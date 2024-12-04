@@ -1,5 +1,3 @@
-#include <SDL_render.h>
-#include <SDL_video.h>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -9,6 +7,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #ifdef WIN32
 #include <windows.h>
@@ -26,9 +25,9 @@ void errorWindow(const char* message) {
 class Player {
   public:
     int x, y;
-    int health, energy, thirst;
+    float health, energy, thirst;
     SDL_Texture* playerSprite;
-    int moveSpeed = 5;
+    int moveSpeed = 2;
 };
 
 class Application {
@@ -145,9 +144,40 @@ class Application {
   }
 
 
+  SDL_Texture* hole_unifiedTexture;
+  struct Hole {
+    SDL_Rect holeRect;
+  };
+  std::vector<Hole*> holesVec;
+  void PreloadHoleTexture() {
+    SDL_Surface* holeSurface = IMG_Load("assets/uni_tex_hole.png");
+    hole_unifiedTexture = SDL_CreateTextureFromSurface(renderer, holeSurface);
+    SDL_FreeSurface(holeSurface);
+  }
+
+  SDL_Texture* hpIconTexture;
+  SDL_Texture* thirstIconTexture;
+  SDL_Texture* energyIconTexture;
+  SDL_Rect hpIconRect, thirstIconRect, energyIconRect;
+  void PreloadStatusBarIcons() {
+    SDL_Surface* hpIconSurface = IMG_Load("assets/hp_icon_32.png");
+    SDL_Surface* thirstIconSurface = IMG_Load("assets/thirst_icon_32.png");
+    SDL_Surface* energyIconSurface = IMG_Load("assets/energy_icon_32.png");
+    hpIconTexture = SDL_CreateTextureFromSurface(renderer, hpIconSurface);
+    thirstIconTexture = SDL_CreateTextureFromSurface(renderer, thirstIconSurface);
+    energyIconTexture = SDL_CreateTextureFromSurface(renderer, energyIconSurface);
+  SDL_QueryTexture(hpIconTexture, NULL, NULL, &hpIconRect.w, &hpIconRect.h);
+  SDL_QueryTexture(thirstIconTexture, NULL, NULL, &thirstIconRect.w, &thirstIconRect.h);
+  SDL_QueryTexture(energyIconTexture, NULL, NULL, &energyIconRect.w, &energyIconRect.h);
+  SDL_FreeSurface(hpIconSurface);
+  SDL_FreeSurface(thirstIconSurface);
+  SDL_FreeSurface(energyIconSurface);
+  }
+
   void game() {
     SDL_SetWindowTitle(window, "Holes - Game");
-    
+    PreloadHoleTexture();
+    PreloadStatusBarIcons();
     SDL_Surface* playerSprite = IMG_Load("assets/player.png");
     if (playerSprite == NULL) throw std::runtime_error("Error loading player sprite");
     player.playerSprite = SDL_CreateTextureFromSurface(renderer, playerSprite);
@@ -156,6 +186,10 @@ class Application {
     if (statusBarFont == NULL) throw std::runtime_error("Error loading status bar font");
 
     bool player_Up = false, player_Down = false, player_Left = false, player_Right = false;
+
+    player.health = 100;
+    player.thirst = 100;
+    player.energy = 100;
 
     while (state == APP_STATE_GAME) {
       while (SDL_PollEvent(&event)) {
@@ -179,6 +213,12 @@ class Application {
             case SDLK_d:
               player_Right = true;
               break;
+            case SDLK_e:
+              Hole* hole = new Hole();
+              hole->holeRect.x = 400 - 32;
+              hole->holeRect.y = 300 - 32;
+              holesVec.push_back(hole);
+              std::cout << "Created new hole\n";
           }
         }
         if (event.type == SDL_KEYUP) {
@@ -205,47 +245,101 @@ class Application {
         }
       }
 
-      if (player_Up) player.y -= player.moveSpeed; 
-      if (player_Down) player.y += player.moveSpeed;
-      if (player_Left) player.x -= player.moveSpeed;
-      if (player_Right) player.x += player.moveSpeed;
+      if (player_Up) 
+      {
+        player.y -= player.moveSpeed; 
+        player.thirst -= 0.1;
+        player.energy -= 0.05;
+      }
+      if (player_Down)
+      {
+        player.y += player.moveSpeed;
+        player.thirst -= 0.1;
+        player.energy -= 0.05;
+      }
+      if (player_Left) 
+      {
+        player.x -= player.moveSpeed;
+        player.thirst -= 0.1;
+        player.energy -= 0.05;
+      }
+      if (player_Right)
+      {
+        player.x += player.moveSpeed;
+        player.thirst -= 0.1;
+        player.energy -= 0.05;
+      }
+
+      if (player.thirst < 0) player.health -= 0.05;
+      if (player.energy < 0) player.energy -= 0.1;
 
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
       SDL_RenderClear(renderer);
 
       SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+      for (Hole* hole : holesVec) {
+        if (player_Up) hole->holeRect.y += player.moveSpeed;
+        if (player_Down) hole->holeRect.y -= player.moveSpeed;
+        if (player_Left) hole->holeRect.x += player.moveSpeed;
+        if (player_Right) hole->holeRect.x -= player.moveSpeed;
+        SDL_Rect holeRect = { hole->holeRect.x, hole->holeRect.y, 64, 64 };
+        if (SDL_RenderCopy(renderer, hole_unifiedTexture, NULL, &holeRect) != 0) {
+          throw std::runtime_error("Failed to render hole");
+        }
+      }
+
       // Render player
-      SDL_Rect playerRect = { player.x, player.y, 32, 32 };
+      SDL_Rect playerRect = { 384, 284, 64, 64 };
       SDL_RenderCopy(renderer, player.playerSprite, NULL, &playerRect);
 
       // Render hud (status bar)
-      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
-      SDL_Rect hudRect = { 0, 600 - 32, 400, 32 };
+      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
+      SDL_Rect hudRect = { 0, 600 - 32, 800, 32 };
       int statusBorderWidth = 2;
       SDL_RenderDrawLine(renderer, 0, (hudRect.y - statusBorderWidth) * windowRenderMultiplierY, hudRect.w * windowRenderMultiplierX, (hudRect.y - statusBorderWidth) * windowRenderMultiplierY);
       SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128);
       SDL_RenderFillRect(renderer, &hudRect);
 
       // Render HP (red)
-      SDL_Surface* hpSurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("HP: " + std::to_string(player.health)).c_str(), {255, 50, 50, 255}, 0);
+      int hpTextW, hpTextH;
+      hpIconRect.x = 50; hpIconRect.y = 600 - 32; hpIconRect.w = 32; hpIconRect.h = 32;
+      SDL_RenderCopy(renderer, hpIconTexture, NULL, &hpIconRect);
+      SDL_Surface* hpSurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("HP: " + std::to_string(static_cast<int>(player.health))).c_str(), {255, 50, 50, 255}, 0);
       SDL_Texture* hpTexture = SDL_CreateTextureFromSurface(renderer, hpSurface);
-      SDL_Rect hpRect = { 10, hudRect.y + 8, hpSurface->w, hpSurface->h };
+      SDL_Rect hpRect = { hpIconRect.x + hpIconRect.w + 10, hudRect.y + 8, hpSurface->w, hpSurface->h };
+      SDL_QueryTexture(hpTexture, NULL, NULL, &hpTextW, &hpTextH);
       SDL_RenderCopy(renderer, hpTexture, NULL, &hpRect);
       SDL_FreeSurface(hpSurface);
+      SDL_DestroyTexture(hpTexture);
 
+      const int hpHUDoffset = hpIconRect.x + hpIconRect.w + hpTextW; 
       // Render Energy (green)
-      SDL_Surface* energySurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("Energy: " + std::to_string(player.energy)).c_str(), {50, 255, 150, 255}, 0);
+      energyIconRect.x = hpHUDoffset + 50; energyIconRect.y = 600 - 32; energyIconRect.w = 32; energyIconRect.h = 32;
+      SDL_RenderCopy(renderer, energyIconTexture, NULL, &energyIconRect);
+      SDL_Surface* energySurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("Energy: " + std::to_string(static_cast<int>(player.energy))).c_str(), {50, 255, 150, 255}, 0);
       SDL_Texture* energyTexture = SDL_CreateTextureFromSurface(renderer, energySurface);
-      SDL_Rect energyRect = { 60, hudRect.y + 8, energySurface->w, energySurface->h };
+      SDL_Rect energyRect = { hpHUDoffset + 50 + energyIconRect.w + 10, hudRect.y + 8, energySurface->w, energySurface->h };
       SDL_RenderCopy(renderer, energyTexture, NULL, &energyRect);
       SDL_FreeSurface(energySurface);
+      SDL_DestroyTexture(energyTexture);
 
+      const int energyHUDoffset = hpHUDoffset + 50 + energyIconRect.w + 10 + energyRect.w;
       // Render Thirst (blue)
-      SDL_Surface* thirstSurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("Thirst: " + std::to_string(player.thirst)).c_str(), {50, 50, 255, 255}, 0);
+      thirstIconRect.x = energyHUDoffset + 50; thirstIconRect.y = 600 - 32; thirstIconRect.w = 32; thirstIconRect.h = 32;
+      SDL_RenderCopy(renderer, thirstIconTexture, NULL, &thirstIconRect);
+      SDL_Surface* thirstSurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("Thirst: " + std::to_string(static_cast<int>(player.thirst))).c_str(), {50, 50, 255, 255}, 0);
       SDL_Texture* thirstTexture = SDL_CreateTextureFromSurface(renderer, thirstSurface);
-      SDL_Rect thirstRect = { 140, hudRect.y + 8, thirstSurface->w, thirstSurface->h };
+      SDL_Rect thirstRect = { energyHUDoffset + 50 + thirstIconRect.w + 10, hudRect.y + 8, thirstSurface->w, thirstSurface->h };
       SDL_RenderCopy(renderer, thirstTexture, NULL, &thirstRect);
       SDL_FreeSurface(thirstSurface);
+      SDL_DestroyTexture(thirstTexture);
+
+      // Red tint if hp is low
+      if (player.health <= 50) {
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, static_cast<Uint8>(255 * ((100 - player.health) / 100)) - 100);
+        SDL_RenderFillRect(renderer, NULL);
+      }
 
       SDL_RenderPresent(renderer);
     }

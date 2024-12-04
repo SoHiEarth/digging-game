@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/s22047/holes/build",
+  "command": "C:\\Users\\s22047\\msys64\\ucrt64\\bin\\c++.exe  @CMakeFiles/Holes.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\Holes.dir\\src\\main.cpp.obj -c C:\\Users\\s22047\\holes\\src\\main.cpp",
+  "file": "C:/Users/s22047/holes/src/main.cpp",
+  "output": "CMakeFiles/Holes.dir/src/main.cpp.obj"
+}
+]
