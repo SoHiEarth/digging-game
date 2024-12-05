@@ -1,5 +1,5 @@
 CMakeFiles/Holes.dir/src/main.cpp.obj: C:\Users\s22047\holes\src\main.cpp \
- C:/Users/s22047/SDL2-2.30.8/include/SDL_keycode.h \
+ C:/Users/s22047/SDL2-2.30.8/include/SDL_render.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_stdinc.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_config.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_platform.h \
@@ -23,8 +23,6 @@ CMakeFiles/Holes.dir/src/main.cpp.obj: C:\Users\s22047\holes\src\main.cpp \
  C:/Users/s22047/msys64/ucrt64/include/_mingw_stdarg.h \
  C:/Users/s22047/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdint.h \
  C:/Users/s22047/msys64/ucrt64/include/stdint.h \
- C:/Users/s22047/SDL2-2.30.8/include/SDL_scancode.h \
- C:/Users/s22047/SDL2-2.30.8/include/SDL_render.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_rect.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_error.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_pixels.h \
@@ -33,8 +31,6 @@ CMakeFiles/Holes.dir/src/main.cpp.obj: C:\Users\s22047\holes\src\main.cpp \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_video.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_surface.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_blendmode.h \
- C:/Users/s22047/SDL2-2.30.8/include/SDL_rwops.h \
- C:/Users/s22047/SDL2-2.30.8/include/SDL_video.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_main.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_assert.h \
@@ -169,6 +165,7 @@ CMakeFiles/Holes.dir/src/main.cpp.obj: C:\Users\s22047\holes\src\main.cpp \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_events.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_keyboard.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_keycode.h \
+ C:/Users/s22047/SDL2-2.30.8/include/SDL_scancode.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_mouse.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_joystick.h \
  C:/Users/s22047/SDL2-2.30.8/include/SDL_guid.h \
@@ -323,6 +320,58 @@ CMakeFiles/Holes.dir/src/main.cpp.obj: C:\Users\s22047\holes\src\main.cpp \
  C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/stl_vector.h \
  C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/stl_bvector.h \
  C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/vector.tcc \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/thread \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/stop_token \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/atomic \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/atomic_base.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/atomic_lockfree_defines.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/atomic_wait.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/std_mutex.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/std_thread.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/unique_ptr.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/semaphore \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/semaphore_base.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/chrono.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/ratio \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/cstdint \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/limits \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/ctime \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/parse_numbers.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/atomic_timed_wait.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/this_thread_sleep.h \
+ C:/Users/s22047/msys64/ucrt64/include/semaphore.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/chrono \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/sstream \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/sstream.tcc \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/stl_algo.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/algorithmfwd.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/stl_heap.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/uniform_int_dist.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/stl_tempbuf.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/shared_ptr.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/shared_ptr_base.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/allocated_ptr.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/ext/aligned_buffer.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/ext/concurrence.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/align.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/chrono_io.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/iomanip \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/locale \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/locale_facets_nonio.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/x86_64-w64-mingw32/bits/time_members.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/x86_64-w64-mingw32/bits/messages_members.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/codecvt.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/locale_facets_nonio.tcc \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/locale_conv.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/quoted_string.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/format \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/array \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/charconv \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/optional \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/enable_special_members.h \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/span \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/variant \
+ C:/Users/s22047/msys64/ucrt64/include/c++/13.2.0/bits/ranges_algobase.h \
  C:/Users/s22047/msys64/ucrt64/include/windows.h \
  C:/Users/s22047/msys64/ucrt64/include/excpt.h \
  C:/Users/s22047/msys64/ucrt64/include/windef.h \

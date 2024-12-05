@@ -1,3 +1,4 @@
+#include <SDL_render.h>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -8,6 +9,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <thread>
+#include <chrono>
 
 #ifdef WIN32
 #include <windows.h>
@@ -21,20 +24,93 @@ void errorWindow(const char* message) {
   std::cout << "[Error] " << message << "\n";
 }
 #endif
+SDL_Window* window = nullptr;
+SDL_Renderer* renderer = nullptr;
+SDL_Event event;                     
+
+struct Item {
+  public:
+    std::string itemName = "null_item_name";
+    SDL_Texture* sprite = nullptr;
+    std::string itemSpritePath = "assets/null.png";
+    virtual void func() { throw std::runtime_error("Item function not configured"); }
+};
 
 class Player {
   public:
     int x, y;
     float health, energy, thirst;
     SDL_Texture* playerSprite;
+    std::vector<Item*> inventory;
+    int currentItem = 0;
     int moveSpeed = 2;
+};
+
+SDL_Texture* hole_unifiedTexture;
+struct Hole {
+  SDL_Rect holeRect;
+};
+std::vector<Hole*> holesVec;
+void PreloadHoleTexture() {
+  SDL_Surface* holeSurface = IMG_Load("assets/uni_tex_hole.png");
+  hole_unifiedTexture = SDL_CreateTextureFromSurface(renderer, holeSurface);
+  SDL_FreeSurface(holeSurface);
+}
+
+bool func_button_pressed;
+int shovelDiggingChargeProgress = 0;
+struct Shovel : public Item {
+public:
+    Shovel() {
+        itemName = "Shovel";
+        itemSpritePath = "assets/char_item_0.png";
+    }
+
+    std::thread holdThread;
+
+    void charge() {
+        while (func_button_pressed && shovelDiggingChargeProgress <= 100) {
+            shovelDiggingChargeProgress++;
+            std::cout << "Charging shovel" << shovelDiggingChargeProgress << "%\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        }
+        if (shovelDiggingChargeProgress >= 100) {
+            Hole* hole = new Hole();
+            hole->holeRect.x = 400 - 16;
+            hole->holeRect.y = 300 + 16;
+            holesVec.push_back(hole);
+        }
+        shovelDiggingChargeProgress = 0;
+    }
+
+    void func() override {
+        if (shovelDiggingChargeProgress == 0) {
+            if (holdThread.joinable()) holdThread.join();
+            holdThread = std::thread(&Shovel::charge, this);
+        }
+    }
+
+    ~Shovel() {
+        if (holdThread.joinable()) {
+            holdThread.join();
+        }
+    }
+};
+
+struct Bottle : public Item {
+  public:
+    Bottle() {
+      itemName = "Bottle";
+      itemSpritePath = "assets/char_item_1.png";
+    }
+    
+    void func() override {
+      player.thirst = 100;
+    }
 };
 
 class Application {
   /* [APP VARIABLES] */
-  SDL_Window* window = nullptr;
-  SDL_Renderer* renderer = nullptr;
-  SDL_Event event;
   bool running;
   Player player;
   float windowRenderMultiplierX = 1, windowRenderMultiplierY = 1;
@@ -80,7 +156,7 @@ class Application {
 
   void mainMenu() {
     SDL_SetWindowTitle(window, "Holes - Main Menu");
-    TTF_Font* hintFont = TTF_OpenFont("assets/Inter.ttf", 20);
+    TTF_Font* hintFont = TTF_OpenFont("assets/font_hint_menu.ttf", 20);
     if (hintFont == NULL) throw std::runtime_error("Error loading hint font");
     
     SDL_Surface* hintSurface = TTF_RenderText_Blended_Wrapped(hintFont, "Press Any Key to start\nPress [Esc] to quit", {255, 255, 255, 255}, 0);
@@ -143,21 +219,7 @@ class Application {
     TTF_CloseFont(hintFont);
   }
 
-
-  SDL_Texture* hole_unifiedTexture;
-  struct Hole {
-    SDL_Rect holeRect;
-  };
-  std::vector<Hole*> holesVec;
-  void PreloadHoleTexture() {
-    SDL_Surface* holeSurface = IMG_Load("assets/uni_tex_hole.png");
-    hole_unifiedTexture = SDL_CreateTextureFromSurface(renderer, holeSurface);
-    SDL_FreeSurface(holeSurface);
-  }
-
-  SDL_Texture* hpIconTexture;
-  SDL_Texture* thirstIconTexture;
-  SDL_Texture* energyIconTexture;
+  SDL_Texture* hpIconTexture, *thirstIconTexture, *energyIconTexture;
   SDL_Rect hpIconRect, thirstIconRect, energyIconRect;
   void PreloadStatusBarIcons() {
     SDL_Surface* hpIconSurface = IMG_Load("assets/hp_icon_32.png");
@@ -190,6 +252,8 @@ class Application {
     player.health = 100;
     player.thirst = 100;
     player.energy = 100;
+    Shovel* shovel = new Shovel();
+    player.inventory.push_back(shovel);
 
     while (state == APP_STATE_GAME) {
       while (SDL_PollEvent(&event)) {
@@ -214,11 +278,13 @@ class Application {
               player_Right = true;
               break;
             case SDLK_e:
-              Hole* hole = new Hole();
-              hole->holeRect.x = 400 - 32;
-              hole->holeRect.y = 300 - 32;
-              holesVec.push_back(hole);
-              std::cout << "Created new hole\n";
+              func_button_pressed = true;
+              try {
+                player.inventory[player.currentItem]->func();
+              }
+              catch (...) {
+                player.currentItem = player.inventory.size();
+              }
           }
         }
         if (event.type == SDL_KEYUP) {
@@ -235,6 +301,9 @@ class Application {
             case SDLK_d:
               player_Right = false;
               break; 
+            case SDLK_e:
+              func_button_pressed = false;
+              break;
           }
         }
         if (event.type == SDL_WINDOWEVENT_RESIZED) {
@@ -273,7 +342,7 @@ class Application {
       if (player.thirst < 0) player.health -= 0.05;
       if (player.energy < 0) player.energy -= 0.1;
 
-      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+      SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
       SDL_RenderClear(renderer);
 
       SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -292,6 +361,18 @@ class Application {
       // Render player
       SDL_Rect playerRect = { 384, 284, 64, 64 };
       SDL_RenderCopy(renderer, player.playerSprite, NULL, &playerRect);
+
+      // Render player itemName
+      if (!player.inventory.empty()) {
+        SDL_Rect itemRect = { 400, 300, 50, 50 };
+        if (player.inventory[player.currentItem]->sprite == nullptr) {
+          SDL_Surface* itemSurface = IMG_Load(player.inventory[player.currentItem]->itemSpritePath.c_str());
+          //if (itemSurface == NULL) throw std::runtime_error("Failed to render item surface");
+          player.inventory[player.currentItem]->sprite = SDL_CreateTextureFromSurface(renderer, itemSurface);
+          SDL_FreeSurface(itemSurface);
+        }
+        SDL_RenderCopy(renderer, player.inventory[player.currentItem]->sprite, NULL, &itemRect);
+      }
 
       // Render hud (status bar)
       SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
@@ -340,6 +421,7 @@ class Application {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, static_cast<Uint8>(255 * ((100 - player.health) / 100)) - 100);
         SDL_RenderFillRect(renderer, NULL);
       }
+      if (player.health <= 0) state = APP_STATE_MAIN_MENU;
 
       SDL_RenderPresent(renderer);
     }
