@@ -46,6 +46,8 @@ class Player {
     int moveSpeed = 2;
 };
 
+Player player;
+  
 SDL_Texture* hole_unifiedTexture;
 struct Hole {
   SDL_Rect holeRect;
@@ -71,7 +73,7 @@ public:
     void charge() {
         while (func_button_pressed && shovelDiggingChargeProgress <= 100) {
             shovelDiggingChargeProgress++;
-            std::cout << "Charging shovel" << shovelDiggingChargeProgress << "%\n";
+            std::cout << "Charging shovel " << shovelDiggingChargeProgress << "%\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
         if (shovelDiggingChargeProgress >= 100) {
@@ -112,7 +114,6 @@ struct Bottle : public Item {
 class Application {
   /* [APP VARIABLES] */
   bool running;
-  Player player;
   float windowRenderMultiplierX = 1, windowRenderMultiplierY = 1;
 
   SDL_Rect TranslateRect(SDL_Rect& rect) {
@@ -220,7 +221,6 @@ class Application {
   }
 
   SDL_Texture* hpIconTexture, *thirstIconTexture, *energyIconTexture;
-  SDL_Rect hpIconRect, thirstIconRect, energyIconRect;
   void PreloadStatusBarIcons() {
     SDL_Surface* hpIconSurface = IMG_Load("assets/hp_icon_32.png");
     SDL_Surface* thirstIconSurface = IMG_Load("assets/thirst_icon_32.png");
@@ -228,12 +228,9 @@ class Application {
     hpIconTexture = SDL_CreateTextureFromSurface(renderer, hpIconSurface);
     thirstIconTexture = SDL_CreateTextureFromSurface(renderer, thirstIconSurface);
     energyIconTexture = SDL_CreateTextureFromSurface(renderer, energyIconSurface);
-  SDL_QueryTexture(hpIconTexture, NULL, NULL, &hpIconRect.w, &hpIconRect.h);
-  SDL_QueryTexture(thirstIconTexture, NULL, NULL, &thirstIconRect.w, &thirstIconRect.h);
-  SDL_QueryTexture(energyIconTexture, NULL, NULL, &energyIconRect.w, &energyIconRect.h);
-  SDL_FreeSurface(hpIconSurface);
-  SDL_FreeSurface(thirstIconSurface);
-  SDL_FreeSurface(energyIconSurface);
+    SDL_FreeSurface(hpIconSurface);
+    SDL_FreeSurface(thirstIconSurface);
+    SDL_FreeSurface(energyIconSurface);
   }
 
   void game() {
@@ -254,6 +251,8 @@ class Application {
     player.energy = 100;
     Shovel* shovel = new Shovel();
     player.inventory.push_back(shovel);
+    Bottle* bottle = new Bottle();
+    player.inventory.push_back(bottle);
 
     while (state == APP_STATE_GAME) {
       while (SDL_PollEvent(&event)) {
@@ -279,12 +278,22 @@ class Application {
               break;
             case SDLK_e:
               func_button_pressed = true;
-              try {
-                player.inventory[player.currentItem]->func();
-              }
-              catch (...) {
-                player.currentItem = player.inventory.size();
-              }
+              if (!player.inventory.empty()) player.inventory[player.currentItem]->func();
+            case SDLK_1:
+              player.currentItem = 0;
+              break;
+            case SDLK_2:
+              player.currentItem = 1;
+              if (player.inventory.size() < 2) player.currentItem = 0;
+              break;
+            case SDLK_3:
+              player.currentItem = 2;
+              if (player.inventory.size() < 3) player.currentItem = 0;
+              break;
+            case SDLK_4:
+              player.currentItem = 3;
+              if (player.inventory.size() < 4) player.currentItem = 0;
+              break;
           }
         }
         if (event.type == SDL_KEYUP) {
@@ -306,38 +315,30 @@ class Application {
               break;
           }
         }
-        if (event.type == SDL_WINDOWEVENT_RESIZED) {
-          int w, h;
-          SDL_GetWindowSize(window, &w, &h);
-          windowRenderMultiplierX = w / 800;
-          windowRenderMultiplierY = h / 600;
-        }
       }
 
       if (player_Up) 
       {
         player.y -= player.moveSpeed; 
-        player.thirst -= 0.1;
-        player.energy -= 0.05;
       }
       if (player_Down)
       {
         player.y += player.moveSpeed;
-        player.thirst -= 0.1;
-        player.energy -= 0.05;
       }
       if (player_Left) 
       {
         player.x -= player.moveSpeed;
-        player.thirst -= 0.1;
-        player.energy -= 0.05;
       }
       if (player_Right)
       {
         player.x += player.moveSpeed;
-        player.thirst -= 0.1;
+      }
+
+      if (player_Up || player_Down || player_Left || player_Right) {
         player.energy -= 0.05;
       }
+
+      player.thirst -= 0.075;
 
       if (player.thirst < 0) player.health -= 0.05;
       if (player.energy < 0) player.energy -= 0.1;
@@ -362,7 +363,7 @@ class Application {
       SDL_Rect playerRect = { 384, 284, 64, 64 };
       SDL_RenderCopy(renderer, player.playerSprite, NULL, &playerRect);
 
-      // Render player itemName
+      // Render player item
       if (!player.inventory.empty()) {
         SDL_Rect itemRect = { 400, 300, 50, 50 };
         if (player.inventory[player.currentItem]->sprite == nullptr) {
@@ -374,47 +375,62 @@ class Application {
         SDL_RenderCopy(renderer, player.inventory[player.currentItem]->sprite, NULL, &itemRect);
       }
 
-      // Render hud (status bar)
-      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
-      SDL_Rect hudRect = { 0, 600 - 32, 800, 32 };
-      int statusBorderWidth = 2;
-      SDL_RenderDrawLine(renderer, 0, (hudRect.y - statusBorderWidth) * windowRenderMultiplierY, hudRect.w * windowRenderMultiplierX, (hudRect.y - statusBorderWidth) * windowRenderMultiplierY);
-      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128);
-      SDL_RenderFillRect(renderer, &hudRect);
+      if (shovelDiggingChargeProgress != 0) {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_Rect chargeRectBg = { 400 - 50 + 16, 300 - 50, 100, 10 };
+        SDL_RenderFillRect(renderer, &chargeRectBg);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_Rect chargeRect = { chargeRectBg.x, chargeRectBg.y, shovelDiggingChargeProgress, chargeRectBg.h };
+        SDL_RenderFillRect(renderer, &chargeRect);
+      }
 
       // Render HP (red)
-      int hpTextW, hpTextH;
-      hpIconRect.x = 50; hpIconRect.y = 600 - 32; hpIconRect.w = 32; hpIconRect.h = 32;
+      SDL_Rect hpIconRect = { 20, 600 - 32 * 3, 32, 32 };
       SDL_RenderCopy(renderer, hpIconTexture, NULL, &hpIconRect);
-      SDL_Surface* hpSurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("HP: " + std::to_string(static_cast<int>(player.health))).c_str(), {255, 50, 50, 255}, 0);
-      SDL_Texture* hpTexture = SDL_CreateTextureFromSurface(renderer, hpSurface);
-      SDL_Rect hpRect = { hpIconRect.x + hpIconRect.w + 10, hudRect.y + 8, hpSurface->w, hpSurface->h };
-      SDL_QueryTexture(hpTexture, NULL, NULL, &hpTextW, &hpTextH);
+      SDL_Texture* hpTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderText_Blended_Wrapped(statusBarFont, ("Health: " + std::to_string(static_cast<int>(player.health))).c_str(), {255, 50, 50, 255}, 0));
+      SDL_Rect hpRect = { 57, hpIconRect.y, 32, 32 };
+      SDL_QueryTexture(hpTexture, NULL, NULL, &hpRect.w, &hpRect.h);
       SDL_RenderCopy(renderer, hpTexture, NULL, &hpRect);
-      SDL_FreeSurface(hpSurface);
       SDL_DestroyTexture(hpTexture);
 
-      const int hpHUDoffset = hpIconRect.x + hpIconRect.w + hpTextW; 
       // Render Energy (green)
-      energyIconRect.x = hpHUDoffset + 50; energyIconRect.y = 600 - 32; energyIconRect.w = 32; energyIconRect.h = 32;
+      SDL_Rect energyIconRect = { 20, 600 - 32 * 2, 32, 32 };
       SDL_RenderCopy(renderer, energyIconTexture, NULL, &energyIconRect);
-      SDL_Surface* energySurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("Energy: " + std::to_string(static_cast<int>(player.energy))).c_str(), {50, 255, 150, 255}, 0);
-      SDL_Texture* energyTexture = SDL_CreateTextureFromSurface(renderer, energySurface);
-      SDL_Rect energyRect = { hpHUDoffset + 50 + energyIconRect.w + 10, hudRect.y + 8, energySurface->w, energySurface->h };
+      SDL_Texture* energyTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderText_Blended_Wrapped(statusBarFont, ("Energy: " + std::to_string(static_cast<int>(player.energy))).c_str(), {50, 255, 150, 255}, 0));
+      SDL_Rect energyRect = { 57, energyIconRect.y, 32, 32 };
+      SDL_QueryTexture(energyTexture, NULL, NULL, &energyRect.w, &energyRect.h);
       SDL_RenderCopy(renderer, energyTexture, NULL, &energyRect);
-      SDL_FreeSurface(energySurface);
       SDL_DestroyTexture(energyTexture);
 
-      const int energyHUDoffset = hpHUDoffset + 50 + energyIconRect.w + 10 + energyRect.w;
       // Render Thirst (blue)
-      thirstIconRect.x = energyHUDoffset + 50; thirstIconRect.y = 600 - 32; thirstIconRect.w = 32; thirstIconRect.h = 32;
+      SDL_Rect thirstIconRect = { 20, 600 - 32, 32, 32 };
       SDL_RenderCopy(renderer, thirstIconTexture, NULL, &thirstIconRect);
-      SDL_Surface* thirstSurface = TTF_RenderText_Blended_Wrapped(statusBarFont, ("Thirst: " + std::to_string(static_cast<int>(player.thirst))).c_str(), {50, 50, 255, 255}, 0);
-      SDL_Texture* thirstTexture = SDL_CreateTextureFromSurface(renderer, thirstSurface);
-      SDL_Rect thirstRect = { energyHUDoffset + 50 + thirstIconRect.w + 10, hudRect.y + 8, thirstSurface->w, thirstSurface->h };
+      
+      SDL_Texture* thirstTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderText_Blended_Wrapped(statusBarFont, ("Thirst: " + std::to_string(static_cast<int>(player.thirst))).c_str(), {50, 50, 255, 255}, 0));
+      SDL_Rect thirstRect = { 57, thirstIconRect.y, 32, 32 };
+      SDL_QueryTexture(thirstTexture, NULL, NULL, &thirstRect.w, &thirstRect.h);
       SDL_RenderCopy(renderer, thirstTexture, NULL, &thirstRect);
-      SDL_FreeSurface(thirstSurface);
       SDL_DestroyTexture(thirstTexture);
+
+      // Render inventory
+      int xOffset = 0;
+      for (int i = player.inventory.size() - 1; i >= 0; i--) {
+        SDL_Rect itemRect = { (800 - 50 * static_cast<int>(player.inventory.size() - 1))/2 + xOffset, 600 - 32, 32, 32 };
+        if (player.inventory[i]->sprite == nullptr) {
+          player.inventory[i]->sprite = IMG_LoadTexture(renderer, player.inventory[i]->itemSpritePath.c_str());
+        }
+        if (player.currentItem == i) {
+          itemRect.w = 50;
+          itemRect.h = 50;
+          itemRect.y = 600 - 50;
+          SDL_SetRenderDrawColor(renderer, 255, 255, 255, 150);
+          SDL_RenderFillRect(renderer, &itemRect);
+          SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+          SDL_RenderDrawRect(renderer, &itemRect);
+        }
+        SDL_RenderCopy(renderer, player.inventory[i]->sprite, NULL, &itemRect);
+        xOffset -= 50;
+      }
 
       // Red tint if hp is low
       if (player.health <= 50) {
@@ -424,6 +440,7 @@ class Application {
       if (player.health <= 0) state = APP_STATE_MAIN_MENU;
 
       SDL_RenderPresent(renderer);
+      SDL_Delay(1000/60);
     }
   }
 
