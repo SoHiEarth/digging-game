@@ -1,10 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Holes.dir/src/main.cpp.obj"
-  "CMakeFiles/Holes.dir/src/main.cpp.obj.d"
-  "Holes.exe"
-  "Holes.exe.manifest"
+  "CMakeFiles/Holes.dir/src/main.cpp.o"
+  "CMakeFiles/Holes.dir/src/main.cpp.o.d"
+  "Holes"
   "Holes.pdb"
-  "libHoles.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

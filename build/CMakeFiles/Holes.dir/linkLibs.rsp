@@ -1,1 +1,0 @@
- D:/SDL2/cmake/../lib/x64/SDL2.lib D:/SDL2/cmake/../lib/x64/SDL2_image.lib D:/SDL2/cmake/../lib/x64/SDL2_ttf.lib D:/SDL2/cmake/../lib/x64/SDL2_mixer.lib -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

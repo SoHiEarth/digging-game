@@ -1,3 +1,3 @@
-D:/Random-Projects/holes/build/CMakeFiles/Holes.dir
-D:/Random-Projects/holes/build/CMakeFiles/edit_cache.dir
-D:/Random-Projects/holes/build/CMakeFiles/rebuild_cache.dir
+/Users/kotaro/holes/build/CMakeFiles/Holes.dir
+/Users/kotaro/holes/build/CMakeFiles/edit_cache.dir
+/Users/kotaro/holes/build/CMakeFiles/rebuild_cache.dir

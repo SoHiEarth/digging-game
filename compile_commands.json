@@ -1,8 +1,8 @@
 [
 {
-  "directory": "D:/Random-Projects/holes/build",
-  "command": "D:\\msys64\\ucrt64\\bin\\c++.exe  @CMakeFiles/Holes.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\Holes.dir\\src\\main.cpp.obj -c D:\\Random-Projects\\holes\\src\\main.cpp",
-  "file": "D:/Random-Projects/holes/src/main.cpp",
-  "output": "CMakeFiles/Holes.dir/src/main.cpp.obj"
+  "directory": "/Users/kotaro/holes/build",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++  -I/opt/homebrew/Cellar/sdl2/2.30.9/include -I/Users/kotaro/holes/include -I/Users/kotaro/holes/lib -isystem /opt/homebrew/Cellar/sdl2/2.30.9/include/SDL2 -isystem /opt/homebrew/Cellar/sdl2_image/2.8.2_2/include/SDL2 -isystem /opt/homebrew/Cellar/sdl2_ttf/2.22.0/include/SDL2 -isystem /opt/homebrew/Cellar/sdl2_mixer/2.8.0/include/SDL2 -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.1.sdk -o CMakeFiles/Holes.dir/src/main.cpp.o -c /Users/kotaro/holes/src/main.cpp",
+  "file": "/Users/kotaro/holes/src/main.cpp",
+  "output": "CMakeFiles/Holes.dir/src/main.cpp.o"
 }
 ]

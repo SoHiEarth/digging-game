@@ -1,4 +1,3 @@
-#include <SDL_render.h>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -82,6 +81,7 @@ public:
             hole->holeRect.y = 300 + 16;
             holesVec.push_back(hole);
         }
+        player.energy -= 10;
         shovelDiggingChargeProgress = 0;
     }
 
@@ -108,6 +108,18 @@ struct Bottle : public Item {
     
     void func() override {
       player.thirst = 100;
+    }
+};
+
+struct Food : public Item {
+  public:
+    Food() {
+      itemName = "Food";
+      itemSpritePath = "assets/char_item_2.png";
+    }
+
+    void func() override {
+      player.energy = 100;
     }
 };
 
@@ -147,7 +159,7 @@ class Application {
       throw std::runtime_error("IMG_Init failed");
     }
 
-    if (Mix_Init(MIX_INIT_WAVPACK) != 0) {
+    if (Mix_Init(MIX_INIT_WAVPACK) == 0) {
       throw std::runtime_error("Mix_Init failed");
     }
 
@@ -241,6 +253,9 @@ class Application {
     if (playerSprite == NULL) throw std::runtime_error("Error loading player sprite");
     player.playerSprite = SDL_CreateTextureFromSurface(renderer, playerSprite);
 
+    SDL_Texture* mapTexture_Part_Hill = IMG_LoadTexture(renderer, "assets/map_part_hill.png");
+    SDL_Rect mapRect = { 0, 0, 3200, 2400 };
+
     TTF_Font* statusBarFont = TTF_OpenFont("assets/Inter.ttf", 16);
     if (statusBarFont == NULL) throw std::runtime_error("Error loading status bar font");
 
@@ -253,6 +268,9 @@ class Application {
     player.inventory.push_back(shovel);
     Bottle* bottle = new Bottle();
     player.inventory.push_back(bottle);
+    Food* food = new Food();
+    player.inventory.push_back(food);
+    int motionBlurFrame = 0;
 
     while (state == APP_STATE_GAME) {
       while (SDL_PollEvent(&event)) {
@@ -338,15 +356,37 @@ class Application {
         player.energy -= 0.05;
       }
 
-      player.thirst -= 0.075;
-
       if (player.thirst < 0) player.health -= 0.05;
-      if (player.energy < 0) player.energy -= 0.1;
-
-      SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
-      SDL_RenderClear(renderer);
-
+      else player.thirst -= 0.075;
+      if (player.energy < 0) player.health -= 0.1;
+      
+      if (player.thirst > 90 && player.energy > 90 && player.health < 100) {
+        player.health += 0.05;
+      }
+#ifdef WIN32
+      if (motionBlurFrame == 0) {
+        motionBlurFrame = 5;
+#endif
+        SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
+        SDL_RenderClear(renderer);
+#ifdef WIN32
+      }
+      else {
+        motionBlurFrame--;
+      }
+#endif
+      
       SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+      if (player.x < 0) player.x = 0;
+      if (player.y < 0) player.y = 0;
+      if (player.x > 800 - 64) player.x = 800 - 64;
+      if (player.y > 600 - 64) player.y = 600 - 64;
+      if (player_Up) mapRect.y += player.moveSpeed; 
+      if (player_Down) mapRect.y -= player.moveSpeed;
+      if (player_Left) mapRect.x += player.moveSpeed;
+      if (player_Right) mapRect.x -= player.moveSpeed;
+      SDL_RenderCopy(renderer, mapTexture_Part_Hill, NULL, &mapRect);
 
       for (Hole* hole : holesVec) {
         if (player_Up) hole->holeRect.y += player.moveSpeed;
@@ -427,17 +467,38 @@ class Application {
           SDL_RenderFillRect(renderer, &itemRect);
           SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
           SDL_RenderDrawRect(renderer, &itemRect);
+
+          // Render item description
+          SDL_Texture* itemDescTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderText_Blended_Wrapped(statusBarFont, player.inventory[i]->itemName.c_str(), {255, 255, 255, 255}, 0));
+          SDL_Rect itemDescRect = { 400 - 50 + 10, 600 - 50 - 32, 100, 32 };
+          SDL_QueryTexture(itemDescTexture, NULL, NULL, &itemDescRect.w, &itemDescRect.h);
+          itemDescRect.x = itemRect.x + (itemRect.w - itemDescRect.w) / 2;
+
+          SDL_RenderCopy(renderer, itemDescTexture, NULL, &itemDescRect);
+          SDL_DestroyTexture(itemDescTexture);
         }
         SDL_RenderCopy(renderer, player.inventory[i]->sprite, NULL, &itemRect);
         xOffset -= 50;
       }
 
       // Red tint if hp is low
-      if (player.health <= 50) {
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, static_cast<Uint8>(255 * ((100 - player.health) / 100)) - 100);
+      if (player.health <= 30) {
+        Uint8 redAlpha = static_cast<Uint8>(255 * ((30 - player.health) / 30.0));
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, redAlpha);
         SDL_RenderFillRect(renderer, NULL);
       }
-      if (player.health <= 0) state = APP_STATE_MAIN_MENU;
+      
+      // Gradually fade to black
+      if (player.health <= 15) {
+        Uint8 blackAlpha = static_cast<Uint8>(255 * (1 - (player.health / 15.0)));
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, blackAlpha);
+        SDL_RenderFillRect(renderer, NULL);
+      }
+      
+      // Transition to main menu if health is too low
+      if (player.health <= 0) {
+        state = APP_STATE_MAIN_MENU;
+      }
 
       SDL_RenderPresent(renderer);
       SDL_Delay(1000/60);
