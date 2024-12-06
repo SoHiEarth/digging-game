@@ -30,9 +30,19 @@ SDL_Event event;
 struct Item {
   public:
     std::string itemName = "null_item_name";
+    std::string itemDescription = "null_item_description";
     SDL_Texture* sprite = nullptr;
     std::string itemSpritePath = "assets/null.png";
     virtual void func() { throw std::runtime_error("Item function not configured"); }
+};
+
+struct MapInteractable {
+  public:
+    std::string interactableName = "null_interactable_name";
+    SDL_Rect rect;
+    SDL_Texture* texture;
+    std::string texturePath = "assets/null.png";
+    virtual void func() { throw std::runtime_error("Interactable function not configured"); }
 };
 
 class Player {
@@ -65,6 +75,7 @@ public:
     Shovel() {
         itemName = "Shovel";
         itemSpritePath = "assets/char_item_0.png";
+        itemDescription = "";
     }
 
     std::thread holdThread;
@@ -72,7 +83,6 @@ public:
     void charge() {
         while (func_button_pressed && shovelDiggingChargeProgress <= 100) {
             shovelDiggingChargeProgress++;
-            std::cout << "Charging shovel " << shovelDiggingChargeProgress << "%\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
         if (shovelDiggingChargeProgress >= 100) {
@@ -80,8 +90,8 @@ public:
             hole->holeRect.x = 400 - 16;
             hole->holeRect.y = 300 + 16;
             holesVec.push_back(hole);
+            player.energy -= 10;
         }
-        player.energy -= 10;
         shovelDiggingChargeProgress = 0;
     }
 
@@ -104,10 +114,18 @@ struct Bottle : public Item {
     Bottle() {
       itemName = "Bottle";
       itemSpritePath = "assets/char_item_1.png";
+      itemDescription = std::to_string(capacity) + "%";
     }
     
+    int capacity = 0;
     void func() override {
-      player.thirst = 100;
+      if (capacity > 0) {
+        player.thirst += 10;
+        capacity -= 20;
+        itemDescription = std::to_string(capacity) + "%";
+      } else {
+        player.inventory.erase(player.inventory.begin() + player.currentItem);
+      }
     }
 };
 
@@ -116,10 +134,35 @@ struct Food : public Item {
     Food() {
       itemName = "Food";
       itemSpritePath = "assets/char_item_2.png";
+      itemDescription = std::to_string(capacity) + "%";
+    }
+
+    int capacity = 0;
+    void func() override {
+      if (capacity > 0) {
+        player.health += 10;
+        capacity -= 20;
+        itemDescription = std::to_string(capacity) + "%";
+      } else {
+        player.inventory.erase(player.inventory.begin() + player.currentItem);
+      }
+    }
+};
+
+struct WaterRefillStation : public MapInteractable {
+  public:
+    WaterRefillStation() {
+      interactableName = "Water Refill Station";
+      texturePath = "assets/water_refill_station.png";
     }
 
     void func() override {
-      player.energy = 100;
+      for (Item* item : player.inventory) {
+        if (item->itemName == "Bottle") {
+          Bottle* bottle = dynamic_cast<Bottle*>(item);
+          if (bottle != nullptr) bottle->capacity = 100;
+        }
+      }
     }
 };
 
@@ -258,19 +301,22 @@ class Application {
 
     TTF_Font* statusBarFont = TTF_OpenFont("assets/Inter.ttf", 16);
     if (statusBarFont == NULL) throw std::runtime_error("Error loading status bar font");
+    TTF_Font* statusBarFont_Bold = TTF_OpenFont("assets/SpaceMono-Bold.ttf", 16);
+    if (statusBarFont_Bold == NULL) throw std::runtime_error("Error loading status bar font");
 
     bool player_Up = false, player_Down = false, player_Left = false, player_Right = false;
 
     player.health = 100;
     player.thirst = 100;
     player.energy = 100;
+    player.inventory.clear();
+
     Shovel* shovel = new Shovel();
     player.inventory.push_back(shovel);
     Bottle* bottle = new Bottle();
     player.inventory.push_back(bottle);
     Food* food = new Food();
     player.inventory.push_back(food);
-    int motionBlurFrame = 0;
 
     while (state == APP_STATE_GAME) {
       while (SDL_PollEvent(&event)) {
@@ -353,29 +399,18 @@ class Application {
       }
 
       if (player_Up || player_Down || player_Left || player_Right) {
-        player.energy -= 0.05;
+        player.energy -= 0.025;
       }
 
       if (player.thirst < 0) player.health -= 0.05;
-      else player.thirst -= 0.075;
-      if (player.energy < 0) player.health -= 0.1;
+      else player.thirst -= 0.01;
+      if (player.energy < 0) player.health -= 0.075;
       
       if (player.thirst > 90 && player.energy > 90 && player.health < 100) {
         player.health += 0.05;
       }
-#ifdef WIN32
-      if (motionBlurFrame == 0) {
-        motionBlurFrame = 5;
-#endif
-        SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
-        SDL_RenderClear(renderer);
-#ifdef WIN32
-      }
-      else {
-        motionBlurFrame--;
-      }
-#endif
-      
+      SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
+      SDL_RenderClear(renderer);
       SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
       if (player.x < 0) player.x = 0;
@@ -405,12 +440,9 @@ class Application {
 
       // Render player item
       if (!player.inventory.empty()) {
-        SDL_Rect itemRect = { 400, 300, 50, 50 };
+        SDL_Rect itemRect = { 415, 300, 35, 35 };
         if (player.inventory[player.currentItem]->sprite == nullptr) {
-          SDL_Surface* itemSurface = IMG_Load(player.inventory[player.currentItem]->itemSpritePath.c_str());
-          //if (itemSurface == NULL) throw std::runtime_error("Failed to render item surface");
-          player.inventory[player.currentItem]->sprite = SDL_CreateTextureFromSurface(renderer, itemSurface);
-          SDL_FreeSurface(itemSurface);
+          player.inventory[player.currentItem]->sprite = IMG_LoadTexture(renderer, player.inventory[player.currentItem]->itemSpritePath.c_str());
         }
         SDL_RenderCopy(renderer, player.inventory[player.currentItem]->sprite, NULL, &itemRect);
       }
@@ -455,29 +487,38 @@ class Application {
       // Render inventory
       int xOffset = 0;
       for (int i = player.inventory.size() - 1; i >= 0; i--) {
-        SDL_Rect itemRect = { (800 - 50 * static_cast<int>(player.inventory.size() - 1))/2 + xOffset, 600 - 32, 32, 32 };
+        SDL_Rect itemRect = { (800 - 50 * static_cast<int>(player.inventory.size() - 1))/2 + xOffset, 600 - 64, 48, 48 };
         if (player.inventory[i]->sprite == nullptr) {
           player.inventory[i]->sprite = IMG_LoadTexture(renderer, player.inventory[i]->itemSpritePath.c_str());
         }
         if (player.currentItem == i) {
-          itemRect.w = 50;
-          itemRect.h = 50;
-          itemRect.y = 600 - 50;
           SDL_SetRenderDrawColor(renderer, 255, 255, 255, 150);
           SDL_RenderFillRect(renderer, &itemRect);
           SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
           SDL_RenderDrawRect(renderer, &itemRect);
 
-          // Render item description
-          SDL_Texture* itemDescTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderText_Blended_Wrapped(statusBarFont, player.inventory[i]->itemName.c_str(), {255, 255, 255, 255}, 0));
-          SDL_Rect itemDescRect = { 400 - 50 + 10, 600 - 50 - 32, 100, 32 };
+          // Render item name
+          SDL_Texture* itemDescTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderText_Blended_Wrapped(statusBarFont_Bold, player.inventory[i]->itemName.c_str(), {255, 255, 255, 255}, 0));
+          SDL_Rect itemDescRect = { 400 - 48 + 10, 600 - 40 - 48, 100, 32 };
           SDL_QueryTexture(itemDescTexture, NULL, NULL, &itemDescRect.w, &itemDescRect.h);
           itemDescRect.x = itemRect.x + (itemRect.w - itemDescRect.w) / 2;
 
+          SDL_SetRenderDrawColor(renderer, 0, 0, 0, 150);
+          SDL_RenderFillRect(renderer, &itemDescRect);
           SDL_RenderCopy(renderer, itemDescTexture, NULL, &itemDescRect);
           SDL_DestroyTexture(itemDescTexture);
         }
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 150);
+        SDL_RenderFillRect(renderer, &itemRect);
+        
         SDL_RenderCopy(renderer, player.inventory[i]->sprite, NULL, &itemRect);
+        // Render Item itemDescription
+        SDL_Texture* itemDescTexture = SDL_CreateTextureFromSurface(renderer, TTF_RenderText_Blended_Wrapped(statusBarFont, player.inventory[i]->itemDescription.c_str(), {255, 255, 255, 255}, 0));
+        SDL_Rect itemDescRect = { itemRect.x, itemRect.y + itemRect.w, itemRect.w, 600 - itemRect.y - itemRect.w };    
+        SDL_RenderCopy(renderer, itemDescTexture, NULL, &itemDescRect);
+        SDL_DestroyTexture(itemDescTexture);
+
+        
         xOffset -= 50;
       }
 
