@@ -117,7 +117,7 @@ struct Bottle : public Item {
       itemDescription = std::to_string(capacity) + "%";
     }
     
-    int capacity = 0;
+    int capacity = 100;
     void func() override {
       if (capacity > 0) {
         player.thirst += 10;
@@ -137,7 +137,7 @@ struct Food : public Item {
       itemDescription = std::to_string(capacity) + "%";
     }
 
-    int capacity = 0;
+    int capacity = 100;
     void func() override {
       if (capacity > 0) {
         player.health += 10;
@@ -154,13 +154,15 @@ struct WaterRefillStation : public MapInteractable {
     WaterRefillStation() {
       interactableName = "Water Refill Station";
       texturePath = "assets/water_refill_station.png";
+      rect = { player.x, player.y, 64, 128 }; 
     }
 
     void func() override {
+      std::cout << "Water Refill Station function called\n";
       for (Item* item : player.inventory) {
         if (item->itemName == "Bottle") {
           Bottle* bottle = dynamic_cast<Bottle*>(item);
-          if (bottle != nullptr) bottle->capacity = 100;
+          bottle->capacity = 100;
         }
       }
     }
@@ -311,17 +313,17 @@ class Application {
     player.energy = 100;
     player.inventory.clear();
 
-    Shovel* shovel = new Shovel();
-    player.inventory.push_back(shovel);
-    Bottle* bottle = new Bottle();
-    player.inventory.push_back(bottle);
-    Food* food = new Food();
-    player.inventory.push_back(food);
+    player.inventory.push_back(new Shovel());
+    player.inventory.push_back(new Bottle());
+    player.inventory.push_back(new Food());
+
+    // Water Refill Station
+    WaterRefillStation* waterRefillStation = new WaterRefillStation();
 
     while (state == APP_STATE_GAME) {
       while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-          state = APP_STATE_QUIT;
+          state = APP_STATE_MAIN_MENU;
         }
         if (event.type == SDL_KEYDOWN) {
           switch (event.key.keysym.sym) {
@@ -381,23 +383,6 @@ class Application {
         }
       }
 
-      if (player_Up) 
-      {
-        player.y -= player.moveSpeed; 
-      }
-      if (player_Down)
-      {
-        player.y += player.moveSpeed;
-      }
-      if (player_Left) 
-      {
-        player.x -= player.moveSpeed;
-      }
-      if (player_Right)
-      {
-        player.x += player.moveSpeed;
-      }
-
       if (player_Up || player_Down || player_Left || player_Right) {
         player.energy -= 0.025;
       }
@@ -409,6 +394,17 @@ class Application {
       if (player.thirst > 90 && player.energy > 90 && player.health < 100) {
         player.health += 0.05;
       }
+
+      SDL_Point playerPos = {player.x, player.y};
+      if (SDL_PointInRect(&playerPos, &waterRefillStation->rect) == SDL_TRUE) {
+        SDL_SetCursor(SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND));
+      } else {
+        SDL_SetCursor(SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW));
+      }
+      if (func_button_pressed && SDL_PointInRect(&playerPos, &waterRefillStation->rect) == SDL_TRUE) {
+        waterRefillStation->func();
+      }
+
       SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
       SDL_RenderClear(renderer);
       SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -433,6 +429,18 @@ class Application {
           throw std::runtime_error("Failed to render hole");
         }
       }
+
+      // Render map interactables
+      if (waterRefillStation->texture == nullptr) {
+        waterRefillStation->texture = IMG_LoadTexture(renderer, waterRefillStation->texturePath.c_str());
+      }
+      if (player_Up) waterRefillStation->rect.y += player.moveSpeed;
+      if (player_Down) waterRefillStation->rect.y -= player.moveSpeed;
+      if (player_Left) waterRefillStation->rect.x += player.moveSpeed;
+      if (player_Right) waterRefillStation->rect.x -= player.moveSpeed;
+
+      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 150);
+      SDL_RenderFillRect(renderer, &waterRefillStation->rect);
 
       // Render player
       SDL_Rect playerRect = { 384, 284, 64, 64 };
