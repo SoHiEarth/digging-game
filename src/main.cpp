@@ -207,7 +207,8 @@ class Application {
     state = APP_STATE_MAIN_MENU;
     running = true;
   }
-
+  
+  int currentSelectedMenuItem = 0;
   void mainMenu() {
     SDL_SetWindowTitle(window, "Holes - Main Menu");
     TTF_Font* hintFont = TTF_OpenFont(FONT_MENU_HINT_PATH, 20);
@@ -233,12 +234,23 @@ class Application {
             }
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
-                    case SDLK_ESCAPE:
-                        state = APP_STATE_QUIT;
-                        break;
-                    default:
+                  case SDLK_UP:
+                    currentSelectedMenuItem--;
+                    if (currentSelectedMenuItem < 0) currentSelectedMenuItem = 0;
+                    break;
+                  case SDLK_DOWN:
+                    currentSelectedMenuItem++;
+                    if (currentSelectedMenuItem > 1) currentSelectedMenuItem = 1;
+                    break;
+                  case SDLK_RETURN:
+                    switch (currentSelectedMenuItem) {
+                      case 0:
                         state = APP_STATE_GAME;
                         break;
+                      case 1:
+                        state = APP_STATE_QUIT;
+                        break;
+                    }
                 }
             }
         }
@@ -246,11 +258,47 @@ class Application {
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
+        
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+        
+        SDL_Texture* menuItem1 = renderText("Start Game", hintFont, {0, 0, 0, 255});
+        SDL_Texture* menuItem2 = renderText("Quit", hintFont, {0, 0, 0, 255});
+
+        SDL_Rect menuItem1Rect, menuItem2Rect;
+        SDL_QueryTexture(menuItem1, NULL, NULL, &menuItem1Rect.w, &menuItem1Rect.h);
+        SDL_QueryTexture(menuItem2, NULL, NULL, &menuItem2Rect.w, &menuItem2Rect.h);
+
+        menuItem1Rect = { 400 - menuItem1Rect.w / 2, 300, menuItem1Rect.w, menuItem1Rect.h };
+        menuItem2Rect = { 400 - menuItem2Rect.w / 2, 350, menuItem2Rect.w, menuItem2Rect.h };
+        
+        SDL_Rect menuItem1BgRect = { menuItem1Rect.x - 10, menuItem1Rect.y - 10, menuItem1Rect.w + 20, menuItem1Rect.h + 20 };
+        SDL_Rect menuItem2BgRect = { menuItem2Rect.x - 10, menuItem2Rect.y - 10, menuItem2Rect.w + 20, menuItem2Rect.h + 20 };
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 20, 255);
+        switch (currentSelectedMenuItem) {
+          case 0:
+            SDL_RenderDrawRect(renderer, &menuItem1BgRect);
+            break;
+          case 1:
+            SDL_RenderDrawRect(renderer, &menuItem2BgRect);
+            break;
+        }
+        
+        SDL_SetRenderDrawColor(renderer, 120, 120, 120, 128); 
+        SDL_RenderFillRect(renderer, &menuItem1BgRect);
+        SDL_RenderFillRect(renderer, &menuItem2BgRect);
+
+        SDL_RenderCopy(renderer, menuItem1, NULL, &menuItem1Rect);
+        SDL_RenderCopy(renderer, menuItem2, NULL, &menuItem2Rect);
+
+        SDL_DestroyTexture(menuItem1);
+        SDL_DestroyTexture(menuItem2);
+        /*
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
         SDL_Rect hintBgRect = { hintRect.x - 10, hintRect.y - 10, hintRect.w + 20, hintRect.h + 20 };
         SDL_RenderFillRect(renderer, &hintBgRect);
         SDL_RenderCopy(renderer, hintTexture, NULL, &hintRect);
+        */
         SDL_RenderPresent(renderer);
     }
 
