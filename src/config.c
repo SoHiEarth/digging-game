@@ -29,7 +29,7 @@ const char* WATER_REFILL_STATION_SPRITE_PATH = "assets/water_refill_station.png"
 const char* PLAYERSTAT_HEALTH_ICON_PATH = "assets/hp_icon_32.png";
 const char* PLAYERSTAT_ENERGY_ICON_PATH = "assets/energy_icon_32.png";
 const char* PLAYERSTAT_THIRST_ICON_PATH = "assets/thirst_icon_32.png";
-const char* PLAYERSTAT_FONT_PATH = FONT_PRESET_SPACE_MONO_BOLD;
+const char* PLAYERSTAT_FONT_PATH = FONT_PRESET_SPACE_MONO;
 
 const char* PLAYER_SPRITE_PATH = "assets/player.png";
 
@@ -38,7 +38,7 @@ const char* MAP_PART_HILL_PATH = "assets/map_part_hill.png";
 const char* FONT_MENU_HINT_PATH = FONT_PRESET_SPACE_GROTESK;
 const char* MENU_BACKGROUND_PATH = "assets/title_bg.png";
 
-const char* FONT_GAME_INVENTORY_PATH = FONT_PRESET_INTER;
+const char* FONT_GAME_INVENTORY_PATH = FONT_PRESET_SPACE_GROTESK;
 
 const char* FONT_GAMEOVER_PATH = FONT_PRESET_INTER;
 const char* FONT_GAMEOVER_HINT_PATH = FONT_PRESET_INTER_ITALIC;

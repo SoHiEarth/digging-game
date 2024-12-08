@@ -1,0 +1,32 @@
+[
+{
+  "directory": "D:/Random-Projects/holes/build",
+  "command": "D:\\msys64\\ucrt64\\bin\\c++.exe  @CMakeFiles/Holes.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\Holes.dir\\src\\base.cpp.obj -c D:\\Random-Projects\\holes\\src\\base.cpp",
+  "file": "D:/Random-Projects/holes/src/base.cpp",
+  "output": "CMakeFiles/Holes.dir/src/base.cpp.obj"
+},
+{
+  "directory": "D:/Random-Projects/holes/build",
+  "command": "D:\\msys64\\ucrt64\\bin\\cc.exe  @CMakeFiles/Holes.dir/includes_C.rsp -g -std=gnu11 -o CMakeFiles\\Holes.dir\\src\\config.c.obj -c D:\\Random-Projects\\holes\\src\\config.c",
+  "file": "D:/Random-Projects/holes/src/config.c",
+  "output": "CMakeFiles/Holes.dir/src/config.c.obj"
+},
+{
+  "directory": "D:/Random-Projects/holes/build",
+  "command": "D:\\msys64\\ucrt64\\bin\\c++.exe  @CMakeFiles/Holes.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\Holes.dir\\src\\hole.cpp.obj -c D:\\Random-Projects\\holes\\src\\hole.cpp",
+  "file": "D:/Random-Projects/holes/src/hole.cpp",
+  "output": "CMakeFiles/Holes.dir/src/hole.cpp.obj"
+},
+{
+  "directory": "D:/Random-Projects/holes/build",
+  "command": "D:\\msys64\\ucrt64\\bin\\c++.exe  @CMakeFiles/Holes.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\Holes.dir\\src\\item.cpp.obj -c D:\\Random-Projects\\holes\\src\\item.cpp",
+  "file": "D:/Random-Projects/holes/src/item.cpp",
+  "output": "CMakeFiles/Holes.dir/src/item.cpp.obj"
+},
+{
+  "directory": "D:/Random-Projects/holes/build",
+  "command": "D:\\msys64\\ucrt64\\bin\\c++.exe  @CMakeFiles/Holes.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\Holes.dir\\src\\main.cpp.obj -c D:\\Random-Projects\\holes\\src\\main.cpp",
+  "file": "D:/Random-Projects/holes/src/main.cpp",
+  "output": "CMakeFiles/Holes.dir/src/main.cpp.obj"
+}
+]

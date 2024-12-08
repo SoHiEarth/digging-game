@@ -1,11 +1,8 @@
-#include <SDL_pixels.h>
-#include <SDL_render.h>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
-#include <exception>
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -13,6 +10,11 @@
 #include <thread>
 #include <chrono>
 #include <config.h>
+#include <items.hpp>
+#include <interactable.hpp>
+#include <base.hpp>
+#include <hole.hpp>
+#include <player.hpp>
 
 #ifdef WIN32
 #include <windows.h>
@@ -26,8 +28,7 @@ void errorWindow(const char* message) {
   std::cout << "[Error] " << message << "\n";
 }
 #endif
-SDL_Window* window = nullptr;
-SDL_Renderer* renderer = nullptr;
+
 SDL_Event event;
 std::thread renderThread;
 std::thread gameThread;
@@ -40,153 +41,7 @@ SDL_Rect mapRect = { 0, 0, 3200, 2400 };
 bool player_Up = false, player_Down = false, player_Left = false, player_Right = false;
 SDL_Rect playerRect = { 384, 284, 64, 64 }, itemRect = { 415, 300, 35, 35 };
 SDL_Rect chargeRectBg = { 400 - 50 + 16, 300 - 50, 100, 10 };
-SDL_Texture* hole_unifiedTexture = nullptr;
-bool func_button_pressed = false;
-float shovelDiggingChargeProgress = 0;
-
-struct Item {
-  public:
-    std::string itemName = ITEM_NULL_NAME;
-    std::string itemDescription = ITEM_NULL_DESCRIPTION;
-    SDL_Texture* sprite = nullptr;
-    std::string itemSpritePath = ITEM_NULL_SPRITE_PATH;
-    virtual void func() { throw std::runtime_error("Item function not configured"); }
-};
-
-struct MapInteractable {
-  public:
-    std::string interactableName = INTERACTABLE_NULL_NAME;
-    SDL_Rect rect;
-    SDL_Texture* texture;
-    std::string texturePath = INTERACTABLE_NULL_SPRITE_PATH;
-    virtual void func() { throw std::runtime_error("Interactable function not configured"); }
-};
-
-class Player {
-  public:
-    int x = 384, y = 284;
-    float health = 100, energy = 100, thirst = 100;
-    SDL_Texture* playerSprite = nullptr;
-    std::vector<Item*> inventory;
-    int currentItem = 0;
-    int moveSpeed = PLAYER_MOVE_SPEED;
-};
-
-Player player;
-  
-struct Hole {
-  SDL_Rect holeRect;
-};
-std::vector<Hole*> holesVec;
-void PreloadHoleTexture() {
-  hole_unifiedTexture = IMG_LoadTexture(renderer, HOLE_UNIFIED_TEXTURE_PATH);
-}
-
-struct Shovel : public Item {
-public:
-    Shovel() {
-        itemName = SHOVEL_ITEM_NAME;
-        itemSpritePath = SHOVEL_ITEM_SPRITE_PATH;
-        itemDescription = SHOVEL_ITEM_DESCRIPTION;
-    }
-
-    std::thread holdThread;
-
-    void charge() {
-        while (func_button_pressed && shovelDiggingChargeProgress <= 100) {
-            if (player.energy > 0) shovelDiggingChargeProgress++;
-            else shovelDiggingChargeProgress += 0.5;
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
-        }
-        if (shovelDiggingChargeProgress >= 100) {
-            Hole* hole = new Hole();
-            hole->holeRect.x = 400;
-            hole->holeRect.y = 300 + 30;
-            holesVec.push_back(hole);
-            player.energy -= 10;
-            player.thirst -= 10;
-            if (player.thirst < 0) player.thirst = 0;
-            if (player.energy < 0) player.energy = 0;
-        }
-        shovelDiggingChargeProgress = 0;
-    }
-
-    void func() override {
-        if (shovelDiggingChargeProgress == 0) {
-            if (holdThread.joinable()) holdThread.join();
-            holdThread = std::thread(&Shovel::charge, this);
-        }
-    }
-
-    ~Shovel() {
-        if (holdThread.joinable()) {
-            holdThread.join();
-        }
-    }
-};
-
-struct Bottle : public Item {
-  public:
-    Bottle() {
-      itemName = BOTTLE_ITEM_NAME;
-      itemSpritePath = BOTTLE_ITEM_SPRITE_PATH;
-      itemDescription = std::to_string(capacity) + "%";
-    }
-    
-    int capacity = 100;
-    void func() override {
-      if (capacity > 0) {
-        if (player.thirst >= 99) return;
-        player.thirst += 10;
-        if (player.thirst > 100) player.thirst = 100;
-        capacity -= 20;
-        itemDescription = std::to_string(capacity) + "%";
-      } else {
-        player.inventory.erase(player.inventory.begin() + player.currentItem);
-      }
-    }
-};
-
-struct Food : public Item {
-  public:
-    Food() {
-      itemName = FOOD_ITEM_NAME;
-      itemSpritePath = FOOD_ITEM_SPRITE_PATH;
-      itemDescription = std::to_string(capacity) + "%";
-    }
-
-    int capacity = 100;
-    void func() override {
-      if (capacity > 0) {
-        if (player.energy >= 100) return;
-        player.energy += 10;
-        if (player.energy > 100) player.energy = 100;
-        capacity -= 20;
-        itemDescription = std::to_string(capacity) + "%";
-      } else {
-        player.inventory.erase(player.inventory.begin() + player.currentItem);
-      }
-    }
-};
-
-struct WaterRefillStation : public MapInteractable {
-  public:
-    WaterRefillStation() {
-      interactableName = WATER_REFILL_STATION_NAME;
-      texturePath = WATER_REFILL_STATION_SPRITE_PATH;
-      rect = { 0, 0, 64, 128 }; 
-    }
-
-    void func() override {
-      for (int i = 0; i < player.inventory.size(); i++) {
-        if (player.inventory[i]->itemName == "Bottle") {
-          player.inventory.erase(player.inventory.begin() + i);
-          break;
-        }
-      }
-      player.inventory.push_back(new Bottle());
-    }
-};
+ 
 WaterRefillStation* waterRefillStation = nullptr;
 SDL_Texture* renderText(const char* text, TTF_Font* font, SDL_Color color) {
   SDL_Surface* surface = TTF_RenderText_Blended(font, text, color);
@@ -199,7 +54,9 @@ void PreloadStatusBarIcons() {
   hpIconTexture = IMG_LoadTexture(renderer, PLAYERSTAT_HEALTH_ICON_PATH);
   thirstIconTexture = IMG_LoadTexture(renderer, PLAYERSTAT_THIRST_ICON_PATH);
   energyIconTexture = IMG_LoadTexture(renderer, PLAYERSTAT_ENERGY_ICON_PATH);
-  widgetFont = TTF_OpenFont(PLAYERSTAT_FONT_PATH, 24);  
+  if (hpIconTexture == NULL || thirstIconTexture == NULL || energyIconTexture == NULL) throw std::runtime_error("Error loading status bar icons");
+  widgetFont = TTF_OpenFont(PLAYERSTAT_FONT_PATH, 24);
+  if (widgetFont == NULL) throw std::runtime_error("Error loading widget font");
 }
 
 void PreloadPlayerSprite() {
@@ -280,6 +137,9 @@ void RenderPlayerStats() {
 Item* inv_prevItem = nullptr, *inv_currItem = nullptr, *inv_nextItem = nullptr, *prevItem = nullptr;
 void RenderItem(Item* item, SDL_Rect anchor, int alpha) {
   SDL_Rect itemIconRect = { anchor.x + 5, anchor.y, 32, 32 };
+  if (item->sprite == nullptr) {
+    item->sprite = IMG_LoadTexture(renderer, item->itemSpritePath.c_str());
+  }
   SDL_Texture* itemNameTexture = renderText(item->itemName.c_str(), inventoryFont, {255, 255, 255, static_cast<Uint8>(alpha)});
   SDL_Texture* itemDescTexture = renderText(item->itemDescription.c_str(), inventoryFont, {255, 255, 255, static_cast<Uint8>(alpha)});
 
@@ -296,7 +156,7 @@ void RenderItem(Item* item, SDL_Rect anchor, int alpha) {
 }
 
 void RenderInventory() {
-  SDL_Rect anchorRect = { 230, 480, 180, 95 };
+  SDL_Rect anchorRect = { 580, 480, 200, 95 };
   if (player.currentItem - 1 >= 0) inv_prevItem = player.inventory[player.currentItem - 1];
   else inv_prevItem = nullptr;
   inv_currItem = player.inventory[player.currentItem];
@@ -306,12 +166,12 @@ void RenderInventory() {
   SDL_Rect prevItemRect = { anchorRect.x + 5, anchorRect.y, anchorRect.w, 30 };
   SDL_Rect currItemRect = { prevItemRect.x, anchorRect.y + 30, anchorRect.w, 30 };
   SDL_Rect nextItemRect = { prevItemRect.x, anchorRect.y + 60, anchorRect.w, 30 };
-
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 120);
-  SDL_RenderFillRect(renderer, &anchorRect);
+  
   if (inv_prevItem != nullptr) RenderItem(inv_prevItem, prevItemRect, 150);
-  RenderItem(inv_currItem, currItemRect, 255);
   if (inv_nextItem != nullptr) RenderItem(inv_nextItem, nextItemRect, 150);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 80);
+  SDL_RenderFillRect(renderer, &anchorRect);
+  RenderItem(inv_currItem, currItemRect, 255);
 }
 
 class Application {
@@ -488,7 +348,7 @@ class Application {
     PreloadPlayerSprite();
     ResetPlayerStats();
     PreloadMapTexture();
-    inventoryFont = TTF_OpenFont("assets/Inter.ttf", 16);
+    inventoryFont = TTF_OpenFont(FONT_GAME_INVENTORY_PATH, 16);
 
     if (waterRefillStation == nullptr)
       waterRefillStation = new WaterRefillStation();
