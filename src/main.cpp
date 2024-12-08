@@ -1,3 +1,4 @@
+#include <SDL_events.h>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -130,7 +131,7 @@ void RenderPlayerStats() {
   
   RenderWidget(playerStat_HP_Anchor, hpIconTexture, static_cast<int>(player.health), 100, {255, 0, 0, 255});
   RenderWidget(playerStat_Energy_Anchor, energyIconTexture, static_cast<int>(player.energy), 100, {0, 255, 0, 255});
-  RenderWidget(playerStat_Thirst_Anchor, thirstIconTexture, static_cast<int>(player.thirst), 100, {0, 0, 255, 255});
+  RenderWidget(playerStat_Thirst_Anchor, thirstIconTexture, static_cast<int>(player.thirst), 100, {150, 150, 255, 255});
   
 }
 
@@ -169,9 +170,17 @@ void RenderInventory() {
   
   if (inv_prevItem != nullptr) RenderItem(inv_prevItem, prevItemRect, 150);
   if (inv_nextItem != nullptr) RenderItem(inv_nextItem, nextItemRect, 150);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 80);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 50);
   SDL_RenderFillRect(renderer, &anchorRect);
   RenderItem(inv_currItem, currItemRect, 255);
+
+  // Render item number in grey left to the items
+  SDL_Texture* itemNumberTexture = renderText(std::to_string(player.currentItem + 1).c_str(), inventoryFont, {150, 150, 150, 255});
+  SDL_Rect itemNumberRect;
+  SDL_QueryTexture(itemNumberTexture, NULL, NULL, &itemNumberRect.w, &itemNumberRect.h);
+  itemNumberRect = { anchorRect.x - itemNumberRect.w - 5, anchorRect.y + (anchorRect.h - itemNumberRect.h) / 2, itemNumberRect.w, itemNumberRect.h };
+  SDL_RenderCopy(renderer, itemNumberTexture, NULL, &itemNumberRect);
+  SDL_DestroyTexture(itemNumberTexture);
 }
 
 class Application {
@@ -228,6 +237,7 @@ class Application {
     if (titleTexture == NULL) throw std::runtime_error("Error loading title texture");
 
     while (state == APP_STATE_MAIN_MENU) {
+        bool mouseClicked = false;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 state = APP_STATE_QUIT;
@@ -253,6 +263,20 @@ class Application {
                     }
                 }
             }
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+              mouseClicked = true;
+            }
+        }
+
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+        if (mouseClicked) {
+          if (mouseX >= 400 - 100 && mouseX <= 400 + 100 && mouseY >= 300 && mouseY <= 300 + 50) {
+            state = APP_STATE_GAME;
+          }
+          if (mouseX >= 400 - 100 && mouseX <= 400 + 100 && mouseY >= 350 && mouseY <= 350 + 50) {
+            state = APP_STATE_QUIT;
+          }
         }
 
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -322,7 +346,9 @@ class Application {
       }
 
       SDL_Point playerPos = {player.x, player.y};
-      if (SDL_PointInRect(&playerPos, &waterRefillStation->rect) == SDL_TRUE) {
+      int playerW, playerH;
+      SDL_Point playerPos_Max = {player.x + playerW, player.y + playerH};
+      if (SDL_PointInRect(&playerPos, &waterRefillStation->rect) == SDL_TRUE || SDL_PointInRect(&playerPos_Max, &waterRefillStation->rect)) {
         waterRefillStation->func();
       }
 
