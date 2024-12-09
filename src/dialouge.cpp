@@ -25,7 +25,7 @@ void Application::dialouge() {
   SDL_Rect humanoidRect = { 100, 50, 600, 450 };
 
   // Create the dialogue background and text rectangle
-  SDL_Rect dialougeRect = { 100, 400, 600, 200 };
+  SDL_Rect dialougeRect = { 100, 450, 400, 100 };
   SDL_Rect dialougeBGRect = { dialougeRect.x - DIALOUGE_BG_BORDER_THICKNESS, 
                               dialougeRect.y - DIALOUGE_BG_BORDER_THICKNESS, 
                               dialougeRect.w + DIALOUGE_BG_BORDER_THICKNESS * 2, 
@@ -53,14 +53,14 @@ void Application::dialouge() {
     // Render the dialogue text
     if (currentDialougeIndex < currentHumanoid->messages.size()) {
       dialougeTexture = renderText(currentHumanoid->messages[currentDialougeIndex].c_str(), font, {255, 255, 255});
-      SDL_QueryTexture(dialougeTexture, NULL, NULL, &dialougeRect.w, &dialougeTextRect.h);
+      SDL_QueryTexture(dialougeTexture, NULL, NULL, &dialougeTextRect.w, &dialougeTextRect.h);
       dialougeTextRect.x = dialougeRect.x + 10;
       dialougeTextRect.y = dialougeRect.y + 10;
     }
 
     if (currentHumanoid->characterTexture == nullptr) {
       currentHumanoid->characterTexture = IMG_LoadTexture(renderer, currentHumanoid->characterTexturePath.c_str());
-      if (currentHumanoid->characterTexture == nullptr) {
+      if (currentHumanoid->characterTexture == NULL) {
         throw std::runtime_error("Failed to load character texture");
       }
     }
