@@ -41,6 +41,9 @@ void Application::Run() {
         case APP_STATE_GAME:
           game();
           break;
+        case APP_STATE_DIALOUGE:
+          dialouge();
+          break;
         case APP_STATE_QUIT:
           running = false;
           break;

@@ -29,24 +29,26 @@ void PreloadStatusBarIcons() {
 }
 
 void PreloadPlayerSprite() {
-  if (player.playerSprite != nullptr) SDL_DestroyTexture(player.playerSprite);
-  player.playerSprite = IMG_LoadTexture(renderer, PLAYER_SPRITE_PATH);
-  if (player.playerSprite == NULL) throw std::runtime_error("Error loading player sprite");
+  if (player->playerSprite != nullptr) SDL_DestroyTexture(player->playerSprite);
+  player->playerSprite = IMG_LoadTexture(renderer, PLAYER_SPRITE_PATH);
+  if (player->playerSprite == NULL) throw std::runtime_error("Error loading player sprite");
 }
 
 void ResetPlayerStats() {
-  player.health = 100;
-  player.energy = 100;
-  player.thirst = 100;
-  if (!player.inventory.empty()) {
-    for (Item* item : player.inventory) {
+  player->x = 384;
+  player->y = 284;
+  player->health = 100;
+  player->energy = 100;
+  player->thirst = 100;
+  if (!player->inventory.empty()) {
+    for (Item* item : player->inventory) {
       delete item;
     }
   }
-  player.inventory.clear();
-  player.inventory.push_back(new Shovel());
-  player.inventory.push_back(new Food());
-  player.inventory.push_back(new Bottle());
+  player->inventory.clear();
+  player->inventory.push_back(new Shovel());
+  player->inventory.push_back(new Food());
+  player->inventory.push_back(new Bottle());
 }
 
 void PreloadMapTexture() {
@@ -97,9 +99,9 @@ void RenderPlayerStats() {
     playerStat_Energy_Anchor.y,
     95, 40 };
   
-  RenderWidget(playerStat_HP_Anchor, hpIconTexture, static_cast<int>(player.health), 100, {255, 0, 0, 255});
-  RenderWidget(playerStat_Energy_Anchor, energyIconTexture, static_cast<int>(player.energy), 100, {0, 255, 0, 255});
-  RenderWidget(playerStat_Thirst_Anchor, thirstIconTexture, static_cast<int>(player.thirst), 100, {150, 150, 255, 255});
+  RenderWidget(playerStat_HP_Anchor, hpIconTexture, static_cast<int>(player->health), 100, {255, 0, 0, 255});
+  RenderWidget(playerStat_Energy_Anchor, energyIconTexture, static_cast<int>(player->energy), 100, {0, 255, 0, 255});
+  RenderWidget(playerStat_Thirst_Anchor, thirstIconTexture, static_cast<int>(player->thirst), 100, {150, 150, 255, 255});
   
 }
 
@@ -129,10 +131,10 @@ void RenderItem(Item* item, SDL_Rect anchor, int alpha) {
 
 void RenderInventory() {
   SDL_Rect anchorRect = { 580, 480, 200, 95 };
-  if (player.currentItem - 1 >= 0) inv_prevItem = player.inventory[player.currentItem - 1];
+  if (player->currentItem - 1 >= 0) inv_prevItem = player->inventory[player->currentItem - 1];
   else inv_prevItem = nullptr;
-  inv_currItem = player.inventory[player.currentItem];
-  if (player.currentItem + 1 < player.inventory.size()) inv_nextItem = player.inventory[player.currentItem + 1];
+  inv_currItem = player->inventory[player->currentItem];
+  if (player->currentItem + 1 < player->inventory.size()) inv_nextItem = player->inventory[player->currentItem + 1];
   else inv_nextItem = nullptr;
 
   SDL_Rect prevItemRect = { anchorRect.x + 5, anchorRect.y, anchorRect.w, 30 };

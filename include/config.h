@@ -54,6 +54,9 @@ extern const char* FONT_GAME_INVENTORY_PATH;
 extern const char* FONT_GAMEOVER_PATH;
 extern const char* FONT_GAMEOVER_HINT_PATH;
 
+extern int DIALOUGE_BG_BORDER_THICKNESS;
+extern const char* FONT_GAME_DIALOUGE_PATH;
+
 #ifdef __cplusplus
 }
 #endif

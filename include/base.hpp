@@ -12,7 +12,9 @@ extern std::thread renderThread;
 extern std::thread gameThread;
 extern bool running;
 extern bool exception_thrown_thread_pause;
+extern std::mutex humanoidsMutex;
+extern std::vector<Humanoid*> humanoidsVec;
 extern Humanoid* currentHumanoid;
-extern Player player;
+extern Player* player;
 
 #endif // BASE_H
