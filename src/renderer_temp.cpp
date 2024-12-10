@@ -14,7 +14,7 @@ SDL_Rect chargeRectBg = { 400 - 50 + 16, 300 - 50, 100, 10 };
 WaterRefillStation* waterRefillStation = nullptr;
 
 SDL_Texture* renderText(const char* text, TTF_Font* font, SDL_Color color) {
-  SDL_Surface* surface = TTF_RenderText_Blended(font, text, color);
+  SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text, color, 0);
   SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
   SDL_FreeSurface(surface);
   return texture;

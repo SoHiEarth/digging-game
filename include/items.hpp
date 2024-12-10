@@ -7,7 +7,7 @@
 #include <config.h>
 #include <thread>
 
-extern bool func_button_pressed;
+extern bool func_button_pressed, talk_button_pressed;
 extern float shovelDiggingChargeProgress;
 
 struct Item {

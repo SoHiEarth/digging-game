@@ -1,6 +1,7 @@
 #include "character.hpp"
 #include "items.hpp"
 #include <SDL_image.h>
+#include <SDL_keycode.h>
 #include <SDL_rect.h>
 #include <application.hpp>
 
@@ -135,6 +136,7 @@ void Application::game() {
   ResetPlayerStats();
   PreloadMapTexture();
   func_button_pressed = false;
+  talk_button_pressed = false;
   inventoryFont = TTF_OpenFont(FONT_GAME_INVENTORY_PATH, 16);
 
   player_Up = false, player_Down = false, player_Left = false, player_Right = false;
@@ -177,6 +179,9 @@ void Application::game() {
             func_button_pressed = true;
             if (!player.inventory.empty()) player.inventory[player.currentItem]->func();
             break;
+          case SDLK_f:
+            talk_button_pressed = true;
+            break;
           case SDLK_1:
             player.currentItem = 0;
             break;
@@ -211,6 +216,9 @@ void Application::game() {
           case SDLK_e:
             func_button_pressed = false;
             break;
+          case SDLK_f:
+            talk_button_pressed = false;
+            break;
         }
       }
     }
@@ -240,7 +248,7 @@ void Application::game() {
       std::lock_guard<std::mutex> lock(humanoidsMutex);
       for (Humanoid* humanoid : humanoidsVec) {
         RenderHumanoid(humanoid);
-        if (SDL_PointInRect(&playerPos, &humanoid->characterRect) && func_button_pressed) {
+        if (SDL_PointInRect(&playerPos, &humanoid->characterRect) && talk_button_pressed) {
           currentHumanoid = humanoid;
           switch_to_dialouge = true;
         }

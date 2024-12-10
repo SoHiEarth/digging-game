@@ -8,7 +8,7 @@
 
 void Application::dialouge() {
   int currentDialougeIndex = 0;
-  TTF_Font* font = TTF_OpenFont(FONT_GAME_DIALOUGE_PATH, 24);
+  TTF_Font* font = TTF_OpenFont(FONT_GAME_DIALOUGE_PATH, 18);
   
   if (font == nullptr) {
     throw std::runtime_error("Failed to load font");
@@ -25,7 +25,7 @@ void Application::dialouge() {
   SDL_Rect humanoidRect = { 100, 50, 600, 450 };
 
   // Create the dialogue background and text rectangle
-  SDL_Rect dialougeRect = { 100, 450, 400, 100 };
+  SDL_Rect dialougeRect = { 100, 450, 500, 100 };
   SDL_Rect dialougeBGRect = { dialougeRect.x - DIALOUGE_BG_BORDER_THICKNESS, 
                               dialougeRect.y - DIALOUGE_BG_BORDER_THICKNESS, 
                               dialougeRect.w + DIALOUGE_BG_BORDER_THICKNESS * 2, 

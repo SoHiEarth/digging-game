@@ -5,7 +5,7 @@
 #include <hole.hpp>
 #include <base.hpp>
 
-bool func_button_pressed = false;
+bool func_button_pressed = false, talk_button_pressed = false;
 
 Item::~Item() {
   if (sprite != nullptr) {
