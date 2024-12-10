@@ -4,7 +4,7 @@
 #include <SDL_keycode.h>
 #include <SDL_rect.h>
 #include <application.hpp>
-
+#include <animate.hpp>
 #include <base.hpp>
 #include <renderer_temp.hpp>
 #include <SDL.h>
@@ -20,6 +20,8 @@ void SetConsoleColor(int attr) {
   SetConsoleTextAttribute(hConsole, attr);
 }
 #endif
+
+Animator_Rect* testHumanoidAnimator;
 
 void Application::game_fixed() {
   while (state == APP_STATE_GAME) {
@@ -138,13 +140,14 @@ void Application::game() {
   func_button_pressed = false;
   talk_button_pressed = false;
   inventoryFont = TTF_OpenFont(FONT_GAME_INVENTORY_PATH, 16);
-
   player_Up = false, player_Down = false, player_Left = false, player_Right = false;
-  
   {
     std::lock_guard<std::mutex> lock(humanoidsMutex);
     if (humanoidsVec.empty()) {
       humanoidsVec.push_back(new TestHumanoid());
+      testHumanoidAnimator = new Animator_Rect(humanoidsVec[0]->characterRect);
+      testHumanoidAnimator->LoadAnimation("assets/anim/test_humanoid.anim");
+      testHumanoidAnimator->Play();
       humanoidsVec.push_back(new JailGuard());
     }
   }

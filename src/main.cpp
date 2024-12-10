@@ -1,18 +1,8 @@
-#include <SDL_events.h>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-#include <SDL_ttf.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
 #include <stdexcept>
 #include <iostream>
 #include <string>
-#include <config.h>
-#include <items.hpp>
-#include <interactable.hpp>
-#include <base.hpp>
-#include <hole.hpp>
-#include <player.hpp>
 #include <renderer_temp.hpp>
 #include <application.hpp>
 
