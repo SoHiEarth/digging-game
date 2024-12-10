@@ -25,13 +25,13 @@ struct WaterRefillStation : public MapInteractable {
     }
 
     void func() override {
-      for (int i = 0; i < player->inventory.size(); i++) {
-        if (player->inventory[i]->itemName == "Bottle") {
-          player->inventory.erase(player->inventory.begin() + i);
+      for (int i = 0; i < player.inventory.size(); i++) {
+        if (player.inventory[i]->itemName == "Bottle") {
+          player.inventory.erase(player.inventory.begin() + i);
           break;
         }
       }
-      player->inventory.push_back(new Bottle());
+      player.inventory.push_back(new Bottle());
     }
 };
 

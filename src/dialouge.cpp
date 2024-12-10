@@ -42,12 +42,15 @@ void Application::dialouge() {
       }
       if (event.type == SDL_KEYDOWN) {
         if (event.key.keysym.sym == SDLK_RETURN) {
-          currentDialougeIndex++;
-          if (currentDialougeIndex >= currentHumanoid->messages.size() || currentHumanoid->messages[currentDialougeIndex] == "%exit") {
-            state = APP_STATE_GAME; // Transition to game state after dialogue
-          }
+          currentDialougeIndex++; 
         }
       }
+    }
+
+    if (currentDialougeIndex == currentHumanoid->messages.size()) {
+      state = APP_STATE_GAME; // Transition to game state after dialogue
+      std::cout << "Reached end of dialouge queue\n";
+      break;
     }
 
     // Render the dialogue text
@@ -83,6 +86,7 @@ void Application::dialouge() {
     SDL_RenderPresent(renderer);
     SDL_Delay(1000 / 60);
   }
-
+  
+  std::cout << "Unloading assets\n";
   TTF_CloseFont(font);
 }

@@ -15,4 +15,4 @@ bool exception_thrown_thread_pause = false;
 std::mutex humanoidsMutex;
 std::vector<Humanoid*> humanoidsVec;
 Humanoid* currentHumanoid = nullptr;
-Player* player = nullptr;
+Player player;

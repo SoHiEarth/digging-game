@@ -22,7 +22,7 @@ Shovel::Shovel() {
 
 void Shovel::charge() {
   while (func_button_pressed && shovelDiggingChargeProgress <= 100) {
-    if (player->energy > 0) shovelDiggingChargeProgress++;
+    if (player.energy > 0) shovelDiggingChargeProgress++;
     else shovelDiggingChargeProgress += 0.5;
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
   }
@@ -31,10 +31,10 @@ void Shovel::charge() {
     hole->holeRect.x = 400;
     hole->holeRect.y = 300 + 30;
     holesVec.push_back(hole);
-    player->energy -= 10;
-    player->thirst -= 10;
-    if (player->thirst < 0) player->thirst = 0;
-    if (player->energy < 0) player->energy = 0;
+    player.energy -= 10;
+    player.thirst -= 10;
+    if (player.thirst < 0) player.thirst = 0;
+    if (player.energy < 0) player.energy = 0;
   }
   shovelDiggingChargeProgress = 0;
 }
@@ -60,13 +60,13 @@ Bottle::Bottle() {
 
 void Bottle::func() {
   if (capacity > 0) {
-    if (player->thirst >= 99) return;
-    player->thirst += 10;
-    if (player->thirst > 100) player->thirst = 100;
+    if (player.thirst >= 99) return;
+    player.thirst += 10;
+    if (player.thirst > 100) player.thirst = 100;
     capacity -= 20;
     itemDescription = std::to_string(capacity) + "%";
   } else {
-    player->inventory.erase(player->inventory.begin() + player->currentItem);
+    player.inventory.erase(player.inventory.begin() + player.currentItem);
   }
 }
 
@@ -78,12 +78,12 @@ Food::Food() {
 
 void Food::func() {
   if (capacity > 0) {
-    if (player->energy >= 100) return;
-    player->energy += 10;
-    if (player->energy > 100) player->energy = 100;
+    if (player.energy >= 100) return;
+    player.energy += 10;
+    if (player.energy > 100) player.energy = 100;
     capacity -= 20;
     itemDescription = std::to_string(capacity) + "%";
   } else {
-    player->inventory.erase(player->inventory.begin() + player->currentItem);
+    player.inventory.erase(player.inventory.begin() + player.currentItem);
   }
 }
