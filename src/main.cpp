@@ -19,11 +19,31 @@ void errorWindow(const char* message) {
 #endif
 
 Application* app;
-int main() {
+int main(int argc, char* argv[]) {
 
   std::cout << "Allocating application\n";
 
   app = new Application();
+
+  std::cout << "Parsing command line arguments\n";
+  
+  for (int i = 1; i < argc; ++i) {
+    std::string arg = argv[i];
+    if (arg[0] == '-') {
+      if (i + 1 < argc) {
+        std::string value = argv[i + 1];
+        launchParams[arg] = value;
+        ++i;
+      } else {
+      std::cerr << "Error: Parameter " << arg << " is missing a value.\n";
+      }
+    }
+  }
+ 
+  std::cout << "Command launched with following parameters:\n";
+  for (const auto& param : launchParams) {
+    std::cout << param.first << " " << param.second << "\n";
+  }
 
   try {
     std::cout << "Initializing application\n";

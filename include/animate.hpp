@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
+#include <map>
+#include <base.hpp>
 
 struct AnimationFrame {
   int xOffset = 0;
@@ -123,6 +125,9 @@ class Animator_Rect {
       rectToAnimate.y += frame.yOffset;
       rectToAnimate.w += frame.wOffset;
       rectToAnimate.h += frame.hOffset;
+      if (launchParams.find("-AnimDebugLog") != launchParams.end()) {
+        if (launchParams["-AnimDebugLog"] == "1") std::cout << "x: " << rectToAnimate.x << " y: " << rectToAnimate.y << " w: " << rectToAnimate.w << " h: " << rectToAnimate.h << "\n";
+      }
       SDL_Delay(frame.timeUntilNextFrame);
     }
     isPlaying = false;

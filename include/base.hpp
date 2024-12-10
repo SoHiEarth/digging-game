@@ -4,7 +4,11 @@
 #include <SDL.h>
 #include <player.hpp>
 #include <character.hpp>
+#include <thread>
+#include <mutex>
+#include <map>
 
+extern std::map<std::string, std::string> launchParams;
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern SDL_Event event;

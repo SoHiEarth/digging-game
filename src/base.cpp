@@ -6,6 +6,10 @@
 #include <SDL_ttf.h>
 #include <mutex>
 #include <vector>
+#include <thread>
+#include <map>
+
+std::map<std::string, std::string> launchParams;
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
 SDL_Event event;
