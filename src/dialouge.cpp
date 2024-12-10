@@ -1,3 +1,6 @@
+#include <SDL_blendmode.h>
+#include <SDL_render.h>
+#include <SDL_ttf.h>
 #include <application.hpp>
 #include <iostream>
 #include <SDL.h>
@@ -9,8 +12,9 @@
 void Application::dialouge() {
   int currentDialougeIndex = 0;
   TTF_Font* font = TTF_OpenFont(FONT_GAME_DIALOUGE_PATH, 18);
+  TTF_Font* topFont = TTF_OpenFont(FONT_GAME_DIALOUGE_PATH, 11);
   
-  if (font == nullptr) {
+  if (font == nullptr || topFont == nullptr) {
     throw std::runtime_error("Failed to load font");
   }
 
@@ -25,11 +29,13 @@ void Application::dialouge() {
   SDL_Rect humanoidRect = { 100, 50, 600, 450 };
 
   // Create the dialogue background and text rectangle
-  SDL_Rect dialougeRect = { 100, 450, 500, 100 };
+  SDL_Rect dialougeRect = { 150, 450, 500, 100 };
   SDL_Rect dialougeBGRect = { dialougeRect.x - DIALOUGE_BG_BORDER_THICKNESS, 
                               dialougeRect.y - DIALOUGE_BG_BORDER_THICKNESS, 
                               dialougeRect.w + DIALOUGE_BG_BORDER_THICKNESS * 2, 
                               dialougeRect.h + DIALOUGE_BG_BORDER_THICKNESS * 2 };
+  SDL_Texture* characterName = nullptr;
+  SDL_Rect characterNameRect = {0, 0, 0, 0}, characterNameBGRect = {0, 0, 0, 0};
 
   SDL_Texture* dialougeTexture = nullptr;
   SDL_Rect dialougeTextRect = {0, 0, 0, 0};
@@ -40,10 +46,11 @@ void Application::dialouge() {
       if (event.type == SDL_QUIT) {
         state = APP_STATE_QUIT;
       }
-      if (event.type == SDL_KEYDOWN) {
-        if (event.key.keysym.sym == SDLK_RETURN) {
-          currentDialougeIndex++; 
+      if (event.type == SDL_KEYDOWN) {    
+        if (event.key.keysym.sym == SDLK_ESCAPE) {
+          state = APP_STATE_MAIN_MENU;
         }
+        currentDialougeIndex++; 
       }
     }
 
@@ -52,6 +59,16 @@ void Application::dialouge() {
       std::cout << "Reached end of dialouge queue\n";
       break;
     }
+
+    characterName = renderText(currentHumanoid->characterName.c_str(), topFont, {255, 255, 255, 255});
+    SDL_QueryTexture(characterName, NULL, NULL, &characterNameRect.w, &characterNameRect.h);
+    characterNameRect.x = dialougeRect.x + 5;
+    characterNameRect.y = dialougeRect.y - (characterNameRect.h * 0.5);
+    characterNameBGRect = characterNameRect;
+    characterNameBGRect.x -= DIALOUGE_BG_BORDER_THICKNESS;
+    characterNameBGRect.y -= DIALOUGE_BG_BORDER_THICKNESS;
+    characterNameBGRect.w += DIALOUGE_BG_BORDER_THICKNESS * 2;
+    characterNameBGRect.h += DIALOUGE_BG_BORDER_THICKNESS * 2;
 
     // Render the dialogue text
     if (currentDialougeIndex < currentHumanoid->messages.size()) {
@@ -69,14 +86,23 @@ void Application::dialouge() {
     }
 
     // Clear the screen and render everything
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, currentHumanoid->characterTexture, NULL, &humanoidRect);
 
     // Draw the dialogue background and text
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
     SDL_RenderFillRect(renderer, &dialougeBGRect);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200);
     SDL_RenderFillRect(renderer, &dialougeRect);
+
+    if (characterName != NULL) {
+      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+      SDL_RenderFillRect(renderer, &characterNameBGRect);
+      SDL_RenderCopy(renderer, characterName, NULL, &characterNameRect);
+      SDL_DestroyTexture(characterName);
+    }
 
     if (dialougeTexture != NULL) {
       SDL_RenderCopy(renderer, dialougeTexture, NULL, &dialougeTextRect);
