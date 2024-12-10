@@ -143,7 +143,10 @@ void Application::game() {
   
   {
     std::lock_guard<std::mutex> lock(humanoidsMutex);
-    if (humanoidsVec.empty()) humanoidsVec.push_back(new TestHumanoid());
+    if (humanoidsVec.empty()) {
+      humanoidsVec.push_back(new TestHumanoid());
+      humanoidsVec.push_back(new JailGuard());
+    }
   }
 
   if (waterRefillStation == nullptr)

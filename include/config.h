@@ -10,6 +10,8 @@ extern "C" {
 #define FONT_PRESET_SPACE_GROTESK "assets/SpaceGrotesk/SpaceGrotesk.ttf";
 #define FONT_PRESET_SPACE_MONO "assets/SpaceMono/SpaceMono-Regular.ttf";
 #define FONT_PRESET_SPACE_MONO_BOLD "assets/SpaceMono/SpaceMono-Bold.ttf";
+#define FONT_PRESET_JACQUARD "assets/Jacquard_12/Jacquard12-Regular.ttf";
+#define FONT_PRESET_JERSEY_10 "assets/Jersey_10/Jersey10-Regular.ttf";
 
 extern const char* APP_TITLE;
 
@@ -56,6 +58,7 @@ extern const char* FONT_GAMEOVER_HINT_PATH;
 
 extern int DIALOUGE_BG_BORDER_THICKNESS;
 extern const char* FONT_GAME_DIALOUGE_PATH;
+extern const char* FONT_GAME_DIALOUGE_NAME_PATH;
 
 #ifdef __cplusplus
 }

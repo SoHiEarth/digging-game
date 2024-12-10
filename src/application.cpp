@@ -34,6 +34,7 @@ void Application::Run() {
     if (renderer == NULL) throw std::runtime_error("Error creating renderer");
 
     while (running) {
+      std::cout << "Entering application state " << state << "\n";
       switch (state) {
         case APP_STATE_MAIN_MENU:
           mainMenu();

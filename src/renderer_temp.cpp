@@ -25,7 +25,7 @@ void PreloadStatusBarIcons() {
   thirstIconTexture = IMG_LoadTexture(renderer, PLAYERSTAT_THIRST_ICON_PATH);
   energyIconTexture = IMG_LoadTexture(renderer, PLAYERSTAT_ENERGY_ICON_PATH);
   if (hpIconTexture == NULL || thirstIconTexture == NULL || energyIconTexture == NULL) throw std::runtime_error("Error loading status bar icons");
-  widgetFont = TTF_OpenFont(PLAYERSTAT_FONT_PATH, 24);
+  widgetFont = TTF_OpenFont(PLAYERSTAT_FONT_PATH, 30);
   if (widgetFont == NULL) throw std::runtime_error("Error loading widget font");
 }
 
@@ -144,7 +144,7 @@ void RenderInventory() {
 
   if (inv_prevItem != nullptr) RenderItem(inv_prevItem, prevItemRect, 150);
   if (inv_nextItem != nullptr) RenderItem(inv_nextItem, nextItemRect, 150);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 50);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 120);
   SDL_RenderFillRect(renderer, &anchorRect);
   RenderItem(inv_currItem, currItemRect, 255);
 }

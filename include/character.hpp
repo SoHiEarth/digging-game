@@ -14,6 +14,19 @@ struct Humanoid {
   SDL_Texture* characterTexture = nullptr;
 };
 
+struct JailGuard : public Humanoid {
+  JailGuard() {
+    this->characterName = "Guard";
+    this->messages.push_back("Stop Right There!");
+    this->characterRect = { 100, 200, 64, 64 };
+    this->characterTexturePath = "assets/character.png";
+  }
+
+  ~JailGuard() {
+    SDL_DestroyTexture(characterTexture);
+  }
+};
+
 struct TestHumanoid : public Humanoid {
   TestHumanoid() {
     this->characterName = "Test Humanoid";

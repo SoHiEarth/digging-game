@@ -11,8 +11,8 @@
 
 void Application::dialouge() {
   int currentDialougeIndex = 0;
-  TTF_Font* font = TTF_OpenFont(FONT_GAME_DIALOUGE_PATH, 18);
-  TTF_Font* topFont = TTF_OpenFont(FONT_GAME_DIALOUGE_PATH, 11);
+  TTF_Font* font = TTF_OpenFont(FONT_GAME_DIALOUGE_PATH, 24);
+  TTF_Font* topFont = TTF_OpenFont(FONT_GAME_DIALOUGE_NAME_PATH, 18);
   
   if (font == nullptr || topFont == nullptr) {
     throw std::runtime_error("Failed to load font");
