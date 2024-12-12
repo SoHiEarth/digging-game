@@ -4,17 +4,17 @@
 #include <SDL.h>
 #include <string>
 #include <stdexcept>
-#include <config.h>
 #include <thread>
+#include <assetbundleloader.hpp>
 
 extern bool func_button_pressed, talk_button_pressed;
 extern float shovelDiggingChargeProgress;
 
 struct Item {
-  std::string itemName = ITEM_NULL_NAME;
-  std::string itemDescription = ITEM_NULL_DESCRIPTION;
+  std::string itemName = assetBundle.ITEM_NULL_NAME;
+  std::string itemDescription = assetBundle.ITEM_NULL_DESCRIPTION;
   SDL_Texture* sprite = nullptr;
-  std::string itemSpritePath = ITEM_NULL_SPRITE_PATH;
+  std::string itemSpritePath = assetBundle.ITEM_NULL_SPRITE_PATH;
   virtual void func() { throw std::runtime_error("Item function not configured"); }
   virtual ~Item();
 };

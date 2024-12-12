@@ -15,9 +15,9 @@ Item::~Item() {
 
 float shovelDiggingChargeProgress = 0;
 Shovel::Shovel() {
-  itemName = SHOVEL_ITEM_NAME;
-  itemSpritePath = SHOVEL_ITEM_SPRITE_PATH;
-  itemDescription = SHOVEL_ITEM_DESCRIPTION;
+  itemName = assetBundle.SHOVEL_ITEM_NAME;
+  itemSpritePath = assetBundle.SHOVEL_ITEM_SPRITE_PATH;
+  itemDescription = assetBundle.SHOVEL_ITEM_DESCRIPTION;
 }
 
 void Shovel::charge() {
@@ -53,8 +53,8 @@ Shovel::~Shovel() {
 }
 
 Bottle::Bottle() {
-  itemName = BOTTLE_ITEM_NAME;
-  itemSpritePath = BOTTLE_ITEM_SPRITE_PATH;
+  itemName = assetBundle.BOTTLE_ITEM_NAME;
+  itemSpritePath = assetBundle.BOTTLE_ITEM_SPRITE_PATH;
   itemDescription = std::to_string(capacity) + "%";
 }
 
@@ -71,8 +71,8 @@ void Bottle::func() {
 }
 
 Food::Food() {
-  itemName = FOOD_ITEM_NAME;
-  itemSpritePath = FOOD_ITEM_SPRITE_PATH;
+  itemName = assetBundle.FOOD_ITEM_NAME;
+  itemSpritePath = assetBundle.FOOD_ITEM_SPRITE_PATH;
   itemDescription = std::to_string(capacity) + "%";
 }
 

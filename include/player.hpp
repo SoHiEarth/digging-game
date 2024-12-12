@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <vector>
 #include <items.hpp>
+#include <assetbundleloader.hpp>
 
 class Player {
   public:
@@ -12,7 +13,7 @@ class Player {
     SDL_Texture* playerSprite = nullptr;
     std::vector<Item*> inventory;
     int currentItem = 0;
-    int moveSpeed = PLAYER_MOVE_SPEED;
+    int moveSpeed = assetBundle.PLAYER_MOVE_SPEED;
 };
 
 #endif // PLAYER_H

@@ -139,7 +139,7 @@ void Application::game() {
   PreloadMapTexture();
   func_button_pressed = false;
   talk_button_pressed = false;
-  inventoryFont = TTF_OpenFont(FONT_GAME_INVENTORY_PATH, 16);
+  inventoryFont = TTF_OpenFont(assetBundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
   player_Up = false, player_Down = false, player_Left = false, player_Right = false;
   {
     std::lock_guard<std::mutex> lock(humanoidsMutex);

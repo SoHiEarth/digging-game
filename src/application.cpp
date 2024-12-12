@@ -7,8 +7,8 @@
 
 #include <stdexcept>
 #include <iostream>
-#include <string>
-#include "base.hpp"
+#include <assetbundleloader.hpp>
+#include <base.hpp>
 
 void Application::Init() {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -23,12 +23,13 @@ void Application::Init() {
   if (Mix_Init(MIX_INIT_WAVPACK) == 0) {
     throw std::runtime_error("Mix_Init failed");
   }
+  assetBundle.LoadAssetBundle("assets/assetbundle.ab");
   state = APP_STATE_MAIN_MENU;
   running = true;
 }
 
 void Application::Run() {
-    window = SDL_CreateWindow(APP_TITLE, 0, 25, 800, 600, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(assetBundle.APP_TITLE.c_str(), 0, 25, 800, 600, SDL_WINDOW_SHOWN);
     if (window == NULL) throw std::runtime_error("Error creating window");
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL) throw std::runtime_error("Error creating renderer");

@@ -8,6 +8,7 @@
 #include <vector>
 #include <thread>
 #include <map>
+#include <assetbundleloader.hpp>
 
 std::map<std::string, std::string> launchParams;
 SDL_Window* window = nullptr;

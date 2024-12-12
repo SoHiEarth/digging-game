@@ -8,11 +8,12 @@
 #include <renderer_temp.hpp>
 #include <config.h>
 #include <character.hpp>
+#include <assetbundleloader.hpp>
 
 void Application::dialouge() {
   int currentDialougeIndex = 0;
-  TTF_Font* font = TTF_OpenFont(FONT_GAME_DIALOUGE_PATH, 24);
-  TTF_Font* topFont = TTF_OpenFont(FONT_GAME_DIALOUGE_NAME_PATH, 18);
+  TTF_Font* font = TTF_OpenFont(assetBundle.FONT_GAME_DIALOUGE_PATH.c_str(), 24);
+  TTF_Font* topFont = TTF_OpenFont(assetBundle.FONT_GAME_DIALOUGE_NAME_PATH.c_str(), 18);
   
   if (font == nullptr || topFont == nullptr) {
     throw std::runtime_error("Failed to load font");
@@ -30,10 +31,10 @@ void Application::dialouge() {
 
   // Create the dialogue background and text rectangle
   SDL_Rect dialougeRect = { 150, 450, 500, 100 };
-  SDL_Rect dialougeBGRect = { dialougeRect.x - DIALOUGE_BG_BORDER_THICKNESS, 
-                              dialougeRect.y - DIALOUGE_BG_BORDER_THICKNESS, 
-                              dialougeRect.w + DIALOUGE_BG_BORDER_THICKNESS * 2, 
-                              dialougeRect.h + DIALOUGE_BG_BORDER_THICKNESS * 2 };
+  SDL_Rect dialougeBGRect = { dialougeRect.x - assetBundle.DIALOUGE_BG_BORDER_THICKNESS, 
+                              dialougeRect.y - assetBundle.DIALOUGE_BG_BORDER_THICKNESS, 
+                              dialougeRect.w + assetBundle.DIALOUGE_BG_BORDER_THICKNESS * 2, 
+                              dialougeRect.h + assetBundle.DIALOUGE_BG_BORDER_THICKNESS * 2 };
   SDL_Texture* characterName = nullptr;
   SDL_Rect characterNameRect = {0, 0, 0, 0}, characterNameBGRect = {0, 0, 0, 0};
 
@@ -65,10 +66,10 @@ void Application::dialouge() {
     characterNameRect.x = dialougeRect.x + 5;
     characterNameRect.y = dialougeRect.y - (characterNameRect.h * 0.5);
     characterNameBGRect = characterNameRect;
-    characterNameBGRect.x -= DIALOUGE_BG_BORDER_THICKNESS;
-    characterNameBGRect.y -= DIALOUGE_BG_BORDER_THICKNESS;
-    characterNameBGRect.w += DIALOUGE_BG_BORDER_THICKNESS * 2;
-    characterNameBGRect.h += DIALOUGE_BG_BORDER_THICKNESS * 2;
+    characterNameBGRect.x -= assetBundle.DIALOUGE_BG_BORDER_THICKNESS;
+    characterNameBGRect.y -= assetBundle.DIALOUGE_BG_BORDER_THICKNESS;
+    characterNameBGRect.w += assetBundle.DIALOUGE_BG_BORDER_THICKNESS * 2;
+    characterNameBGRect.h += assetBundle.DIALOUGE_BG_BORDER_THICKNESS * 2;
 
     // Render the dialogue text
     if (currentDialougeIndex < currentHumanoid->messages.size()) {

@@ -11,6 +11,7 @@
 #include <interactable.hpp>
 #include <hole.hpp>
 #include <character.hpp>
+#include <assetbundleloader.hpp>
 
 extern SDL_Texture *hpIconTexture, *thirstIconTexture, *energyIconTexture;
 extern TTF_Font *widgetFont, *inventoryFont;

@@ -8,11 +8,11 @@ SDL_Rect gameOverRect = { 0, 0, 800, 600 }, gameOverHintRect = { 0, 0, 800, 600 
 void Application::gameOver() {
 
   if (gameOverFont == nullptr) {
-    gameOverFont = TTF_OpenFont(FONT_GAMEOVER_PATH, 32);
+    gameOverFont = TTF_OpenFont(assetBundle.FONT_GAMEOVER_PATH.c_str(), 32);
     if (gameOverFont == NULL) throw std::runtime_error("Error loading game over font");
   }
   if (gameOverHintFont == nullptr) {
-    gameOverHintFont = TTF_OpenFont(FONT_GAMEOVER_HINT_PATH, 16);
+    gameOverHintFont = TTF_OpenFont(assetBundle.FONT_GAMEOVER_HINT_PATH.c_str(), 16);
     if (gameOverHintFont == NULL) throw std::runtime_error("Error loading game over hint font");
   }
   

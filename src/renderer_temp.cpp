@@ -21,17 +21,17 @@ SDL_Texture* renderText(const char* text, TTF_Font* font, SDL_Color color) {
 }
 
 void PreloadStatusBarIcons() {
-  hpIconTexture = IMG_LoadTexture(renderer, PLAYERSTAT_HEALTH_ICON_PATH);
-  thirstIconTexture = IMG_LoadTexture(renderer, PLAYERSTAT_THIRST_ICON_PATH);
-  energyIconTexture = IMG_LoadTexture(renderer, PLAYERSTAT_ENERGY_ICON_PATH);
+  hpIconTexture = IMG_LoadTexture(renderer, assetBundle.PLAYERSTAT_HEALTH_ICON_PATH.c_str());
+  thirstIconTexture = IMG_LoadTexture(renderer, assetBundle.PLAYERSTAT_THIRST_ICON_PATH.c_str());
+  energyIconTexture = IMG_LoadTexture(renderer, assetBundle.PLAYERSTAT_ENERGY_ICON_PATH.c_str());
   if (hpIconTexture == NULL || thirstIconTexture == NULL || energyIconTexture == NULL) throw std::runtime_error("Error loading status bar icons");
-  widgetFont = TTF_OpenFont(PLAYERSTAT_FONT_PATH, 30);
+  widgetFont = TTF_OpenFont(assetBundle.PLAYERSTAT_FONT_PATH.c_str(), 30);
   if (widgetFont == NULL) throw std::runtime_error("Error loading widget font");
 }
 
 void PreloadPlayerSprite() {
   if (player.playerSprite != nullptr) SDL_DestroyTexture(player.playerSprite);
-  player.playerSprite = IMG_LoadTexture(renderer, PLAYER_SPRITE_PATH);
+  player.playerSprite = IMG_LoadTexture(renderer, assetBundle.PLAYER_SPRITE_PATH.c_str());
   if (player.playerSprite == NULL) throw std::runtime_error("Error loading player sprite");
 }
 
@@ -54,7 +54,7 @@ void ResetPlayerStats() {
 
 void PreloadMapTexture() {
   if (mapTexture_Part_Hill != nullptr) return;
-  mapTexture_Part_Hill = IMG_LoadTexture(renderer, MAP_PART_HILL_PATH);
+  mapTexture_Part_Hill = IMG_LoadTexture(renderer, assetBundle.MAP_PART_HILL_PATH.c_str());
   if (mapTexture_Part_Hill == NULL) throw std::runtime_error("Error loading map texture");
 }
 

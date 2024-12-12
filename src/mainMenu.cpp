@@ -4,7 +4,7 @@
 int currentSelectedMenuItem = 0;
 void Application::mainMenu() {
   SDL_SetWindowTitle(window, "Holes - Main Menu");
-  TTF_Font* hintFont = TTF_OpenFont(FONT_MENU_HINT_PATH, 20);
+  TTF_Font* hintFont = TTF_OpenFont(assetBundle.FONT_MENU_HINT_PATH.c_str(), 20);
   if (hintFont == NULL) throw std::runtime_error("Error loading hint font");
   
   SDL_Surface* hintSurface = TTF_RenderText_Blended_Wrapped(hintFont, "Press Any Key to start\nPress [Esc] to quit", {255, 255, 255, 255}, 0);
@@ -15,7 +15,7 @@ void Application::mainMenu() {
   SDL_QueryTexture(hintTexture, NULL, NULL, &hintRect.w, &hintRect.h);
   hintRect = { 80, (600 - hintRect.h) / 2, hintRect.w, hintRect.h };
   SDL_Rect titleRect = { 0, 0, 800, 600};
-  SDL_Texture* titleTexture = IMG_LoadTexture(renderer, MENU_BACKGROUND_PATH);
+  SDL_Texture* titleTexture = IMG_LoadTexture(renderer, assetBundle.MENU_BACKGROUND_PATH.c_str());
   if (titleTexture == NULL) throw std::runtime_error("Error loading title texture");
   while (state == APP_STATE_MAIN_MENU) {
       bool mouseClicked = false;
