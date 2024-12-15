@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
+#include <macro.hpp>
 #include <renderer_temp.hpp>
 #include <application.hpp>
 
