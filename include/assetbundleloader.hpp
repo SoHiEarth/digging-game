@@ -34,11 +34,11 @@ class AssetBundle {
     std::string FONT_GAME_INVENTORY_PATH = FONT_PRESET_SPACE_GROTESK;
     std::string FONT_GAMEOVER_PATH = FONT_PRESET_INTER;
     std::string FONT_GAMEOVER_HINT_PATH = FONT_PRESET_INTER_ITALIC;
-    int DIALOUGE_BG_BORDER_THICKNESS = 2;
+    int DIALOUGE_BG_BORDER_THICKNESS = _DIALOUGE_BG_BORDER_THICKNESS;
     std::string FONT_GAME_DIALOUGE_PATH = FONT_PRESET_JERSEY_10;
     std::string FONT_GAME_DIALOUGE_NAME_PATH = FONT_PRESET_JACQUARD;
 
-    void LoadAssetBundle(const char* path);
+    auto LoadAssetBundle(const char* path) -> void;
 };
 
 extern AssetBundle assetBundle;

@@ -17,6 +17,7 @@ SDL_Event event;
 std::thread renderThread, gameThread;
 bool running = false;
 bool exception_thrown_thread_pause = false;
+int globalBrightness = 100;
 std::mutex humanoidsMutex;
 std::vector<Humanoid*> humanoidsVec;
 Humanoid* currentHumanoid = nullptr;

@@ -6,6 +6,7 @@
 #include <macro.hpp>
 #include <renderer_temp.hpp>
 #include <application.hpp>
+#include <base.hpp>
 
 #ifdef WIN32
 #include <windows.h>
@@ -40,11 +41,13 @@ int main(int argc, char* argv[]) {
       }
     }
   }
- 
+
   std::cout << "Command launched with following parameters:\n";
   for (const auto& param : launchParams) {
-    std::cout << param.first << " " << param.second << "\n";
+    std::cout << "\t" << param.first << " " << param.second << "\n";
   }
+
+  if (launchParams.empty()) std::cout << "\tNone\n";
 
   try {
     std::cout << "Initializing application\n";

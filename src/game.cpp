@@ -1,8 +1,6 @@
 #include "character.hpp"
 #include "items.hpp"
 #include <SDL_image.h>
-#include <SDL_keycode.h>
-#include <SDL_rect.h>
 #include <application.hpp>
 #include <animate.hpp>
 #include <base.hpp>
@@ -157,6 +155,8 @@ void Application::game() {
   
   gameThread = std::thread(&Application::game_fixed, this);
 
+  if (player.moveSpeed == 0) player.moveSpeed = 1;
+
   std::cout << "Preload complete\n";
 
   while (state == APP_STATE_GAME) {
@@ -278,6 +278,9 @@ void Application::game() {
     // Render Player RenderPlayerStats
     RenderPlayerStats();
     RenderInventory();
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 - (255 * (globalBrightness / 100.0)));
+    SDL_RenderFillRect(renderer, NULL);
 
     // Red tint if hp is low
     if (player.health <= 20) {
