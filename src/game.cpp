@@ -169,18 +169,23 @@ void Application::game() {
           case SDLK_ESCAPE:
             state = APP_STATE_QUIT;
             break;
+          case SDLK_UP:
           case SDLK_w:
             player_Up = true;
             break;
+          case SDLK_DOWN:
           case SDLK_s:
             player_Down = true;
             break;
+          case SDLK_LEFT:
           case SDLK_a:
             player_Left = true;
             break;
+          case SDLK_RIGHT:
           case SDLK_d:
             player_Right = true;
             break;
+          case SDLK_SPACE:
           case SDLK_e:
             func_button_pressed = true;
             if (!player.inventory.empty()) player.inventory[player.currentItem]->func();
@@ -207,18 +212,23 @@ void Application::game() {
       }
       if (event.type == SDL_KEYUP) {
         switch (event.key.keysym.sym) {
+          case SDLK_UP:
           case SDLK_w:
             player_Up = false;
             break;
+          case SDLK_DOWN:
           case SDLK_s:
             player_Down = false;
             break;
+          case SDLK_LEFT:
           case SDLK_a:
             player_Left = false;
             break;
+          case SDLK_RIGHT:
           case SDLK_d:
             player_Right = false;
-            break; 
+            break;
+          case SDLK_SPACE:
           case SDLK_e:
             func_button_pressed = false;
             break;

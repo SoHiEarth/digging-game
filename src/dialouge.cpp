@@ -1,6 +1,3 @@
-#include <SDL_blendmode.h>
-#include <SDL_render.h>
-#include <SDL_ttf.h>
 #include <application.hpp>
 #include <iostream>
 #include <SDL.h>
