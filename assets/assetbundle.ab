@@ -1,1 +1,2 @@
 APP_TITLE = Holes_v0.1
+PLAYER_MOVE_SPEED = 12

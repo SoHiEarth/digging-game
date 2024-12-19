@@ -1,6 +1,7 @@
 #include "character.hpp"
 #include "items.hpp"
 #include <SDL_image.h>
+#include <SDL_render.h>
 #include <application.hpp>
 #include <animate.hpp>
 #include <base.hpp>
@@ -154,9 +155,7 @@ void Application::game() {
     waterRefillStation = new WaterRefillStation();
   
   gameThread = std::thread(&Application::game_fixed, this);
-
-  if (player.moveSpeed == 0) player.moveSpeed = 1;
-
+  player.moveSpeed = assetBundle.PLAYER_MOVE_SPEED;
   std::cout << "Preload complete\n";
 
   while (state == APP_STATE_GAME) {
@@ -264,9 +263,16 @@ void Application::game() {
       std::lock_guard<std::mutex> lock(humanoidsMutex);
       for (Humanoid* humanoid : humanoidsVec) {
         RenderHumanoid(humanoid);
-        if (SDL_PointInRect(&playerPos, &humanoid->characterRect) && talk_button_pressed) {
-          currentHumanoid = humanoid;
-          switch_to_dialouge = true;
+        if (SDL_PointInRect(&playerPos, &humanoid->characterRect)) {
+          SDL_Texture* talkControlTexture = renderText("Press [F] to speak", inventoryFont, {255, 255, 255, 200});
+          SDL_Rect talkControlRect = { humanoid->characterRect.x, humanoid->characterRect.y - 30, 0, 0};
+          SDL_QueryTexture(talkControlTexture, NULL, NULL, &talkControlRect.w, &talkControlRect.h);
+          SDL_RenderCopy(renderer, talkControlTexture, NULL, &talkControlRect);
+          SDL_DestroyTexture(talkControlTexture);
+          if (talk_button_pressed) {
+            currentHumanoid = humanoid;
+            switch_to_dialouge = true;
+          }
         }
       }
     }

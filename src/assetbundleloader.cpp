@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 
-AssetBundle assetBundle;
+AssetBundle assetBundle{};
 
 void AssetBundle::LoadAssetBundle(const char* path) {
   // Load asset bundle from path
@@ -32,8 +32,6 @@ void AssetBundle::LoadAssetBundle(const char* path) {
         INTERACTABLE_NULL_NAME = assetValue;
       } else if (variableName == "INTERACTABLE_NULL_SPRITE_PATH") {
         INTERACTABLE_NULL_SPRITE_PATH = assetValue;
-      } else if (variableName == "PLAYER_MOVE_SPEED") {
-        PLAYER_MOVE_SPEED = std::stoi(assetValue);
       } else if (variableName == "HOLE_UNIFIED_TEXTURE_PATH") {
         HOLE_UNIFIED_TEXTURE_PATH = assetValue;
       } else if (variableName == "SHOVEL_ITEM_NAME") {
@@ -54,6 +52,8 @@ void AssetBundle::LoadAssetBundle(const char* path) {
         WATER_REFILL_STATION_NAME = assetValue;
       } else if (variableName == "WATER_REFILL_STATION_SPRITE_PATH") {
         WATER_REFILL_STATION_SPRITE_PATH = assetValue;
+      } else if (variableName == "PLAYER_MOVE_SPEED") {
+        PLAYER_MOVE_SPEED = std::stoi(assetValue);
       } else if (variableName == "PLAYERSTAT_HEALTH_ICON_PATH") {
         PLAYERSTAT_HEALTH_ICON_PATH = assetValue;
       } else if (variableName == "PLAYERSTAT_ENERGY_ICON_PATH") {
