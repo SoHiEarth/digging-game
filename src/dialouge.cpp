@@ -73,7 +73,9 @@ void Application::dialouge() {
 
     // Render the dialogue text
     if (currentDialougeIndex < currentHumanoid->messages.size()) {
-      dialougeTexture = renderText(currentHumanoid->messages[currentDialougeIndex].c_str(), font, {255, 255, 255});
+      SDL_Surface* dialougeSurface = TTF_RenderText_Blended_Wrapped(font, currentHumanoid->messages[currentDialougeIndex].c_str(), {255, 255, 255}, 500);
+      dialougeTexture = SDL_CreateTextureFromSurface(renderer, dialougeSurface);
+      SDL_FreeSurface(dialougeSurface);
       SDL_QueryTexture(dialougeTexture, NULL, NULL, &dialougeTextRect.w, &dialougeTextRect.h);
       dialougeTextRect.x = dialougeRect.x + 10;
       dialougeTextRect.y = dialougeRect.y + 10;

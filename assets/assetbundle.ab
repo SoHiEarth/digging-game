@@ -1,1 +1,3 @@
 APP_TITLE = Holes_v0.1
+FONT_GAME_DIALOUGE_PATH = assets/spacemono/SpaceMono-Regular.ttf
+FONT_GAME_DIALOUGE_NAME_PATH = assets/spacegrotesk/SpaceGrotesk.ttf

@@ -1,4 +1,5 @@
 #include "character.hpp"
+#include "config.h"
 #include "items.hpp"
 #include <SDL_image.h>
 #include <application.hpp>
@@ -147,6 +148,7 @@ void Application::game() {
       testHumanoidAnimator->LoadAnimation("assets/anim/test_humanoid.anim");
       testHumanoidAnimator->Play();
       humanoidsVec.push_back(new JailGuard());
+      humanoidsVec.push_back(new Sir());
     }
   }
 
@@ -155,7 +157,7 @@ void Application::game() {
   
   gameThread = std::thread(&Application::game_fixed, this);
 
-  if (player.moveSpeed == 0) player.moveSpeed = 1;
+  if (player.moveSpeed == 0) player.moveSpeed = _PLAYER_MOVE_SPEED;
 
   std::cout << "Preload complete\n";
 

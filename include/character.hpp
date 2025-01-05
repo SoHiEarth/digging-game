@@ -4,6 +4,13 @@
 #include <string>
 #include <vector>
 #include <SDL.h>
+#include <animate.hpp>
+
+struct HumanoidDialougeOnTriggerAnim {
+  std::string dialouge;
+  std::string animPath;
+
+};
 
 struct Humanoid {
   std::string characterName;
@@ -12,6 +19,20 @@ struct Humanoid {
   SDL_Rect characterRect;
   std::string characterTexturePath;
   SDL_Texture* characterTexture = nullptr;
+};
+
+struct Sir : public Humanoid {
+  Sir() {
+    this->characterName = "Mr. Sir";
+    this->messages.push_back("Stop Right There!");
+    this->messages.push_back("You are not in the girl's scouts anymore.");
+    this->characterRect = { 240, 200, 64, 64 };
+    this->characterTexturePath = "assets/character.png";
+  }
+
+  ~Sir() {
+    SDL_DestroyTexture(characterTexture);
+  }
 };
 
 struct JailGuard : public Humanoid {
