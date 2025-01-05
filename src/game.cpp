@@ -2,6 +2,7 @@
 #include "config.h"
 #include "items.hpp"
 #include <SDL_image.h>
+#include <SDL_render.h>
 #include <application.hpp>
 #include <animate.hpp>
 #include <base.hpp>
@@ -171,18 +172,23 @@ void Application::game() {
           case SDLK_ESCAPE:
             state = APP_STATE_QUIT;
             break;
+          case SDLK_UP:
           case SDLK_w:
             player_Up = true;
             break;
+          case SDLK_DOWN:
           case SDLK_s:
             player_Down = true;
             break;
+          case SDLK_LEFT:
           case SDLK_a:
             player_Left = true;
             break;
+          case SDLK_RIGHT:
           case SDLK_d:
             player_Right = true;
             break;
+          case SDLK_SPACE:
           case SDLK_e:
             func_button_pressed = true;
             if (!player.inventory.empty()) player.inventory[player.currentItem]->func();
@@ -209,18 +215,23 @@ void Application::game() {
       }
       if (event.type == SDL_KEYUP) {
         switch (event.key.keysym.sym) {
+          case SDLK_UP:
           case SDLK_w:
             player_Up = false;
             break;
+          case SDLK_DOWN:
           case SDLK_s:
             player_Down = false;
             break;
+          case SDLK_LEFT:
           case SDLK_a:
             player_Left = false;
             break;
+          case SDLK_RIGHT:
           case SDLK_d:
             player_Right = false;
-            break; 
+            break;
+          case SDLK_SPACE:
           case SDLK_e:
             func_button_pressed = false;
             break;
@@ -256,9 +267,16 @@ void Application::game() {
       std::lock_guard<std::mutex> lock(humanoidsMutex);
       for (Humanoid* humanoid : humanoidsVec) {
         RenderHumanoid(humanoid);
-        if (SDL_PointInRect(&playerPos, &humanoid->characterRect) && talk_button_pressed) {
-          currentHumanoid = humanoid;
-          switch_to_dialouge = true;
+        if (SDL_PointInRect(&playerPos, &humanoid->characterRect)) {
+          SDL_Texture* talkControlTexture = renderText("Press [F] to speak", inventoryFont, {255, 255, 255, 200});
+          SDL_Rect talkControlRect = { humanoid->characterRect.x, humanoid->characterRect.y - 30, 0, 0};
+          SDL_QueryTexture(talkControlTexture, NULL, NULL, &talkControlRect.w, &talkControlRect.h);
+          SDL_RenderCopy(renderer, talkControlTexture, NULL, &talkControlRect);
+          SDL_DestroyTexture(talkControlTexture);
+          if (talk_button_pressed) {
+            currentHumanoid = humanoid;
+            switch_to_dialouge = true;
+          }
         }
       }
     }

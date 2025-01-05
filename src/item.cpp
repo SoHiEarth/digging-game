@@ -1,7 +1,5 @@
 #include <items.hpp>
-
 #include <config.h>
-
 #include <hole.hpp>
 #include <base.hpp>
 
