@@ -4,11 +4,9 @@
 #include <SDL.h>
 #include <string>
 #include <stdexcept>
-#include <thread>
 #include <assetbundleloader.hpp>
 
 extern bool func_button_pressed, talk_button_pressed;
-extern float shovelDiggingChargeProgress;
 
 struct Item {
   std::string itemName = assetBundle.ITEM_NULL_NAME;
@@ -20,12 +18,8 @@ struct Item {
 };
 
 struct Shovel : public Item {
-    std::thread holdThread;
-    
-    Shovel();
-    void charge();
-    void func() override;
-    ~Shovel();
+  Shovel();
+  void func() override;
 };
 
 struct Bottle : public Item {

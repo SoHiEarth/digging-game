@@ -2,7 +2,8 @@
 #include <config.h>
 #include <hole.hpp>
 #include <base.hpp>
-
+#include <algorithm>
+#include <iostream>
 bool func_button_pressed = false, talk_button_pressed = false;
 
 Item::~Item() {
@@ -11,43 +12,44 @@ Item::~Item() {
   }
 }
 
-float shovelDiggingChargeProgress = 0;
 Shovel::Shovel() {
   itemName = assetBundle.SHOVEL_ITEM_NAME;
   itemSpritePath = assetBundle.SHOVEL_ITEM_SPRITE_PATH;
   itemDescription = assetBundle.SHOVEL_ITEM_DESCRIPTION;
 }
 
-void Shovel::charge() {
-  while (func_button_pressed && shovelDiggingChargeProgress <= 100) {
-    if (player.energy > 0) shovelDiggingChargeProgress++;
-    else shovelDiggingChargeProgress += 0.5;
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
-  }
-  if (shovelDiggingChargeProgress >= 100) {
-    Hole* hole = new Hole();
-    hole->holeRect.x = 400;
-    hole->holeRect.y = 300 + 30;
-    holesVec.push_back(hole);
-    player.energy -= 10;
-    player.thirst -= 10;
-    if (player.thirst < 0) player.thirst = 0;
-    if (player.energy < 0) player.energy = 0;
-  }
-  shovelDiggingChargeProgress = 0;
-}
-
 void Shovel::func() {
-  if (shovelDiggingChargeProgress == 0) {
-    if (holdThread.joinable()) holdThread.join();
-    holdThread = std::thread(&Shovel::charge, this);
+  Hole* current_hole = nullptr;
+  SDL_Rect player_rect = {
+    player.x,
+    player.y,
+    64,
+    64
+  };
+  std::cout << "Cpt 1";
+  if (!holesVec.empty()) {
+    for (Hole* hole : holesVec) {
+      SDL_Point top_left = {hole->holeRect.x,hole->holeRect.y},
+        bottom_right = {hole->holeRect.x + 32};
+      if (SDL_PointInRect(&top_left, &player_rect) == SDL_TRUE ||
+        SDL_PointInRect(&bottom_right, &player_rect) == SDL_TRUE) {
+        current_hole = hole;
+        break;
+      }
+    }
   }
-}
-
-Shovel::~Shovel() {
-  if (holdThread.joinable()) {
-    holdThread.join();
+  std::cout << "2";
+  if (current_hole != nullptr) {
+    if (std::clamp(current_hole->hole_dig_progress, 0, 100) == current_hole->hole_dig_progress) {
+      current_hole->hole_dig_progress++;
+    }
+    return;
   }
+  std::cout << "3";
+  Hole* hole = new Hole();
+  hole->holeRect = {player_rect.x, player_rect.y, 32, 32};
+  holesVec.push_back(hole);
+  std::cout << "4";
 }
 
 Bottle::Bottle() {

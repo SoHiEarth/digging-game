@@ -58,14 +58,6 @@ void PreloadMapTexture() {
   if (mapTexture_Part_Hill == NULL) throw std::runtime_error("Error loading map texture");
 }
 
-void RenderChargeBar() {
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-  SDL_RenderFillRect(renderer, &chargeRectBg);
-  SDL_Rect chargeRect = { chargeRectBg.x, chargeRectBg.y, static_cast<int>(shovelDiggingChargeProgress), chargeRectBg.h };
-  SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-  SDL_RenderFillRect(renderer, &chargeRect);
-}
-
 void RenderWidget(SDL_Rect anchor, SDL_Texture* icon, int val, int maxVal, SDL_Color theme){
   SDL_Rect iconRect, valRect, barRect;
   SDL_Texture* valTexture = nullptr;

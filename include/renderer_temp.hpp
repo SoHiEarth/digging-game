@@ -33,8 +33,6 @@ void ResetPlayerStats();
 
 void PreloadMapTexture();
 
-void RenderChargeBar();
-
 void RenderWidget(SDL_Rect anchor, SDL_Texture* icon, int val, int maxVal, SDL_Color theme);
 
 void RenderPlayerStats(); 

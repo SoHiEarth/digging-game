@@ -2,6 +2,7 @@
 #include "config.h"
 #include "items.hpp"
 #include <SDL_image.h>
+#include <SDL_keyboard.h>
 #include <SDL_render.h>
 #include <application.hpp>
 #include <animate.hpp>
@@ -9,18 +10,9 @@
 #include <renderer_temp.hpp>
 #include <SDL.h>
 #include <iostream>
+#include <algorithm>
 #include <mutex>
-
-#ifdef WIN32
-
-#include <Windows.h>
-
-void SetConsoleColor(int attr) {
-  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleTextAttribute(hConsole, attr);
-}
-#endif
-
+#include <cstdlib>
 Animator_Rect* testHumanoidAnimator;
 
 void Application::game_fixed() {
@@ -157,7 +149,7 @@ void Application::game() {
     waterRefillStation = new WaterRefillStation();
   
   gameThread = std::thread(&Application::game_fixed, this);
-
+  std::map<const char*, bool> key_states;
   if (player.moveSpeed == 0) player.moveSpeed = _PLAYER_MOVE_SPEED;
 
   std::cout << "Preload complete\n";
@@ -168,51 +160,8 @@ void Application::game() {
         state = APP_STATE_MAIN_MENU;
       }
       if (event.type == SDL_KEYDOWN) {
-        switch (event.key.keysym.sym) {
-          case SDLK_ESCAPE:
-            state = APP_STATE_QUIT;
-            break;
-          case SDLK_UP:
-          case SDLK_w:
-            player_Up = true;
-            break;
-          case SDLK_DOWN:
-          case SDLK_s:
-            player_Down = true;
-            break;
-          case SDLK_LEFT:
-          case SDLK_a:
-            player_Left = true;
-            break;
-          case SDLK_RIGHT:
-          case SDLK_d:
-            player_Right = true;
-            break;
-          case SDLK_SPACE:
-          case SDLK_e:
-            func_button_pressed = true;
-            if (!player.inventory.empty()) player.inventory[player.currentItem]->func();
-            break;
-          case SDLK_f:
-            talk_button_pressed = true;
-            break;
-          case SDLK_1:
-            player.currentItem = 0;
-            break;
-          case SDLK_2:
-            player.currentItem = 1;
-            if (player.inventory.size() < 2) player.currentItem = 0;
-            break;
-          case SDLK_3:
-            player.currentItem = 2;
-            if (player.inventory.size() < 3) player.currentItem = 0;
-            break;
-          case SDLK_4:
-            player.currentItem = 3;
-            if (player.inventory.size() < 4) player.currentItem = 0;
-            break;
-        }
-      }
+        key_states[SDL_GetKeyName(event.key.keysym.sym)] = true;
+      } 
       if (event.type == SDL_KEYUP) {
         switch (event.key.keysym.sym) {
           case SDLK_UP:
@@ -241,7 +190,30 @@ void Application::game() {
         }
       }
     }
-    
+
+    if (key_states["\x1b"]) state = APP_STATE_QUIT;
+    if (key_states["w"]) player_Up = true;
+    else player_Up = false;
+    if (key_states["s"]) player_Down = true;
+    else player_Down = false;
+    if (key_states["a"]) player_Left = true;
+    else player_Left = false;
+    if (key_states["d"]) player_Right = true;
+    else player_Right = false;
+    if (key_states["e"]) {
+      func_button_pressed = true;
+      if (!player.inventory.empty()) {
+        player.inventory[std::clamp(player.currentItem, 1, (int)player.inventory.size())]->func();
+      }
+    }
+    else func_button_pressed = false;
+    if (key_states["f"]) talk_button_pressed = true;
+    else talk_button_pressed = false;
+    for (int i = 1; i < 10; i++) {
+      if (key_states[std::to_string(i).c_str()]) {
+        player.currentItem = std::clamp(i, 0, static_cast<int>(player.inventory.size()));
+      }
+    }
     SDL_Point playerPos = {player.x, player.y};
 
     if (player.currentItem > player.inventory.size() - 1) player.currentItem = 0;
@@ -258,8 +230,7 @@ void Application::game() {
     SDL_RenderFillRect(renderer, &waterRefillStation->rect);
 
     for (Hole* hole : holesVec) {
-      SDL_Rect holeRect = { hole->holeRect.x, hole->holeRect.y, 32, 32 };
-      SDL_RenderCopy(renderer, hole_unifiedTexture, NULL, &holeRect);
+      RenderHole(*hole);
     }
 
     bool switch_to_dialouge = false;
@@ -292,9 +263,6 @@ void Application::game() {
       }
       SDL_RenderCopy(renderer, player.inventory[player.currentItem]->sprite, NULL, &itemRect);
     }
-    if (shovelDiggingChargeProgress != 0) {
-      RenderChargeBar();
-    }
     // Render Player RenderPlayerStats
     RenderPlayerStats();
     RenderInventory();
@@ -303,20 +271,19 @@ void Application::game() {
     SDL_RenderFillRect(renderer, NULL);
 
     // Red tint if hp is low
-    if (player.health <= 20) {
-      Uint8 redAlpha = static_cast<Uint8>(255 * ((20 - player.health) / 20.0));
+    if (player.health <= 10) {
+      Uint8 redAlpha = static_cast<Uint8>(255 * ((10 - player.health) / 10.0));
       SDL_SetRenderDrawColor(renderer, 255, 0, 0, redAlpha);
       SDL_RenderFillRect(renderer, NULL);
     }
     
     // Gradually fade to black
-    if (player.health <= 10) {
-      Uint8 blackAlpha = static_cast<Uint8>(255 * (1 - (player.health / 10.0)));
+    if (player.health <= 5) {
+      Uint8 blackAlpha = static_cast<Uint8>(255 * (5 - (player.health / 5.0)));
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, blackAlpha);
       SDL_RenderFillRect(renderer, NULL);
     }
     
-    // Transition to main menu if health is too low
     if (player.health <= 0) {
       state = APP_STATE_GAME_OVER;
     }
