@@ -4,22 +4,22 @@
 #include <base.hpp>
 #include <renderer_temp.hpp>
 #include <config.h>
-#include <character.hpp>
+#include <humanoid.h>
 #include <assetbundleloader.hpp>
 
 void Application::dialouge() {
   int currentDialougeIndex = 0;
-  TTF_Font* font = TTF_OpenFont(assetBundle.FONT_GAME_DIALOUGE_PATH.c_str(), 24);
-  TTF_Font* topFont = TTF_OpenFont(assetBundle.FONT_GAME_DIALOUGE_NAME_PATH.c_str(), 18);
+  TTF_Font* font = TTF_OpenFont(current_asset_bundle.FONT_GAME_DIALOUGE_PATH.c_str(), 24);
+  TTF_Font* topFont = TTF_OpenFont(current_asset_bundle.FONT_GAME_DIALOUGE_NAME_PATH.c_str(), 18);
   
   if (font == nullptr || topFont == nullptr) {
     throw std::runtime_error("Failed to load font");
   }
 
   // Load character texture once before the loop
-  if (currentHumanoid->characterTexture == nullptr) {
-    currentHumanoid->characterTexture = IMG_LoadTexture(renderer, currentHumanoid->characterTexturePath.c_str());
-    if (currentHumanoid->characterTexture == nullptr) {
+  if (currentHumanoid->humanoid_texture == nullptr) {
+    currentHumanoid->humanoid_texture = IMG_LoadTexture(renderer, currentHumanoid->humanoid_texture_path.c_str());
+    if (currentHumanoid->humanoid_texture == nullptr) {
       throw std::runtime_error("Failed to load character texture");
     }
   }
@@ -28,10 +28,10 @@ void Application::dialouge() {
 
   // Create the dialogue background and text rectangle
   SDL_Rect dialougeRect = { 150, 450, 500, 100 };
-  SDL_Rect dialougeBGRect = { dialougeRect.x - assetBundle.DIALOUGE_BG_BORDER_THICKNESS, 
-                              dialougeRect.y - assetBundle.DIALOUGE_BG_BORDER_THICKNESS, 
-                              dialougeRect.w + assetBundle.DIALOUGE_BG_BORDER_THICKNESS * 2, 
-                              dialougeRect.h + assetBundle.DIALOUGE_BG_BORDER_THICKNESS * 2 };
+  SDL_Rect dialougeBGRect = { dialougeRect.x - current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS, 
+                              dialougeRect.y - current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS, 
+                              dialougeRect.w + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2, 
+                              dialougeRect.h + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2 };
   SDL_Texture* characterName = nullptr;
   SDL_Rect characterNameRect = {0, 0, 0, 0}, characterNameBGRect = {0, 0, 0, 0};
 
@@ -53,20 +53,19 @@ void Application::dialouge() {
     }
 
     if (currentDialougeIndex == currentHumanoid->messages.size()) {
-      state = APP_STATE_GAME; // Transition to game state after dialogue
       std::cout << "Reached end of dialouge queue\n";
       break;
     }
 
-    characterName = renderText(currentHumanoid->characterName.c_str(), topFont, {255, 255, 255, 255});
+    characterName = renderText(currentHumanoid->humanoid_name.c_str(), topFont, {255, 255, 255, 255});
     SDL_QueryTexture(characterName, NULL, NULL, &characterNameRect.w, &characterNameRect.h);
     characterNameRect.x = dialougeRect.x + 5;
     characterNameRect.y = dialougeRect.y - (characterNameRect.h * 0.5);
     characterNameBGRect = characterNameRect;
-    characterNameBGRect.x -= assetBundle.DIALOUGE_BG_BORDER_THICKNESS;
-    characterNameBGRect.y -= assetBundle.DIALOUGE_BG_BORDER_THICKNESS;
-    characterNameBGRect.w += assetBundle.DIALOUGE_BG_BORDER_THICKNESS * 2;
-    characterNameBGRect.h += assetBundle.DIALOUGE_BG_BORDER_THICKNESS * 2;
+    characterNameBGRect.x -= current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS;
+    characterNameBGRect.y -= current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS;
+    characterNameBGRect.w += current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2;
+    characterNameBGRect.h += current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2;
 
     // Render the dialogue text
     if (currentDialougeIndex < currentHumanoid->messages.size()) {
@@ -78,9 +77,9 @@ void Application::dialouge() {
       dialougeTextRect.y = dialougeRect.y + 10;
     }
 
-    if (currentHumanoid->characterTexture == nullptr) {
-      currentHumanoid->characterTexture = IMG_LoadTexture(renderer, currentHumanoid->characterTexturePath.c_str());
-      if (currentHumanoid->characterTexture == NULL) {
+    if (currentHumanoid->humanoid_texture == nullptr) {
+      currentHumanoid->humanoid_texture = IMG_LoadTexture(renderer, currentHumanoid->humanoid_texture_path.c_str());
+      if (currentHumanoid->humanoid_texture == NULL) {
         throw std::runtime_error("Failed to load character texture");
       }
     }
@@ -89,7 +88,7 @@ void Application::dialouge() {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, currentHumanoid->characterTexture, NULL, &humanoidRect);
+    SDL_RenderCopy(renderer, currentHumanoid->humanoid_texture, NULL, &humanoidRect);
 
     // Draw the dialogue background and text
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
@@ -115,4 +114,5 @@ void Application::dialouge() {
   
   std::cout << "Unloading assets\n";
   TTF_CloseFont(font);
+  state = APP_STATE_GAME;
 }

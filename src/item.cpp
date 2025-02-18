@@ -3,9 +3,7 @@
 #include <hole.hpp>
 #include <base.hpp>
 #include <algorithm>
-#include <iostream>
 bool func_button_pressed = false, talk_button_pressed = false;
-
 Item::~Item() {
   if (sprite != nullptr) {
     SDL_DestroyTexture(sprite);
@@ -13,20 +11,19 @@ Item::~Item() {
 }
 
 Shovel::Shovel() {
-  itemName = assetBundle.SHOVEL_ITEM_NAME;
-  itemSpritePath = assetBundle.SHOVEL_ITEM_SPRITE_PATH;
-  itemDescription = assetBundle.SHOVEL_ITEM_DESCRIPTION;
+  itemName = current_asset_bundle.SHOVEL_ITEM_NAME;
+  itemSpritePath = current_asset_bundle.SHOVEL_ITEM_SPRITE_PATH;
+  itemDescription = current_asset_bundle.SHOVEL_ITEM_DESCRIPTION;
 }
 
 void Shovel::func() {
   Hole* current_hole = nullptr;
   SDL_Rect player_rect = {
-    player.x,
-    player.y,
+    player.position.x,
+    player.position.y,
     64,
     64
   };
-  std::cout << "Cpt 1";
   if (!holesVec.empty()) {
     for (Hole* hole : holesVec) {
       SDL_Point top_left = {hole->holeRect.x,hole->holeRect.y},
@@ -38,23 +35,20 @@ void Shovel::func() {
       }
     }
   }
-  std::cout << "2";
   if (current_hole != nullptr) {
     if (std::clamp(current_hole->hole_dig_progress, 0, 100) == current_hole->hole_dig_progress) {
       current_hole->hole_dig_progress++;
     }
     return;
   }
-  std::cout << "3";
   Hole* hole = new Hole();
   hole->holeRect = {player_rect.x, player_rect.y, 32, 32};
   holesVec.push_back(hole);
-  std::cout << "4";
 }
 
 Bottle::Bottle() {
-  itemName = assetBundle.BOTTLE_ITEM_NAME;
-  itemSpritePath = assetBundle.BOTTLE_ITEM_SPRITE_PATH;
+  itemName = current_asset_bundle.BOTTLE_ITEM_NAME;
+  itemSpritePath = current_asset_bundle.BOTTLE_ITEM_SPRITE_PATH;
   itemDescription = std::to_string(capacity) + "%";
 }
 
@@ -71,8 +65,8 @@ void Bottle::func() {
 }
 
 Food::Food() {
-  itemName = assetBundle.FOOD_ITEM_NAME;
-  itemSpritePath = assetBundle.FOOD_ITEM_SPRITE_PATH;
+  itemName = current_asset_bundle.FOOD_ITEM_NAME;
+  itemSpritePath = current_asset_bundle.FOOD_ITEM_SPRITE_PATH;
   itemDescription = std::to_string(capacity) + "%";
 }
 

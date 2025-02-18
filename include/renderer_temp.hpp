@@ -10,18 +10,18 @@
 #include <base.hpp>
 #include <interactable.hpp>
 #include <hole.hpp>
-#include <character.hpp>
+#include <humanoid.h>
 #include <assetbundleloader.hpp>
 
 extern SDL_Texture *hpIconTexture, *thirstIconTexture, *energyIconTexture;
 extern TTF_Font *widgetFont, *inventoryFont;
 extern SDL_Texture* mapTexture_Part_Hill;
 extern SDL_Rect mapRect;
-extern bool player_Up, player_Down, player_Left, player_Right;
+extern bool player_up, player_down, player_left, player_right;
 extern SDL_Rect playerRect, itemRect;
 extern SDL_Rect chargeRectBg;
  
-extern WaterRefillStation* waterRefillStation;
+extern WaterRefillStation* water_refill_station;
 
 SDL_Texture* renderText(const char* text, TTF_Font* font, SDL_Color color);
 

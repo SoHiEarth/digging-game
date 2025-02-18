@@ -41,6 +41,6 @@ class AssetBundle {
     auto LoadAssetBundle(const char* path) -> void;
 };
 
-extern AssetBundle assetBundle;
+extern AssetBundle current_asset_bundle;
 
 #endif // ASSETBUNDLELOADER_HPP

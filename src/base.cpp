@@ -1,5 +1,5 @@
 #include <base.hpp>
-#include <character.hpp>
+#include <humanoid.h>
 #include <player.hpp>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -9,7 +9,7 @@
 #include <thread>
 #include <map>
 #include <assetbundleloader.hpp>
-
+#include <level.h>
 std::map<std::string, std::string> launchParams;
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
@@ -22,3 +22,4 @@ std::mutex humanoidsMutex;
 std::vector<Humanoid*> humanoidsVec;
 Humanoid* currentHumanoid = nullptr;
 Player player;
+Level level;

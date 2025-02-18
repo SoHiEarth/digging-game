@@ -23,13 +23,13 @@ void Application::Init() {
   if (Mix_Init(MIX_INIT_WAVPACK) == 0) {
     throw std::runtime_error("Mix_Init failed");
   }
-  assetBundle.LoadAssetBundle("assets/assetbundle.ab");
+  current_asset_bundle.LoadAssetBundle("assets/assetbundle.ab");
   state = APP_STATE_MAIN_MENU;
   running = true;
 }
 
 void Application::Run() {
-    window = SDL_CreateWindow(assetBundle.APP_TITLE.c_str(), 0, 25, 800, 600, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(current_asset_bundle.APP_TITLE.c_str(), 0, 25, 800, 600, SDL_WINDOW_SHOWN);
     if (window == NULL) throw std::runtime_error("Error creating window");
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL) throw std::runtime_error("Error creating renderer");

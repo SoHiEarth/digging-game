@@ -9,10 +9,10 @@
 extern bool func_button_pressed, talk_button_pressed;
 
 struct Item {
-  std::string itemName = assetBundle.ITEM_NULL_NAME;
-  std::string itemDescription = assetBundle.ITEM_NULL_DESCRIPTION;
+  std::string itemName = current_asset_bundle.ITEM_NULL_NAME;
+  std::string itemDescription = current_asset_bundle.ITEM_NULL_DESCRIPTION;
   SDL_Texture* sprite = nullptr;
-  std::string itemSpritePath = assetBundle.ITEM_NULL_SPRITE_PATH;
+  std::string itemSpritePath = current_asset_bundle.ITEM_NULL_SPRITE_PATH;
   virtual void func() { throw std::runtime_error("Item function not configured"); }
   virtual ~Item();
 };

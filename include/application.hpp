@@ -11,8 +11,8 @@ enum ApplicationState {
 };
 
 class Application {
-  ApplicationState state = APP_STATE_QUIT;
 public:
+  ApplicationState state = APP_STATE_QUIT;
   void Init();
   void mainMenu();
   void game_fixed();

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 
-AssetBundle assetBundle{};
+AssetBundle current_asset_bundle{};
 
 void AssetBundle::LoadAssetBundle(const char* path) {
   // Load asset bundle from path

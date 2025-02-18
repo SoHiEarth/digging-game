@@ -1,17 +1,16 @@
 #include <SDL_render.h>
-
+#include <humanoid.h>
 #include <renderer_temp.hpp>
-#include <character.hpp>
 
 SDL_Texture *hpIconTexture = nullptr, *thirstIconTexture = nullptr, *energyIconTexture = nullptr;
 TTF_Font *widgetFont = nullptr, *inventoryFont = nullptr;
 SDL_Texture* mapTexture_Part_Hill = nullptr;
 SDL_Rect mapRect = { 0, 0, 3200, 2400 };
-bool player_Up = false, player_Down = false, player_Left = false, player_Right = false;
+bool player_up = false, player_down = false, player_left = false, player_right = false;
 SDL_Rect playerRect = { 384, 284, 64, 64 }, itemRect = { 415, 300, 35, 35 };
 SDL_Rect chargeRectBg = { 400 - 50 + 16, 300 - 50, 100, 10 };
  
-WaterRefillStation* waterRefillStation = nullptr;
+WaterRefillStation* water_refill_station = nullptr;
 
 SDL_Texture* renderText(const char* text, TTF_Font* font, SDL_Color color) {
   SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text, color, 0);
@@ -21,23 +20,23 @@ SDL_Texture* renderText(const char* text, TTF_Font* font, SDL_Color color) {
 }
 
 void PreloadStatusBarIcons() {
-  hpIconTexture = IMG_LoadTexture(renderer, assetBundle.PLAYERSTAT_HEALTH_ICON_PATH.c_str());
-  thirstIconTexture = IMG_LoadTexture(renderer, assetBundle.PLAYERSTAT_THIRST_ICON_PATH.c_str());
-  energyIconTexture = IMG_LoadTexture(renderer, assetBundle.PLAYERSTAT_ENERGY_ICON_PATH.c_str());
+  hpIconTexture = IMG_LoadTexture(renderer, current_asset_bundle.PLAYERSTAT_HEALTH_ICON_PATH.c_str());
+  thirstIconTexture = IMG_LoadTexture(renderer, current_asset_bundle.PLAYERSTAT_THIRST_ICON_PATH.c_str());
+  energyIconTexture = IMG_LoadTexture(renderer, current_asset_bundle.PLAYERSTAT_ENERGY_ICON_PATH.c_str());
   if (hpIconTexture == NULL || thirstIconTexture == NULL || energyIconTexture == NULL) throw std::runtime_error("Error loading status bar icons");
-  widgetFont = TTF_OpenFont(assetBundle.PLAYERSTAT_FONT_PATH.c_str(), 30);
+  widgetFont = TTF_OpenFont(current_asset_bundle.PLAYERSTAT_FONT_PATH.c_str(), 30);
   if (widgetFont == NULL) throw std::runtime_error("Error loading widget font");
 }
 
 void PreloadPlayerSprite() {
   if (player.playerSprite != nullptr) SDL_DestroyTexture(player.playerSprite);
-  player.playerSprite = IMG_LoadTexture(renderer, assetBundle.PLAYER_SPRITE_PATH.c_str());
+  player.playerSprite = IMG_LoadTexture(renderer, current_asset_bundle.PLAYER_SPRITE_PATH.c_str());
   if (player.playerSprite == NULL) throw std::runtime_error("Error loading player sprite");
 }
 
 void ResetPlayerStats() {
-  player.x = 384;
-  player.y = 284;
+  player.position.x = 384;
+  player.position.y = 284;
   player.health = 100;
   player.energy = 100;
   player.thirst = 100;
@@ -54,7 +53,7 @@ void ResetPlayerStats() {
 
 void PreloadMapTexture() {
   if (mapTexture_Part_Hill != nullptr) return;
-  mapTexture_Part_Hill = IMG_LoadTexture(renderer, assetBundle.MAP_PART_HILL_PATH.c_str());
+  mapTexture_Part_Hill = IMG_LoadTexture(renderer, current_asset_bundle.MAP_PART_HILL_PATH.c_str());
   if (mapTexture_Part_Hill == NULL) throw std::runtime_error("Error loading map texture");
 }
 
@@ -142,17 +141,17 @@ void RenderInventory() {
 }
 
 void RenderHumanoid(Humanoid* humanoid) {
- if (humanoid->characterTexture == nullptr) {
-    humanoid->characterTexture = IMG_LoadTexture(renderer, humanoid->characterTexturePath.c_str());
-    if (humanoid->characterTexture == NULL) {
+ if (humanoid->humanoid_texture == nullptr) {
+    humanoid->humanoid_texture = IMG_LoadTexture(renderer, humanoid->humanoid_texture_path.c_str());
+    if (humanoid->humanoid_texture == NULL) {
       throw std::runtime_error("Failed to render humanoid texture");
     }
   }
-  SDL_Texture* characterName = renderText(humanoid->characterName.c_str(), inventoryFont, {255, 255, 255, 255});
+  SDL_Texture* characterName = renderText(humanoid->humanoid_name.c_str(), inventoryFont, {255, 255, 255, 255});
   SDL_Rect characterNameRect;
   SDL_QueryTexture(characterName, NULL, NULL, &characterNameRect.w, &characterNameRect.h);
-  characterNameRect = { humanoid->characterRect.x - (humanoid->characterRect.w / 2), humanoid->characterRect.y + humanoid->characterRect.w, characterNameRect.w, characterNameRect.h };
+  characterNameRect = { humanoid->rect.x - (humanoid->rect.w / 2), humanoid->rect.y + humanoid->rect.w, characterNameRect.w, characterNameRect.h };
   SDL_RenderCopy(renderer, characterName, NULL, &characterNameRect);
-  SDL_RenderCopy(renderer, humanoid->characterTexture, NULL, &humanoid->characterRect); 
+  SDL_RenderCopy(renderer, humanoid->humanoid_texture, NULL, &humanoid->rect); 
   SDL_DestroyTexture(characterName);
 }

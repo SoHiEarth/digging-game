@@ -9,7 +9,7 @@
 std::vector<Hole*> holesVec;
 SDL_Texture* hole_unifiedTexture = nullptr;
 void PreloadHoleTexture() {
-  hole_unifiedTexture = IMG_LoadTexture(renderer, assetBundle.HOLE_UNIFIED_TEXTURE_PATH.c_str());
+  hole_unifiedTexture = IMG_LoadTexture(renderer, current_asset_bundle.HOLE_UNIFIED_TEXTURE_PATH.c_str());
 }
 
 SDL_Rect hole_progress_bar = {
