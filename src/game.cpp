@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <humanoid.h>
 #include <cstdlib>
-std::map<SDL_Keycode, bool> key_states;
+std::map<SDL_Keycode, bool> key_states, prev_key_states;
 void Application::game_fixed() {
   while (state == APP_STATE_GAME) {
     player.energy = std::clamp(player.energy, 0.0f, 100.0f);
@@ -100,7 +100,7 @@ void Application::game() {
     player_down = key_states[SDLK_s];
     player_left = key_states[SDLK_a];
     player_right = key_states[SDLK_d];
-    if (key_states[SDLK_e]) {
+    if (key_states[SDLK_e] && !prev_key_states[SDLK_e]) {
       func_button_pressed = true;
       if (!player.inventory.empty()) {
         player.inventory[std::clamp(player.currentItem, 0, (int)player.inventory.size())]->func();
@@ -149,6 +149,7 @@ void Application::game() {
       state = APP_STATE_GAME_OVER;
     }
     SDL_RenderPresent(renderer);
+    prev_key_states = key_states;
     SDL_Delay(1000/60);
   }
   gameThread.join();

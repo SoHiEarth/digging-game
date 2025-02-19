@@ -10,8 +10,8 @@
 extern SDL_Texture* hole_unifiedTexture;
 
 struct Hole {
-  SDL_Rect holeRect;
-  int hole_dig_progress = 0;
+  SDL_Rect holeRect = { 0, 0, 32, 32 };
+  int hole_dig_progress = 0, hole_dig_speed = 10;
 };
 extern std::vector<Hole*> holesVec;
 void PreloadHoleTexture();
