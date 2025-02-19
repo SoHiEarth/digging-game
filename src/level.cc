@@ -18,16 +18,20 @@ void Level::Load(std::string path) {
     lineNumber++;
     std::cout << lineNumber;
     std::istringstream iss(line);
-    std::string objectName;
-    iss >> objectName;
-    if (objectName == "Sir") {
+    std::string object_name;
+    iss >> object_name;
+    if (object_name == "Sir") {
       objects.push_back(new Sir());
-    } else if (objectName == "JailGuard") {
+    } else if (object_name == "JailGuard") {
       objects.push_back(new JailGuard());
-    } else if (objectName == "TestHumanoid") {
+    } else if (object_name == "TestHumanoid") {
       objects.push_back(new TestHumanoid());
-    } else if (objectName == "WaterRefillStation") {
+    } else if (object_name == "WaterRefillStation") {
       objects.push_back(new WaterRefillStation());
+    } else if (object_name == "Transport_Bus_1") {
+      objects.push_back(new TransportBus_Lv1());
+    } else {
+      std::cerr << "-!- Unknown object name: " << object_name << std::endl;
     }
   }
   std::cout << "\n--- Level loaded\n";

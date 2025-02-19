@@ -29,6 +29,14 @@ struct JailGuard : public Humanoid {
   JailGuard();
 };
 
+struct Warden : public Humanoid {
+  Warden();
+};
+
+struct Zero : public Humanoid {
+  Zero();
+};
+
 struct TestHumanoid : public Humanoid {
   TestHumanoid();
 };

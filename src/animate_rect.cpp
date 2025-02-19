@@ -21,9 +21,8 @@ void Animator_Rect::PlayAnimation() {
 }
 
 void Animator_Rect::Play() {
-  if (animationThread.joinable()) {
+  if (animationThread.joinable())
     animationThread.join();
-  }
   if (!isPlaying) animationThread = std::thread(&Animator_Rect::PlayAnimation, this);
 }
 

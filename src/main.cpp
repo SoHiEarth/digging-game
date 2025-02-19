@@ -16,7 +16,7 @@ void errorWindow(const char* message) {
 
 #else
 void errorWindow(const char* message) {
-  std::cout << "[Error] " << message << "\n";
+  std::cout << "[MAIN] [Error] " << message << "\n";
 }
 #endif
 

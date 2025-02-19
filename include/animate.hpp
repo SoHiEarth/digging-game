@@ -48,6 +48,15 @@ public:
 
   void Play();
   void LoadAnimation(const std::string& sourceFile);
-  };
+};
+
+class Animator_Brightness : public Animator {
+  void PlayAnimation();
+public:
+  std::string AnimationSourceFile;
+  std::thread animationThread;
+  void Play();
+  void LoadAnimation(const std::string& sourceFile);
+};
 
 #endif // ANIMATE_HPP
