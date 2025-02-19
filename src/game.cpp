@@ -73,7 +73,10 @@ void Application::game_fixed() {
 
 void Application::game() {
   SDL_SetWindowTitle(window, "Holes - Game");
-  if (!level.loaded) level.Load("assets/1.lvl");
+  if (!level.loaded) {
+    level.Load("assets/1.lvl");
+    ResetPlayerStats();
+  }
   key_states.clear();
   for (Object* object : level.objects) {
     object->Start();
@@ -81,7 +84,6 @@ void Application::game() {
   PreloadHoleTexture();
   PreloadStatusBarIcons();
   PreloadPlayerSprite(); 
-  ResetPlayerStats();
   PreloadMapTexture();
   func_button_pressed = false;
   talk_button_pressed = false;
