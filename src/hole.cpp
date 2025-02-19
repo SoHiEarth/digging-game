@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 #include <vector>
 #include <assetbundleloader.hpp>
+#include <algorithm>
 
 std::vector<Hole*> holesVec;
 SDL_Texture* hole_unifiedTexture = nullptr;
@@ -22,8 +23,8 @@ void RenderHole(Hole& hole) {
   SDL_Rect hole_src_rect = {
     0,
     0,
-    static_cast<int>(hole.holeRect.w * 100/hole.hole_dig_progress),
-    static_cast<int>(hole.holeRect.h * 100/hole.hole_dig_progress)
+    static_cast<int>(hole.holeRect.w * std::clamp(hole.hole_dig_progress, 1, 100)/100),
+    static_cast<int>(hole.holeRect.h * std::clamp(hole.hole_dig_progress, 1, 100)/100)
   },
   hole_progress_bar_bg = {
     hole.holeRect.x + hole_progress_bar.x,
@@ -34,7 +35,7 @@ void RenderHole(Hole& hole) {
   hole_progress_bar_content = {
     hole_progress_bar_bg.x,
     hole_progress_bar_bg.y,
-    hole_progress_bar_bg.w * 100/hole.hole_dig_progress,
+    hole_progress_bar_bg.w * std::clamp(hole.hole_dig_progress, 1, 100)/100,
     hole_progress_bar_bg.h
   };
 

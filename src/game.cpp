@@ -10,11 +10,11 @@
 #include <SDL.h>
 #include <algorithm>
 #include <humanoid.h>
-#include <mutex>
 #include <cstdlib>
 std::map<SDL_Keycode, bool> key_states;
 void Application::game_fixed() {
   while (state == APP_STATE_GAME) {
+    player.energy = std::clamp(player.energy, 0.0f, 100.0f);
     if (player_up || player_down || player_left || player_right) {
       player.energy -= 0.01;
     }
@@ -63,7 +63,7 @@ void Application::game_fixed() {
         else hole->holeRect.x -= player.move_speed / 2;
       }
     }
-    SDL_Delay(1000/60);
+    SDL_Delay(1000/30);
   }
   return;
 }
@@ -107,8 +107,7 @@ void Application::game() {
       }
     }
     else func_button_pressed = false;
-    if (key_states[SDLK_f]) talk_button_pressed = true;
-    else talk_button_pressed = false;
+    talk_button_pressed = key_states[SDLK_f];
     for (int i = 1; i < 10; i++) {
       if (key_states[SDL_GetKeyFromName(std::to_string(i).c_str())]) {
         player.currentItem = std::clamp(i - 1, 0, static_cast<int>(player.inventory.size()));
@@ -121,29 +120,6 @@ void Application::game() {
     SDL_RenderCopy(renderer, mapTexture_Part_Hill, NULL, &mapRect);
     for (Hole* hole : holesVec) {
       RenderHole(*hole);
-    }
-
-    bool switch_to_dialouge = false;
-    {
-      std::lock_guard<std::mutex> lock(humanoidsMutex);
-      for (Humanoid* humanoid : humanoidsVec) {
-        RenderHumanoid(humanoid);
-        if (SDL_PointInRect(player.position.toSDLPointPtr(), &humanoid->rect)) {
-          SDL_Texture* talkControlTexture = renderText("Press [F] to speak", inventoryFont, {255, 255, 255, 200});
-          SDL_Rect talkControlRect = { humanoid->rect.x, humanoid->rect.y - 30, 0, 0};
-          SDL_QueryTexture(talkControlTexture, NULL, NULL, &talkControlRect.w, &talkControlRect.h);
-          SDL_RenderCopy(renderer, talkControlTexture, NULL, &talkControlRect);
-          SDL_DestroyTexture(talkControlTexture);
-          if (talk_button_pressed) {
-            currentHumanoid = humanoid;
-            switch_to_dialouge = true;
-          }
-        }
-      }
-    }
-
-    if (switch_to_dialouge) {
-      state = APP_STATE_DIALOUGE;
     }
     SDL_RenderCopy(renderer, player.playerSprite, NULL, &playerRect);
     if (!player.inventory.empty()) {
@@ -172,7 +148,6 @@ void Application::game() {
     if (player.health <= 0) {
       state = APP_STATE_GAME_OVER;
     }
-    player.energy = std::clamp(player.energy, 0.0f, 100.0f);
     SDL_RenderPresent(renderer);
     SDL_Delay(1000/60);
   }

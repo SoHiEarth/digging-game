@@ -3,7 +3,6 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
-#include <SDL_mixer.h>
 
 #include <stdexcept>
 #include <iostream>
@@ -20,10 +19,7 @@ void Application::Init() {
   if (IMG_Init(IMG_INIT_PNG) == 0) {
     throw std::runtime_error("IMG_Init failed");
   }
-  if (Mix_Init(MIX_INIT_WAVPACK) == 0) {
-    throw std::runtime_error("Mix_Init failed");
-  }
-  current_asset_bundle.LoadAssetBundle("assets/assetbundle.ab");
+  current_asset_bundle.LoadAssetBundle("./assets/assetbundle.ab");
   state = APP_STATE_MAIN_MENU;
   running = true;
 }
@@ -65,7 +61,6 @@ void Application::Run() {
   }
 
 void Application::Quit() {
-    Mix_Quit();
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();

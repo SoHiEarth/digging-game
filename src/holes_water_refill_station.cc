@@ -8,6 +8,9 @@ WaterRefillStation::WaterRefillStation() {
 
 void WaterRefillStation::func() {
   for (int i = 0; i < player.inventory.size(); i++) {
+    if (player.inventory[i] == nullptr) {
+      continue;
+    }
     if (player.inventory[i]->itemName == "Bottle") {
       player.inventory.erase(player.inventory.begin() + i);
       break;

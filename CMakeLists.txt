@@ -10,7 +10,6 @@ set(CMAKE_CXX_STANDARD 20)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
-find_package(SDL2_mixer REQUIRED)
 
 file(GLOB SOURCES "src/*.cpp" "src/*.c")
 file(GLOB LIBRARIES "lib/*.cpp" "lib/**/*.cpp" "lib/*.c" "lib/**/*.c")
@@ -20,7 +19,7 @@ add_executable(Holes
     ${LIBRARIES} 
 )
 
-target_link_libraries(Holes PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf SDL2_mixer::SDL2_mixer)
+target_link_libraries(Holes PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
 
 target_include_directories(Holes PRIVATE 
     ${SDL2_INCLUDE_DIRS} 
