@@ -28,10 +28,12 @@ void Application::dialouge() {
 
   // Create the dialogue background and text rectangle
   SDL_Rect dialougeRect = { 150, 450, 500, 100 };
-  SDL_Rect dialougeBGRect = { dialougeRect.x - current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS, 
-                              dialougeRect.y - current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS, 
-                              dialougeRect.w + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2, 
-                              dialougeRect.h + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2 };
+  SDL_Rect dialougeBGRect = { 
+    dialougeRect.x - current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS, 
+    dialougeRect.y - current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS, 
+    dialougeRect.w + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2, 
+    dialougeRect.h + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2
+  };
   SDL_Texture* characterName = nullptr;
   SDL_Rect characterNameRect = {0, 0, 0, 0}, characterNameBGRect = {0, 0, 0, 0};
 

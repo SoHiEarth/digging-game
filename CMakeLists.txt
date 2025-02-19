@@ -11,7 +11,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
-file(GLOB SOURCES "src/*.cpp" "src/*.c")
+file(GLOB SOURCES "src/*.cpp" "src/*.cc" "src/*.c")
 file(GLOB LIBRARIES "lib/*.cpp" "lib/**/*.cpp" "lib/*.c" "lib/**/*.c")
 
 add_executable(Holes 

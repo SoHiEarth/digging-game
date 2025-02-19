@@ -16,7 +16,7 @@ void Level::Load(std::string path) {
   std::cout << "Reading line: ";
   while (std::getline(file, line)) {
     lineNumber++;
-    std::cout << lineNumber << std::endl;
+    std::cout << lineNumber;
     std::istringstream iss(line);
     std::string objectName;
     iss >> objectName;
@@ -31,4 +31,5 @@ void Level::Load(std::string path) {
     }
   }
   std::cout << "\n--- Level loaded\n";
+  loaded = true;
 }

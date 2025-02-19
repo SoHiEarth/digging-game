@@ -9,7 +9,6 @@
 struct HumanoidDialougeOnTriggerAnim {
   std::string dialouge;
   std::string animPath;
-
 };
 
 struct Humanoid : public Object{
@@ -17,10 +16,8 @@ struct Humanoid : public Object{
   std::vector<std::string> messages;
   std::string humanoid_texture_path;
   SDL_Texture* humanoid_texture = nullptr;
-  // Loads the character texture
-  Humanoid();
-  // Frees the character texture
   ~Humanoid();
+  void Start() override;
   void Update() override;
 };
 

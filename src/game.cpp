@@ -45,6 +45,9 @@ void Application::game_fixed() {
       if (player.energy > 0) mapRect.x -= player.move_speed;
       else mapRect.x -= player.move_speed / 2;
     }
+    for (Object* object : level.objects) {
+      object->Fixed();
+    }
     for (Hole* hole : holesVec) {
       if (player_up) {
         if (player.energy > 0) hole->holeRect.y += player.move_speed;
@@ -63,14 +66,18 @@ void Application::game_fixed() {
         else hole->holeRect.x -= player.move_speed / 2;
       }
     }
-    SDL_Delay(1000/30);
+    SDL_Delay(1000/60);
   }
   return;
 }
 
 void Application::game() {
   SDL_SetWindowTitle(window, "Holes - Game");
+  if (!level.loaded) level.Load("assets/1.lvl");
   key_states.clear();
+  for (Object* object : level.objects) {
+    object->Start();
+  }
   PreloadHoleTexture();
   PreloadStatusBarIcons();
   PreloadPlayerSprite(); 
@@ -118,6 +125,9 @@ void Application::game() {
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_RenderCopy(renderer, mapTexture_Part_Hill, NULL, &mapRect);
+    for (Object* object : level.objects) {
+      object->Update();
+    }
     for (Hole* hole : holesVec) {
       RenderHole(*hole);
     }
@@ -128,10 +138,9 @@ void Application::game() {
       }
       SDL_RenderCopy(renderer, player.inventory[player.currentItem]->sprite, NULL, &itemRect);
     }
-    // Render Player RenderPlayerStats
     RenderPlayerStats();
     RenderInventory();
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 - (255 * (globalBrightness / 100.0)));
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * (100 - globalBrightness) / 100);
     SDL_RenderFillRect(renderer, NULL);
     // Red tint if hp is low
     if (player.health <= 10) {

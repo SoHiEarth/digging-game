@@ -6,7 +6,7 @@ struct Object {
   SDL_Rect rect;
   virtual void Start() {}
   virtual void Update() {}
-  virtual void Render() {}
+  virtual void Fixed() {}
   virtual void Quit() {}
 };
 
