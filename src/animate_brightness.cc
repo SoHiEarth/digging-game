@@ -1,6 +1,8 @@
 #include <animate.hpp>
 #include <base.hpp>
+#include <algorithm>
 #include <fstream>
+#include <sstream>
 void Animator_Brightness::PlayAnimation() {
   isPlaying = true;
   for (AnimationFrame& frame : frames) {
