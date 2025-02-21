@@ -2,7 +2,7 @@
 #include <base.h>
 #include <SDL_image.h>
 #include <renderer_temp.h>
-#include <iostream>
+#include <resload.h>
 TransportBus_Lv1::TransportBus_Lv1() {
   rect = {0, 0, 120, 240};
   SDL_GetWindowSize(window, &rect.x, &rect.y);
@@ -13,10 +13,7 @@ TransportBus_Lv1::TransportBus_Lv1() {
 }
 
 void TransportBus_Lv1::Start() {
-  texture = IMG_LoadTexture(renderer, "assets/transport_bus_1.png");
-  if (texture == nullptr) {
-    std::cerr << "Failed to load texture: " << SDL_GetError() << std::endl;
-  }
+  texture = ResLoad::LoadImage("assets/transport_bus_1.png").texture;
   animator_transform->LoadAnimation("assets/transport_bus_1.anim");
   animator_brightness->LoadAnimation("assets/transport_1_brightness.anim");
   animator_transform->Play();

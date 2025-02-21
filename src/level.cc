@@ -5,7 +5,7 @@
 #include <humanoid.h>
 #include <interactable.h>
 void Level::Load(std::string path) {
-  std::cout << "--- Loading level\n";
+  std::cout << "--- Loading level\r";
   std::ifstream file(path);
   if (!file.is_open()) {
     std::cerr << "-!- Failed to open level file: " << path << std::endl;
@@ -13,10 +13,9 @@ void Level::Load(std::string path) {
   }
   std::string line;
   int lineNumber = 0;
-  std::cout << "Reading line: ";
   while (std::getline(file, line)) {
     lineNumber++;
-    std::cout << lineNumber;
+    std::cout << "Reading line: " << lineNumber << "\r";
     std::istringstream iss(line);
     std::string object_name;
     iss >> object_name;
@@ -32,6 +31,6 @@ void Level::Load(std::string path) {
       std::cerr << "-!- Unknown object name: " << object_name << std::endl;
     }
   }
-  std::cout << "\n--- Level loaded\n";
+  std::cout << "\r--- Level loaded\n";
   loaded = true;
 }

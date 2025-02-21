@@ -4,17 +4,13 @@
 #include <application.h>
 #include <renderer_temp.h>
 #include <SDL_image.h>
+#include <resload.h>
 Humanoid::~Humanoid() {
   SDL_DestroyTexture(texture);
 }
 
 void Humanoid::Start() {
-  if (texture == nullptr) {
-    texture = IMG_LoadTexture(renderer, texture_path.c_str());
-    if (texture == nullptr) {
-      throw std::runtime_error("Failed to load character texture");
-    }
-  }
+  texture = ResLoad::LoadImage(texture_path).texture;
 }
 
 void Humanoid::Update() {
@@ -41,13 +37,10 @@ void Humanoid::Update() {
   // Talking if player is in 
   // 10 pixel radius of the humanoid
   if (SDL_HasIntersection(&player.rect, &rect) == SDL_TRUE) {
-    SDL_Texture* talkControlTexture = renderText("Press [F] to speak", inventoryFont, {255, 255, 255, 200});
-    SDL_Rect talkControlRect = { rect.x, rect.y - 30, 0, 0};
-    SDL_QueryTexture(talkControlTexture, NULL, NULL, &talkControlRect.w, &talkControlRect.h);
-    if (SDL_RenderCopy(renderer, talkControlTexture, NULL, &talkControlRect) != 0) {
-      throw std::runtime_error("Failed to render talk control texture: " + std::string(SDL_GetError()));
-    }
-    SDL_DestroyTexture(talkControlTexture);
+    auto control_data = ResLoad::RenderText(inventoryFont, "Press [F] to speak");
+    SDL_Rect talkControlRect = { rect.x, rect.y - 30, control_data.w, control_data.h};
+    SDL_RenderCopy(renderer, control_data.texture, NULL, &talkControlRect);
+    SDL_DestroyTexture(control_data.texture);
     if (talk_button_pressed) {
       currentHumanoid = this;
       app->state = APP_STATE_DIALOUGE;

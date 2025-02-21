@@ -75,7 +75,7 @@ void Application::game() {
   for (Object* object : level.objects) {
     object->Start();
   }
-  PreloadHoleTexture();
+  LoadHoleTexture();
   PreloadStatusBarIcons();
   PreloadPlayerSprite(); 
   PreloadMapTexture();

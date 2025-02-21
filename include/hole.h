@@ -14,6 +14,6 @@ struct Hole {
   int progress = 0, speed = 10;
 };
 extern std::vector<Hole*> holes_vector;
-void PreloadHoleTexture();
+void LoadHoleTexture();
 void RenderHole(Hole& hole);
 #endif // HOLE_H
