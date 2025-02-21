@@ -36,6 +36,8 @@ const char* _PLAYER_SPRITE_PATH = "assets/player.png";
 const char* _MAP_PART_HILL_PATH = "assets/map_part_hill.png";
 
 const char* _FONT_MENU_HINT_PATH = FONT_PRESET_SPACE_GROTESK;
+
+const char* _MENU_TITLE_PATH = "assets/title.png";
 const char* _MENU_BACKGROUND_PATH = "assets/title_bg.png";
 
 const char* _FONT_GAME_INVENTORY_PATH = FONT_PRESET_SPACE_GROTESK;

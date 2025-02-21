@@ -37,6 +37,7 @@ extern const char* _PLAYERSTAT_FONT_PATH;
 extern const char* _PLAYER_SPRITE_PATH;
 extern const char* _MAP_PART_HILL_PATH;
 extern const char* _FONT_MENU_HINT_PATH;
+extern const char* _MENU_TITLE_PATH;
 extern const char* _MENU_BACKGROUND_PATH;
 extern const char* _FONT_GAME_INVENTORY_PATH;
 extern const char* _FONT_GAMEOVER_PATH;

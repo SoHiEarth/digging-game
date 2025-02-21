@@ -42,7 +42,7 @@ void Humanoid::Update() {
     SDL_RenderCopy(renderer, control_data.texture, NULL, &talkControlRect);
     SDL_DestroyTexture(control_data.texture);
     if (talk_button_pressed) {
-      currentHumanoid = this;
+      current_humanoid = this;
       app->state = APP_STATE_DIALOUGE;
     }
   }

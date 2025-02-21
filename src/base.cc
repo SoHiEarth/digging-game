@@ -20,6 +20,6 @@ bool exception_thrown_thread_pause = false;
 int global_brightness = 100;
 std::mutex humanoidsMutex;
 std::vector<Humanoid*> humanoidsVec;
-Humanoid* currentHumanoid = nullptr;
+Humanoid* current_humanoid = nullptr;
 Player player;
 Level level;

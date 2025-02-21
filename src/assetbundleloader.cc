@@ -68,6 +68,8 @@ void AssetBundle::LoadAssetBundle(const char* path) {
         MAP_PART_HILL_PATH = assetValue;
       } else if (variableName == "FONT_MENU_HINT_PATH") {
         FONT_MENU_HINT_PATH = assetValue;
+      } else if (variableName == "MENU_TITLE_PATH") {
+        MENU_TITLE_PATH = assetValue;
       } else if (variableName == "MENU_BACKGROUND_PATH") {
         MENU_BACKGROUND_PATH = assetValue;
       } else if (variableName == "FONT_GAME_INVENTORY_PATH") {

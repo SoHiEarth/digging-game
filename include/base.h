@@ -17,7 +17,7 @@ extern SDL_Event event;
 extern std::thread fixed_thread;
 extern bool running;
 extern int global_brightness;
-extern Humanoid* currentHumanoid;
+extern Humanoid* current_humanoid;
 extern Player player;
 extern Level level;
 
