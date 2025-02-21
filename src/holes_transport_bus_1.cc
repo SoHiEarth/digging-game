@@ -28,8 +28,8 @@ void TransportBus_Lv1::Update() {
   player_down = false;
   player_left = false;
   player_right = false;
-  player.rect.x = rect.x + rect.w / 2;
-  player.rect.y = rect.y + rect.h / 2;
+  player.rect.x = rect.x + (rect.w / 2);
+  player.rect.y = rect.y + (rect.h / 2);
   //SDL_RenderCopy(renderer, texture, NULL, &rect);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderFillRect(renderer, &rect);
