@@ -1,9 +1,8 @@
-#include <animate.hpp>
-
+#include <animate.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <base.hpp>
+#include <base.h>
 
 void Animator_Rect::PlayAnimation() {
   isPlaying = true;
@@ -12,8 +11,8 @@ void Animator_Rect::PlayAnimation() {
     rectToAnimate.y += frame.yOffset;
     rectToAnimate.w += frame.wOffset;
     rectToAnimate.h += frame.hOffset;
-    if (launchParams.find("-AnimDebugLog") != launchParams.end()) {
-      if (launchParams["-AnimDebugLog"] == "1") std::cout << "x: " << rectToAnimate.x << " y: " << rectToAnimate.y << " w: " << rectToAnimate.w << " h: " << rectToAnimate.h << "\n";
+    if (launch_args.find("-AnimDebugLog") != launch_args.end()) {
+      if (launch_args["-AnimDebugLog"] == "1") std::cout << "x: " << rectToAnimate.x << " y: " << rectToAnimate.y << " w: " << rectToAnimate.w << " h: " << rectToAnimate.h << "\n";
     }
     SDL_Delay(frame.timeUntilNextFrame);
   }

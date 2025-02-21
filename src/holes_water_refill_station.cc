@@ -1,8 +1,8 @@
-#include <interactable.hpp>
-
+#include <interactable.h>
+#include <items.h>
 WaterRefillStation::WaterRefillStation() {
-  interactableName = current_asset_bundle.WATER_REFILL_STATION_NAME;
-  texturePath = current_asset_bundle.WATER_REFILL_STATION_SPRITE_PATH;
+  name = current_asset_bundle.WATER_REFILL_STATION_NAME;
+  texture_path = current_asset_bundle.WATER_REFILL_STATION_SPRITE_PATH;
   rect = { 0, 0, 64, 128 }; 
 }
 
@@ -12,7 +12,11 @@ void WaterRefillStation::func() {
       continue;
     }
     if (player.inventory[i]->itemName == "Bottle") {
-      player.inventory.erase(player.inventory.begin() + i);
+      Bottle* bottle = static_cast<Bottle*>(player.inventory[i]);
+      if (bottle == nullptr) continue;
+      else {
+        bottle->capacity = 100;
+      }
       break;
     }
   }

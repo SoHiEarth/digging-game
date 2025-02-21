@@ -1,9 +1,8 @@
-#include <animate.hpp>
-
+#include <animate.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <base.hpp>
+#include <base.h>
 
 void Animator_Color::PlayAnimation() {
   isPlaying = true;

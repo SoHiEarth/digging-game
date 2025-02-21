@@ -1,13 +1,13 @@
-#include <animate.hpp>
-#include <base.hpp>
+#include <animate.h>
+#include <base.h>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 void Animator_Brightness::PlayAnimation() {
   isPlaying = true;
   for (AnimationFrame& frame : frames) {
-    globalBrightness += frame.aOffset;
-    globalBrightness = std::clamp(globalBrightness, 0, 100);
+    global_brightness += frame.aOffset;
+    global_brightness = std::clamp(global_brightness, 0, 100);
     SDL_Delay(frame.timeUntilNextFrame);
   }
   isPlaying = false;

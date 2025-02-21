@@ -13,53 +13,37 @@ extern "C" {
 #define FONT_PRESET_JACQUARD "assets/Jacquard_12/Jacquard12-Regular.ttf";
 #define FONT_PRESET_JERSEY_10 "assets/Jersey_10/Jersey10-Regular.ttf";
 
-extern const char* _APP_TITLE;
-
-extern const char* _ITEM_NULL_NAME;
-extern const char* _ITEM_NULL_DESCRIPTION;
-extern const char* _ITEM_NULL_SPRITE_PATH;
-
-extern const char* _INTERACTABLE_NULL_NAME;
-extern const char* _INTERACTABLE_NULL_SPRITE_PATH;
-
+extern const char *_APP_TITLE,
+  *_ITEM_NULL_NAME,
+  *_ITEM_NULL_DESCRIPTION,
+  *_ITEM_NULL_SPRITE_PATH,
+  *_INTERACTABLE_NULL_NAME,
+  *_INTERACTABLE_NULL_SPRITE_PATH,
+  *_HOLE_UNIFIED_TEXTURE_PATH,
+  *_SHOVEL_ITEM_NAME,
+  *_SHOVEL_ITEM_DESCRIPTION,
+  *_SHOVEL_ITEM_SPRITE_PATH,
+  *_BOTTLE_ITEM_NAME,
+  *_BOTTLE_ITEM_SPRITE_PATH,
+  *_FOOD_ITEM_NAME;
 extern const int _PLAYER_MOVE_SPEED;
-
-extern const char* _HOLE_UNIFIED_TEXTURE_PATH;
-
-extern const char* _SHOVEL_ITEM_NAME;
-extern const char* _SHOVEL_ITEM_DESCRIPTION;
-extern const char* _SHOVEL_ITEM_SPRITE_PATH;
-
-extern const char* _BOTTLE_ITEM_NAME;
-extern const char* _BOTTLE_ITEM_SPRITE_PATH;
-
-extern const char* _FOOD_ITEM_NAME;
 extern const char* _FOOD_ITEM_SPRITE_PATH;
-
 extern const char* _WATER_REFILL_STATION_NAME;
 extern const char* _WATER_REFILL_STATION_SPRITE_PATH;
-
 extern const char* _PLAYERSTAT_HEALTH_ICON_PATH;
 extern const char* _PLAYERSTAT_ENERGY_ICON_PATH;
 extern const char* _PLAYERSTAT_THIRST_ICON_PATH;
 extern const char* _PLAYERSTAT_FONT_PATH;
-
 extern const char* _PLAYER_SPRITE_PATH;
-
 extern const char* _MAP_PART_HILL_PATH;
-
 extern const char* _FONT_MENU_HINT_PATH;
 extern const char* _MENU_BACKGROUND_PATH;
-
 extern const char* _FONT_GAME_INVENTORY_PATH;
-
 extern const char* _FONT_GAMEOVER_PATH;
 extern const char* _FONT_GAMEOVER_HINT_PATH;
-
 extern int _DIALOUGE_BG_BORDER_THICKNESS;
 extern const char* _FONT_GAME_DIALOUGE_PATH;
 extern const char* _FONT_GAME_DIALOUGE_NAME_PATH;
-
 #ifdef __cplusplus
 }
 #endif

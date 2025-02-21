@@ -1,5 +1,5 @@
-#include <application.hpp>
-#include <renderer_temp.hpp>
+#include <application.h>
+#include <renderer_temp.h>
 
 TTF_Font* gameOverFont = nullptr, *gameOverHintFont = nullptr;
 SDL_Texture* gameOverTexture;

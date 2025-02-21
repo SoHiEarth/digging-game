@@ -4,14 +4,14 @@
 #include <SDL.h>
 #include <string>
 #include <config.h>
-#include <base.hpp>
-#include <assetbundleloader.hpp>
-#include <animate.hpp>
+#include <base.h>
+#include <assetbundleloader.h>
+#include <animate.h>
 struct MapInteractable : public Object{
   public:
-    std::string interactableName = current_asset_bundle.INTERACTABLE_NULL_NAME;
+    std::string name = current_asset_bundle.INTERACTABLE_NULL_NAME;
     SDL_Texture* texture;
-    std::string texturePath = current_asset_bundle.INTERACTABLE_NULL_SPRITE_PATH;
+    std::string texture_path = current_asset_bundle.INTERACTABLE_NULL_SPRITE_PATH;
     void Update() override;
     virtual void func();
 };

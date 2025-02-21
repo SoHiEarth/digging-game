@@ -1,6 +1,5 @@
-#include <SDL_render.h>
 #include <humanoid.h>
-#include <renderer_temp.hpp>
+#include <renderer_temp.h>
 
 SDL_Texture *hpIconTexture = nullptr, *thirstIconTexture = nullptr, *energyIconTexture = nullptr;
 TTF_Font *widgetFont = nullptr, *inventoryFont = nullptr;
@@ -29,14 +28,14 @@ void PreloadStatusBarIcons() {
 }
 
 void PreloadPlayerSprite() {
-  if (player.playerSprite != nullptr) SDL_DestroyTexture(player.playerSprite);
-  player.playerSprite = IMG_LoadTexture(renderer, current_asset_bundle.PLAYER_SPRITE_PATH.c_str());
-  if (player.playerSprite == NULL) throw std::runtime_error("Error loading player sprite");
+  if (player.texture != nullptr) SDL_DestroyTexture(player.texture);
+  player.texture = IMG_LoadTexture(renderer, current_asset_bundle.PLAYER_SPRITE_PATH.c_str());
+  if (player.texture == NULL) throw std::runtime_error("Error loading player sprite");
 }
 
 void ResetPlayerStats() {
-  player.position.x = 384;
-  player.position.y = 284;
+  player.rect.x = 384;
+  player.rect.y = 284;
   player.health = 100;
   player.energy = 100;
   player.thirst = 100;
@@ -123,10 +122,10 @@ void RenderItem(Item* item, SDL_Rect anchor, int alpha) {
 
 void RenderInventory() {
   SDL_Rect anchorRect = { 580, 480, 200, 95 };
-  if (player.currentItem - 1 >= 0) inv_prevItem = player.inventory[player.currentItem - 1];
+  if (player.current_item - 1 >= 0) inv_prevItem = player.inventory[player.current_item - 1];
   else inv_prevItem = nullptr;
-  inv_currItem = player.inventory[player.currentItem];
-  if (player.currentItem + 1 < player.inventory.size()) inv_nextItem = player.inventory[player.currentItem + 1];
+  inv_currItem = player.inventory[player.current_item];
+  if (player.current_item + 1 < player.inventory.size()) inv_nextItem = player.inventory[player.current_item + 1];
   else inv_nextItem = nullptr;
 
   SDL_Rect prevItemRect = { anchorRect.x + 5, anchorRect.y, anchorRect.w, 30 };
@@ -141,17 +140,17 @@ void RenderInventory() {
 }
 
 void RenderHumanoid(Humanoid* humanoid) {
- if (humanoid->humanoid_texture == nullptr) {
-    humanoid->humanoid_texture = IMG_LoadTexture(renderer, humanoid->humanoid_texture_path.c_str());
-    if (humanoid->humanoid_texture == NULL) {
+ if (humanoid->texture == nullptr) {
+    humanoid->texture = IMG_LoadTexture(renderer, humanoid->texture_path.c_str());
+    if (humanoid->texture == NULL) {
       throw std::runtime_error("Failed to render humanoid texture");
     }
   }
-  SDL_Texture* characterName = renderText(humanoid->humanoid_name.c_str(), inventoryFont, {255, 255, 255, 255});
+  SDL_Texture* characterName = renderText(humanoid->name.c_str(), inventoryFont, {255, 255, 255, 255});
   SDL_Rect characterNameRect;
   SDL_QueryTexture(characterName, NULL, NULL, &characterNameRect.w, &characterNameRect.h);
   characterNameRect = { humanoid->rect.x - (humanoid->rect.w / 2), humanoid->rect.y + humanoid->rect.w, characterNameRect.w, characterNameRect.h };
   SDL_RenderCopy(renderer, characterName, NULL, &characterNameRect);
-  SDL_RenderCopy(renderer, humanoid->humanoid_texture, NULL, &humanoid->rect); 
+  SDL_RenderCopy(renderer, humanoid->texture, NULL, &humanoid->rect); 
   SDL_DestroyTexture(characterName);
 }

@@ -1,10 +1,9 @@
-#ifndef CHARACTER_HPP
-#define CHARACTER_HPP
-
+#ifndef HUMANOID_H
+#define HUMANOID_H
 #include <string>
 #include <vector>
 #include <SDL.h>
-#include <animate.hpp>
+#include <animate.h>
 #include <object.h>
 struct HumanoidDialougeOnTriggerAnim {
   std::string dialouge;
@@ -12,10 +11,9 @@ struct HumanoidDialougeOnTriggerAnim {
 };
 
 struct Humanoid : public Object{
-  std::string humanoid_name;
+  std::string name;
   std::vector<std::string> messages;
-  std::string humanoid_texture_path;
-  SDL_Texture* humanoid_texture = nullptr;
+  std::string texture_path;
   ~Humanoid();
   void Start() override;
   void Update() override;
@@ -36,9 +34,4 @@ struct Warden : public Humanoid {
 struct Zero : public Humanoid {
   Zero();
 };
-
-struct TestHumanoid : public Humanoid {
-  TestHumanoid();
-};
-
-#endif // CHARACTER_HPP
+#endif // HUMANOID_H

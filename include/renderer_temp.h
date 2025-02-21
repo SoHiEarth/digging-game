@@ -5,13 +5,13 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <config.h>
-#include <items.hpp>
-#include <player.hpp>
-#include <base.hpp>
-#include <interactable.hpp>
-#include <hole.hpp>
+#include <items.h>
+#include <player.h>
+#include <base.h>
+#include <interactable.h>
+#include <hole.h>
 #include <humanoid.h>
-#include <assetbundleloader.hpp>
+#include <assetbundleloader.h>
 
 extern SDL_Texture *hpIconTexture, *thirstIconTexture, *energyIconTexture;
 extern TTF_Font *widgetFont, *inventoryFont;

@@ -1,5 +1,5 @@
-#include <renderer_temp.hpp>
-#include <application.hpp>
+#include <renderer_temp.h>
+#include <application.h>
 
 int currentSelectedMenuItem = 0;
 void Application::mainMenu() {

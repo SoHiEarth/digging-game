@@ -1,8 +1,7 @@
-#include <items.hpp>
-#include <SDL_rect.h>
+#include <items.h>
 #include <config.h>
-#include <hole.hpp>
-#include <base.hpp>
+#include <hole.h>
+#include <base.h>
 #include <algorithm>
 bool func_button_pressed = false, talk_button_pressed = false;
 Item::~Item() {
@@ -19,25 +18,24 @@ Shovel::Shovel() {
 
 void Shovel::func() {
   Hole* current_hole = nullptr;
-  SDL_Rect player_rect = { player.position.x, player.position.y, 64, 64 };
-  if (!holesVec.empty()) {
-    for (Hole* hole : holesVec) {
+  if (!holes_vector.empty()) {
+    for (Hole* hole : holes_vector) {
       if (hole == nullptr) continue;
-      if (SDL_HasIntersection(&player_rect, &hole->holeRect) == SDL_TRUE) {
+      if (SDL_HasIntersection(&player.rect, &hole->rect) == SDL_TRUE) {
         current_hole = hole;
         break;
       }
     }
   }
   if (current_hole != nullptr) {
-    if (std::clamp(current_hole->hole_dig_progress, 0, 100) == current_hole->hole_dig_progress) {
-      current_hole->hole_dig_progress += current_hole->hole_dig_speed;
+    if (std::clamp(current_hole->progress, 0, 100) == current_hole->progress) {
+      current_hole->progress += current_hole->speed;
     }
     return;
   } else {
     Hole* hole = new Hole();
-    hole->holeRect = {player_rect.x, player_rect.y, 32, 32};
-    holesVec.push_back(hole);
+    hole->rect = player.rect;
+    holes_vector.push_back(hole);
   }
 }
 
@@ -55,7 +53,7 @@ void Bottle::func() {
     capacity -= 20;
     itemDescription = std::to_string(capacity) + "%";
   } else {
-    player.inventory.erase(player.inventory.begin() + player.currentItem);
+    player.inventory.erase(player.inventory.begin() + player.current_item);
   }
 }
 
@@ -73,6 +71,6 @@ void Food::func() {
     capacity -= 20;
     itemDescription = std::to_string(capacity) + "%";
   } else {
-    player.inventory.erase(player.inventory.begin() + player.currentItem);
+    player.inventory.erase(player.inventory.begin() + player.current_item);
   }
 }

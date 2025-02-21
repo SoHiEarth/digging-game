@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <humanoid.h>
-#include <interactable.hpp>
+#include <interactable.h>
 void Level::Load(std::string path) {
   std::cout << "--- Loading level\n";
   std::ifstream file(path);
@@ -24,8 +24,6 @@ void Level::Load(std::string path) {
       objects.push_back(new Sir());
     } else if (object_name == "JailGuard") {
       objects.push_back(new JailGuard());
-    } else if (object_name == "TestHumanoid") {
-      objects.push_back(new TestHumanoid());
     } else if (object_name == "WaterRefillStation") {
       objects.push_back(new WaterRefillStation());
     } else if (object_name == "Transport_Bus_1") {

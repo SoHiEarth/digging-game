@@ -1,7 +1,7 @@
-#include <interactable.hpp>
-#include <base.hpp>
+#include <interactable.h>
+#include <base.h>
 #include <SDL_image.h>
-#include <renderer_temp.hpp>
+#include <renderer_temp.h>
 #include <iostream>
 TransportBus_Lv1::TransportBus_Lv1() {
   rect = {0, 0, 120, 240};
@@ -28,8 +28,8 @@ void TransportBus_Lv1::Update() {
   player_down = false;
   player_left = false;
   player_right = false;
-  player.position.x = rect.x + rect.w / 2;
-  player.position.y = rect.y + rect.h / 2;
+  player.rect.x = rect.x + rect.w / 2;
+  player.rect.y = rect.y + rect.h / 2;
   //SDL_RenderCopy(renderer, texture, NULL, &rect);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderFillRect(renderer, &rect);

@@ -3,10 +3,10 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
-#include <macro.hpp>
-#include <renderer_temp.hpp>
-#include <application.hpp>
-#include <base.hpp>
+#include <macro.h>
+#include <renderer_temp.h>
+#include <application.h>
+#include <base.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     if (arg[0] == '-') {
       if (i + 1 < argc) {
         std::string value = argv[i + 1];
-        launchParams[arg] = value;
+        launch_args[arg] = value;
         ++i;
       } else {
       std::cerr << "Error: Parameter " << arg << " is missing a value.\n";
@@ -43,11 +43,11 @@ int main(int argc, char* argv[]) {
   }
 
   std::cout << "Command launched with following parameters:\n";
-  for (const auto& param : launchParams) {
+  for (const auto& param : launch_args) {
     std::cout << "\t" << param.first << " " << param.second << "\n";
   }
 
-  if (launchParams.empty()) std::cout << "\tNone\n";
+  if (launch_args.empty()) std::cout << "\tNone\n";
 
   try {
     std::cout << "Initializing application\n";
@@ -58,10 +58,8 @@ int main(int argc, char* argv[]) {
     app->Quit();
   }
   catch (std::runtime_error& e) {
-    exception_thrown_thread_pause = true;
     std::string msg = std::string(e.what()) + "\nSDL: " + SDL_GetError();
     errorWindow(msg.c_str());
-    exception_thrown_thread_pause = false;
     delete app;
     return -1;
   }

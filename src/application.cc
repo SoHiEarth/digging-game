@@ -1,13 +1,12 @@
-#include <application.hpp>
-
+#include <application.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
 #include <stdexcept>
 #include <iostream>
-#include <assetbundleloader.hpp>
-#include <base.hpp>
+#include <assetbundleloader.h>
+#include <base.h>
 
 void Application::Init() {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {

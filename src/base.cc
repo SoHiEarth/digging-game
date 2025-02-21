@@ -1,6 +1,6 @@
-#include <base.hpp>
+#include <base.h>
 #include <humanoid.h>
-#include <player.hpp>
+#include <player.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -8,16 +8,16 @@
 #include <vector>
 #include <thread>
 #include <map>
-#include <assetbundleloader.hpp>
+#include <assetbundleloader.h>
 #include <level.h>
-std::map<std::string, std::string> launchParams;
+std::map<std::string, std::string> launch_args;
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
 SDL_Event event;
-std::thread renderThread, gameThread;
+std::thread renderThread, fixed_thread;
 bool running = false;
 bool exception_thrown_thread_pause = false;
-int globalBrightness = 100;
+int global_brightness = 100;
 std::mutex humanoidsMutex;
 std::vector<Humanoid*> humanoidsVec;
 Humanoid* currentHumanoid = nullptr;

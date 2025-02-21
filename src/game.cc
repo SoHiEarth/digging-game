@@ -1,12 +1,8 @@
-#include "config.h"
-#include "items.hpp"
 #include <SDL_image.h>
-#include <SDL_keyboard.h>
-#include <SDL_render.h>
-#include <application.hpp>
-#include <animate.hpp>
-#include <base.hpp>
-#include <renderer_temp.hpp>
+#include <application.h>
+#include <animate.h>
+#include <base.h>
+#include <renderer_temp.h>
 #include <SDL.h>
 #include <algorithm>
 #include <humanoid.h>
@@ -24,11 +20,9 @@ void Application::game_fixed() {
     if (player.thirst > 90 && player.energy > 90 && player.health < 100) {
       player.health += 0.05;
     }
-    int playerW, playerH;
-    SDL_QueryTexture(player.playerSprite, NULL, NULL, &playerW, &playerH);
-    SDL_Point playerPos_Max = {player.position.x + playerW, player.position.y + playerH};
-    player.position.x = std::clamp(player.position.x, 0, 800 - 64);
-    player.position.y = std::clamp(player.position.y, 0, 600 - 64);
+    SDL_QueryTexture(player.texture, NULL, NULL, &player.rect.w, &player.rect.h);
+    player.rect.x = std::clamp(player.rect.x, 0, 800 - 64);
+    player.rect.y = std::clamp(player.rect.y, 0, 600 - 64);
     if (player_up) {
       if (player.energy > 0) mapRect.y += player.move_speed;
       else mapRect.y += player.move_speed / 2;
@@ -48,22 +42,22 @@ void Application::game_fixed() {
     for (Object* object : level.objects) {
       object->Fixed();
     }
-    for (Hole* hole : holesVec) {
+    for (Hole* hole : holes_vector) {
       if (player_up) {
-        if (player.energy > 0) hole->holeRect.y += player.move_speed;
-        else hole->holeRect.y += player.move_speed / 2;
+        if (player.energy > 0) hole->rect.y += player.move_speed;
+        else hole->rect.y += player.move_speed / 2;
       }
       if (player_down) {
-        if (player.energy > 0) hole->holeRect.y -= player.move_speed;
-        else hole->holeRect.y -= player.move_speed / 2;
+        if (player.energy > 0) hole->rect.y -= player.move_speed;
+        else hole->rect.y -= player.move_speed / 2;
       }
       if (player_left) {
-        if (player.energy > 0) hole->holeRect.x += player.move_speed;
-        else hole->holeRect.x += player.move_speed / 2;
+        if (player.energy > 0) hole->rect.x += player.move_speed;
+        else hole->rect.x += player.move_speed / 2;
       }
       if (player_right) {
-        if (player.energy > 0) hole->holeRect.x -= player.move_speed;
-        else hole->holeRect.x -= player.move_speed / 2;
+        if (player.energy > 0) hole->rect.x -= player.move_speed;
+        else hole->rect.x -= player.move_speed / 2;
       }
     }
     SDL_Delay(1000/60);
@@ -89,7 +83,7 @@ void Application::game() {
   talk_button_pressed = false;
   inventoryFont = TTF_OpenFont(current_asset_bundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
   player_up = false, player_down = false, player_left = false, player_right = false;
-  gameThread = std::thread(&Application::game_fixed, this);
+  fixed_thread = std::thread(&Application::game_fixed, this);
   if (player.move_speed == 0) player.move_speed = _PLAYER_MOVE_SPEED;
   while (state == APP_STATE_GAME) {
     while (SDL_PollEvent(&event)) {
@@ -112,17 +106,17 @@ void Application::game() {
     if (key_states[SDLK_e] && !prev_key_states[SDLK_e]) {
       func_button_pressed = true;
       if (!player.inventory.empty()) {
-        player.inventory[std::clamp(player.currentItem, 0, (int)player.inventory.size())]->func();
+        player.inventory[std::clamp(player.current_item, 0, (int)player.inventory.size())]->func();
       }
     }
     else func_button_pressed = false;
     talk_button_pressed = key_states[SDLK_f];
     for (int i = 1; i < 10; i++) {
       if (key_states[SDL_GetKeyFromName(std::to_string(i).c_str())]) {
-        player.currentItem = std::clamp(i - 1, 0, static_cast<int>(player.inventory.size()));
+        player.current_item = std::clamp(i - 1, 0, static_cast<int>(player.inventory.size()));
       }
     }
-    if (player.currentItem > player.inventory.size() - 1) player.currentItem = 0;
+    if (player.current_item > player.inventory.size() - 1) player.current_item = 0;
     SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -130,19 +124,19 @@ void Application::game() {
     for (Object* object : level.objects) {
       object->Update();
     }
-    for (Hole* hole : holesVec) {
+    for (Hole* hole : holes_vector) {
       RenderHole(*hole);
     }
-    SDL_RenderCopy(renderer, player.playerSprite, NULL, &playerRect);
+    SDL_RenderCopy(renderer, player.texture, NULL, &playerRect);
     if (!player.inventory.empty()) {
-      if (player.inventory[player.currentItem]->sprite == nullptr) {
-        player.inventory[player.currentItem]->sprite = IMG_LoadTexture(renderer, player.inventory[player.currentItem]->itemSpritePath.c_str());
+      if (player.inventory[player.current_item]->sprite == nullptr) {
+        player.inventory[player.current_item]->sprite = IMG_LoadTexture(renderer, player.inventory[player.current_item]->itemSpritePath.c_str());
       }
-      SDL_RenderCopy(renderer, player.inventory[player.currentItem]->sprite, NULL, &itemRect);
+      SDL_RenderCopy(renderer, player.inventory[player.current_item]->sprite, NULL, &itemRect);
     }
     RenderPlayerStats();
     RenderInventory();
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * (100 - globalBrightness) / 100);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * (100 - global_brightness) / 100);
     SDL_RenderFillRect(renderer, NULL);
     // Red tint if hp is low
     if (player.health <= 10) {
@@ -163,5 +157,5 @@ void Application::game() {
     prev_key_states = key_states;
     SDL_Delay(1000/60);
   }
-  gameThread.join();
+  fixed_thread.join();
 }

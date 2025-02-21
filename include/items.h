@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include <string>
 #include <stdexcept>
-#include <assetbundleloader.hpp>
+#include <assetbundleloader.h>
 
 extern bool func_button_pressed, talk_button_pressed;
 
