@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <humanoid.h>
 #include <cstdlib>
+#include <error.h>
 std::map<SDL_Keycode, bool> key_states, prev_key_states;
 void Application::game_fixed() {
   while (state == APP_STATE_GAME) {
@@ -83,7 +84,6 @@ void Application::game() {
   talk_button_pressed = false;
   inventoryFont = TTF_OpenFont(current_asset_bundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
   player_up = false, player_down = false, player_left = false, player_right = false;
-  fixed_thread = std::thread(&Application::game_fixed, this);
   if (player.move_speed == 0) player.move_speed = _PLAYER_MOVE_SPEED;
   while (state == APP_STATE_GAME) {
     while (SDL_PollEvent(&event)) {
@@ -156,6 +156,8 @@ void Application::game() {
     SDL_RenderPresent(renderer);
     prev_key_states = key_states;
     SDL_Delay(1000/60);
+    if (level.HasNextFramePath()) {
+      level.LoadNextFramePath();
+    }
   }
-  fixed_thread.join();
 }

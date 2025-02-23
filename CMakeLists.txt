@@ -11,20 +11,38 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
+if(APPLE)
+    set_source_files_properties(platform/mac/error.mm PROPERTIES COMPILE_FLAGS "-ObjC++")
+    find_library(COCOA_FRAMEWORK Cocoa REQUIRED)
+endif()
+
 file(GLOB SOURCES "src/*.cpp" "src/*.cc" "src/*.c")
 file(GLOB LIBRARIES "lib/*.cpp" "lib/**/*.cpp" "lib/*.c" "lib/**/*.c")
 
+if (APPLE)
 add_executable(Holes 
-    ${SOURCES} 
-    ${LIBRARIES} 
+    ${SOURCES}
+    platform/mac/error.mm
+    ${LIBRARIES}
 )
+else()
+add_executable(Holes
+    ${SOURCES}
+    platform/other/error.cc
+    ${LIBRARIES}
+)
+endif()
 
-target_link_libraries(Holes PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
+if(APPLE)
+  target_link_libraries(
+    Holes SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf ${COCOA_FRAMEWORK}
+  )
+else()
+  target_link_libraries(
+    Holes PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf
+  )
+endif()
 
 target_include_directories(Holes PRIVATE 
-    ${SDL2_INCLUDE_DIRS} 
-    ${SDL2_IMAGE_INCLUDE_DIRS} 
-    ${SDL2_TTF_INCLUDE_DIRS} 
-    ${SDL2_MIXER_INCLUDE_DIRS}
     "include" "lib"
 )

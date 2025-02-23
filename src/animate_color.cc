@@ -5,26 +5,25 @@
 #include <base.h>
 
 void Animator_Color::PlayAnimation() {
-  isPlaying = true;
+  is_playing = true;
   for (AnimationFrame& frame : frames) {
-    colorToAnimate.r += frame.rOffset;
-    colorToAnimate.g += frame.gOffset;
-    colorToAnimate.b += frame.bOffset;
-    colorToAnimate.a += frame.aOffset;
+    color_to_animate.r += frame.rOffset;
+    color_to_animate.g += frame.gOffset;
+    color_to_animate.b += frame.bOffset;
+    color_to_animate.a += frame.aOffset;
     SDL_Delay(frame.timeUntilNextFrame);
   }
-  isPlaying = false;
+  is_playing = false;
 }
 
 void Animator_Color::Play() {
-  if (animationThread.joinable()) {
-    animationThread.join();
-  }
-  if (!isPlaying) animationThread = std::thread(&Animator_Color::PlayAnimation, this);
+  if (is_playing)
+    animation_thread.Close();
+  animation_thread.Start([this] { PlayAnimation(); });
 }
 
 void Animator_Color::LoadAnimation(const std::string& sourceFile) {
-    AnimationSourceFile = sourceFile;    std::ifstream file(sourceFile);
+    animation_source_file = sourceFile;    std::ifstream file(sourceFile);
     if (!file.is_open()) {
       throw std::runtime_error("Could not open file: " + sourceFile);
     }

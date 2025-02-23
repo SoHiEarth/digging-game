@@ -4,8 +4,14 @@
 #include <iostream>
 #include <humanoid.h>
 #include <interactable.h>
+#include <safe_thread.h>
+#include <application.h>
 void Level::Load(std::string path) {
   std::cout << "--- Loading level\r";
+  // Close threads that aren't main before loading
+  if (!all_threads_closed()) {
+    close_all_threads();
+  }
   if (loaded) {
     Unload();
   }
@@ -36,9 +42,25 @@ void Level::Load(std::string path) {
   }
   std::cout << "\r--- Level loaded\n";
   loaded = true;
+  // Start fixed update thread
+  fixed_thread.Start([this] { app->game_fixed(); });
+}
+
+void Level::LoadAtNextFrame(std::string path) {
+  next_frame_path = path;
+}
+
+bool Level::HasNextFramePath() {
+  return next_frame_path != "";
+}
+
+void Level::LoadNextFramePath() {
+  Load(next_frame_path);
+  next_frame_path = "";
 }
 
 void Level::Unload() {
+  close_all_threads();
   for (Object* object : objects) {
     object->Quit();
     delete object;

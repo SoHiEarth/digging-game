@@ -6,7 +6,6 @@
 #include <SDL_ttf.h>
 #include <mutex>
 #include <vector>
-#include <thread>
 #include <map>
 #include <assetbundleloader.h>
 #include <level.h>
@@ -14,7 +13,6 @@ std::map<std::string, std::string> launch_args;
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
 SDL_Event event;
-std::thread renderThread, fixed_thread;
 bool running = false;
 bool exception_thrown_thread_pause = false;
 int global_brightness = 100;

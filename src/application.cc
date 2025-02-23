@@ -2,13 +2,12 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
-
 #include <stdexcept>
 #include <iostream>
 #include <assetbundleloader.h>
 #include <base.h>
 #include <resload.h>
-
+#include <error.h>
 void Application::Init() {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
     throw std::runtime_error("SDL_Init failed");
@@ -30,38 +29,35 @@ void Application::Init() {
 }
 
 void Application::Run() {
-    while (running) {
-      std::cout << "Entering application state " << state << "\n";
-      switch (state) {
-        case APP_STATE_MAIN_MENU:
-          mainMenu();
-          break;
-        case APP_STATE_GAME:
-          game();
-          break;
-        case APP_STATE_DIALOUGE:
-          dialouge();
-          break;
-        case APP_STATE_QUIT:
-          running = false;
-          break;
-        case APP_STATE_PAUSE:
-          break;
-        case APP_STATE_GAME_OVER:
-          gameOver();
-          break;
-        default:
-          throw std::runtime_error("Unknown Application State encountered!");
-          break;
-      }
+  while (running) {
+    std::cout << "Entering application state " << state << "\n";
+    switch (state) {
+      case APP_STATE_MAIN_MENU:
+        mainMenu();
+        break;
+      case APP_STATE_GAME:
+        game();
+        break;
+      case APP_STATE_DIALOUGE:
+        dialouge();
+        break;
+      case APP_STATE_QUIT:
+        running = false;
+        break;
+      case APP_STATE_GAME_OVER:
+        gameOver();
+        break;
+      default:
+        throw std::runtime_error("Unknown Application State encountered!");
+        break;
     }
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
   }
+}
 
 void Application::Quit() {
-    IMG_Quit();
-    TTF_Quit();
-    SDL_Quit();
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  IMG_Quit();
+  TTF_Quit();
+  SDL_Quit();
   }

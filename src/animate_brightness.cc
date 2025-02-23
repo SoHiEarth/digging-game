@@ -4,23 +4,23 @@
 #include <fstream>
 #include <sstream>
 void Animator_Brightness::PlayAnimation() {
-  isPlaying = true;
+  is_playing = true;
   for (AnimationFrame& frame : frames) {
     global_brightness += frame.aOffset;
     global_brightness = std::clamp(global_brightness, 0, 100);
     SDL_Delay(frame.timeUntilNextFrame);
   }
-  isPlaying = false;
+  is_playing = false;
 }
 
 void Animator_Brightness::Play() {
-  if (animationThread.joinable())
-    animationThread.join();
-  if (!isPlaying) animationThread = std::thread(&Animator_Brightness::PlayAnimation, this);
+  if (is_playing)
+    animation_thread.Close();
+  animation_thread.Start([this] { PlayAnimation(); });
 }
 
 void Animator_Brightness::LoadAnimation(const std::string& sourceFile) {
-  AnimationSourceFile = sourceFile;
+  animation_source_file = sourceFile;
   std::ifstream file(sourceFile);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file: " + sourceFile);

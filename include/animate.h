@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include <string>
 #include <vector>
-#include <thread>
+#include <safe_thread.h>
 
 struct AnimationFrame {
   int xOffset = 0;
@@ -22,7 +22,9 @@ class Animator {
 protected:
   std::vector<AnimationFrame> frames{};
   virtual void PlayAnimation() = 0;
-  bool isPlaying = false;
+  std::string animation_source_file;
+  ST animation_thread;
+  bool is_playing = false;
   virtual void Play() = 0;
   virtual void LoadAnimation(const std::string& sourceFile) = 0;
 };
@@ -30,10 +32,8 @@ protected:
 class Animator_Color : public Animator {
   void PlayAnimation();
   public:
-  std::string AnimationSourceFile;
-  SDL_Color& colorToAnimate;
-  std::thread animationThread;
-  Animator_Color(SDL_Color& color) : colorToAnimate(color) {}
+  SDL_Color& color_to_animate;
+  Animator_Color(SDL_Color& color) : color_to_animate(color) {}
   void Play();
   void LoadAnimation(const std::string& sourceFile);
 };
@@ -41,10 +41,8 @@ class Animator_Color : public Animator {
 class Animator_Rect : public Animator {
   void PlayAnimation();
 public:
-  std::string AnimationSourceFile;
-  SDL_Rect& rectToAnimate;
-  std::thread animationThread;
-  Animator_Rect(SDL_Rect& rect) : rectToAnimate(rect) {}
+  SDL_Rect& rect_to_animate;
+  Animator_Rect(SDL_Rect& rect) : rect_to_animate(rect) {}
 
   void Play();
   void LoadAnimation(const std::string& sourceFile);
@@ -53,8 +51,6 @@ public:
 class Animator_Brightness : public Animator {
   void PlayAnimation();
 public:
-  std::string AnimationSourceFile;
-  std::thread animationThread;
   void Play();
   void LoadAnimation(const std::string& sourceFile);
 };

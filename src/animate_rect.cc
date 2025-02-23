@@ -5,28 +5,28 @@
 #include <base.h>
 
 void Animator_Rect::PlayAnimation() {
-  isPlaying = true;
+  is_playing = true;
   for (AnimationFrame& frame : frames) {
-    rectToAnimate.x += frame.xOffset;
-    rectToAnimate.y += frame.yOffset;
-    rectToAnimate.w += frame.wOffset;
-    rectToAnimate.h += frame.hOffset;
+    rect_to_animate.x += frame.xOffset;
+    rect_to_animate.y += frame.yOffset;
+    rect_to_animate.w += frame.wOffset;
+    rect_to_animate.h += frame.hOffset;
     if (launch_args.find("-AnimDebugLog") != launch_args.end()) {
-      if (launch_args["-AnimDebugLog"] == "1") std::cout << "x: " << rectToAnimate.x << " y: " << rectToAnimate.y << " w: " << rectToAnimate.w << " h: " << rectToAnimate.h << "\n";
+      if (launch_args["-AnimDebugLog"] == "1") std::cout << "x: " << rect_to_animate.x << " y: " << rect_to_animate.y << " w: " << rect_to_animate.w << " h: " << rect_to_animate.h << "\n";
     }
     SDL_Delay(frame.timeUntilNextFrame);
   }
-  isPlaying = false;
+  is_playing = false;
 }
 
 void Animator_Rect::Play() {
-  if (animationThread.joinable())
-    animationThread.join();
-  if (!isPlaying) animationThread = std::thread(&Animator_Rect::PlayAnimation, this);
+  if (is_playing)
+    animation_thread.Close();
+  animation_thread.Start([this] { PlayAnimation(); });
 }
 
 void Animator_Rect::LoadAnimation(const std::string& sourceFile) {
-  AnimationSourceFile = sourceFile;
+  animation_source_file = sourceFile;
   std::ifstream file(sourceFile);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file: " + sourceFile);
