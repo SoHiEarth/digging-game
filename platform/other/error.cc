@@ -8,7 +8,7 @@ void errorWindow(const char* message) {
 #ifdef __linux__
 #include <iostream>
 void errorWindow(const char* message) {
-  std::cerr << "[MAIN] [Error] " << message << "\n";
+  std::cerr << "[Error] " << message << "\n";
 }
 #endif
 
