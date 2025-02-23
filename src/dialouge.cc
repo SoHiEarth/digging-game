@@ -9,7 +9,7 @@
 #include <humanoid.h>
 #include <assetbundleloader.h>
 
-void Application::dialouge() {
+void Application::Dialouge() {
   int currentDialougeIndex = 0;
   TTF_Font* font = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_DIALOUGE_PATH.c_str(), 24);
   TTF_Font* topFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_DIALOUGE_NAME_PATH.c_str(), 18);

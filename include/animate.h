@@ -19,28 +19,29 @@ struct AnimationFrame {
 };
 
 class Animator {
-protected:
+ protected:
   std::vector<AnimationFrame> frames{};
-  virtual void PlayAnimation() = 0;
+  virtual void PlayAnimation(std::atomic<bool>& running) = 0;
   std::string animation_source_file;
   ST animation_thread;
+ public:
   bool is_playing = false;
   virtual void Play() = 0;
-  virtual void LoadAnimation(const std::string& sourceFile) = 0;
+  virtual void LoadAnimation(const std::string& source_file) = 0;
 };
 
 class Animator_Color : public Animator {
-  void PlayAnimation();
-  public:
+  void PlayAnimation(std::atomic<bool>& running);
+ public:
   SDL_Color& color_to_animate;
   Animator_Color(SDL_Color& color) : color_to_animate(color) {}
   void Play();
-  void LoadAnimation(const std::string& sourceFile);
+  void LoadAnimation(const std::string& source_file);
 };
 
 class Animator_Rect : public Animator {
-  void PlayAnimation();
-public:
+  void PlayAnimation(std::atomic<bool>& running);
+ public:
   SDL_Rect& rect_to_animate;
   Animator_Rect(SDL_Rect& rect) : rect_to_animate(rect) {}
 
@@ -49,10 +50,10 @@ public:
 };
 
 class Animator_Brightness : public Animator {
-  void PlayAnimation();
+  void PlayAnimation(std::atomic<bool>& running);
 public:
   void Play();
-  void LoadAnimation(const std::string& sourceFile);
+  void LoadAnimation(const std::string& source_file);
 };
 
 #endif // ANIMATE_HPP

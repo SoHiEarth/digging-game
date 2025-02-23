@@ -8,6 +8,10 @@
 #include <map>
 #include <level.h>
 #include <application.h>
+enum THREAD_STATE {
+  THREAD_STATE_OPEN,
+  THREAD_STATE_TERMINATE
+};
 extern std::map<std::string, std::string> launch_args;
 extern std::map<SDL_Keycode, bool> key_states;
 extern Application* app;
@@ -19,5 +23,5 @@ extern int global_brightness;
 extern Humanoid* current_humanoid;
 extern Player player;
 extern Level level;
-
+extern THREAD_STATE thread_state;
 #endif // BASE_H

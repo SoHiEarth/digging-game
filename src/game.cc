@@ -9,8 +9,8 @@
 #include <cstdlib>
 #include <error.h>
 std::map<SDL_Keycode, bool> key_states, prev_key_states;
-void Application::game_fixed() {
-  while (state == APP_STATE_GAME) {
+void Application::Fixed(std::atomic<bool>& running) {
+  while (running && state == APP_STATE_GAME) {
     player.energy = std::clamp(player.energy, 0.0f, 100.0f);
     if (player_up || player_down || player_left || player_right) {
       player.energy -= 0.01;
@@ -61,21 +61,12 @@ void Application::game_fixed() {
         else hole->rect.x -= player.move_speed / 2;
       }
     }
-    SDL_Delay(1000/60);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
   }
-  return;
 }
 
-void Application::game() {
+void Application::Game() {
   SDL_SetWindowTitle(window, "Holes - Game");
-  if (!level.loaded) {
-    level.Load("assets/1.lvl");
-    ResetPlayerStats();
-  }
-  key_states.clear();
-  for (Object* object : level.objects) {
-    object->Start();
-  }
   LoadHoleTexture();
   PreloadStatusBarIcons();
   PreloadPlayerSprite();
@@ -85,6 +76,10 @@ void Application::game() {
   inventoryFont = TTF_OpenFont(current_asset_bundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
   player_up = false, player_down = false, player_left = false, player_right = false;
   if (player.move_speed == 0) player.move_speed = _PLAYER_MOVE_SPEED;
+  if (!level.loaded) {
+    level.Load("assets/1.lvl");
+    ResetPlayerStats();
+  } 
   while (state == APP_STATE_GAME) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -97,7 +92,6 @@ void Application::game() {
         key_states[event.key.keysym.sym] = false;
       }
     }
-
     if (key_states[SDLK_ESCAPE]) state = APP_STATE_QUIT;
     player_up = key_states[SDLK_w];
     player_down = key_states[SDLK_s];
@@ -159,5 +153,6 @@ void Application::game() {
     if (level.HasNextFramePath()) {
       level.LoadNextFramePath();
     }
+    std::cout << "Frame end.\r";
   }
 }

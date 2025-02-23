@@ -4,7 +4,7 @@
 int currentSelectedMenuItem = 0,
     window_width = 800,
     window_height = 600;
-void Application::mainMenu() {
+void Application::MainMenu() {
   SDL_SetWindowTitle(window, "Holes - Main Menu");
   TTF_Font* hintFont = ResLoad::LoadFont(current_asset_bundle.FONT_MENU_HINT_PATH, 20);
   SDL_Rect background_rect = { 0, 0, 800, 600};

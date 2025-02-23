@@ -4,6 +4,7 @@
 #include <SDL_image.h>
 #include <stdexcept>
 #include <iostream>
+#include "safe_thread.h"
 #include <assetbundleloader.h>
 #include <base.h>
 #include <resload.h>
@@ -33,28 +34,30 @@ void Application::Run() {
     std::cout << "Entering application state " << state << "\n";
     switch (state) {
       case APP_STATE_MAIN_MENU:
-        mainMenu();
+        MainMenu();
         break;
       case APP_STATE_GAME:
-        game();
+        Game();
         break;
       case APP_STATE_DIALOUGE:
-        dialouge();
+        Dialouge();
         break;
       case APP_STATE_QUIT:
         running = false;
         break;
       case APP_STATE_GAME_OVER:
-        gameOver();
+        GameOver();
         break;
       default:
         throw std::runtime_error("Unknown Application State encountered!");
         break;
     }
   }
+  level.Unload();
 }
 
 void Application::Quit() {
+  CloseAllThreads();
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   IMG_Quit();

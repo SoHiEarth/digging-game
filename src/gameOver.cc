@@ -5,7 +5,7 @@ TTF_Font* gameOverFont = nullptr, *gameOverHintFont = nullptr;
 SDL_Texture* gameOverTexture;
 SDL_Texture* gameOverHintTexture;
 SDL_Rect gameOverRect = { 0, 0, 800, 600 }, gameOverHintRect = { 0, 0, 800, 600 };
-void Application::gameOver() {
+void Application::GameOver() {
 
   if (gameOverFont == nullptr) {
     gameOverFont = TTF_OpenFont(current_asset_bundle.FONT_GAMEOVER_PATH.c_str(), 32);

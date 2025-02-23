@@ -21,3 +21,4 @@ std::vector<Humanoid*> humanoidsVec;
 Humanoid* current_humanoid = nullptr;
 Player player;
 Level level;
+THREAD_STATE thread_state = THREAD_STATE_OPEN;

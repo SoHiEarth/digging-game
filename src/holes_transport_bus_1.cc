@@ -30,9 +30,16 @@ void TransportBus_Lv1::Update() {
   //SDL_RenderCopy(renderer, texture, NULL, &rect);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderFillRect(renderer, &rect);
+  // Load next level when the animations are finished.
+  if (!animator_transform->is_playing &&
+      !animator_brightness->is_playing) {
+    std::cout << "[BUS]: Loading next level\n";
+    level.LoadAtNextFrame("./assets/2.lvl");
+  }
 }
 
 void TransportBus_Lv1::Quit() {
   SDL_DestroyTexture(texture);
   delete animator_transform;
+  delete animator_brightness;
 }

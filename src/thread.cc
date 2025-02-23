@@ -2,7 +2,7 @@
 
 std::vector<SafeThread*> open_safe_threads;
 
-bool all_threads_closed() {
+bool AllThreadsClosed() {
   for (SafeThread* thread : open_safe_threads) {
     if (thread->open) {
       return false;
@@ -11,10 +11,23 @@ bool all_threads_closed() {
   return true;
 }
 
-void close_all_threads() {
+void CloseAllThreads() {
   for (SafeThread* thread : open_safe_threads) {
-    if (thread->open) {
-      thread->Close();
+    if (thread == nullptr) {
+      continue;
+    }
+    std::cout << "Closing thread w/ attr " << thread->attribute << "\n";
+    thread->Close();
+    std::cout << "\rClosed thread w/ attr " << thread->attribute << "\n";
+  }
+  open_safe_threads.clear();
+}
+
+bool ThreadIsValid(SafeThread* thread) {
+  for (SafeThread* open_thread : open_safe_threads) {
+    if (open_thread == thread) {
+      return true;
     }
   }
+  return false;
 }

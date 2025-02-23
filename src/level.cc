@@ -2,22 +2,32 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <filesystem>
+#include "base.h"
 #include <humanoid.h>
 #include <interactable.h>
 #include <safe_thread.h>
 #include <application.h>
 void Level::Load(std::string path) {
-  std::cout << "--- Loading level\r";
+  std::cout << "--- Loading level\n";
+  if (!std::filesystem::exists(path)) {
+    std::cerr << "-!- Requested file doesn't exist.\nFile: " << path << "\n";
+    app->state = APP_STATE_QUIT;
+    return;
+  }
   // Close threads that aren't main before loading
-  if (!all_threads_closed()) {
-    close_all_threads();
+  if (!AllThreadsClosed()) {
+    std::cout << "Closing all threads\n";
+    CloseAllThreads();
   }
   if (loaded) {
+    std::cout << "Unloading level\n";
     Unload();
   }
   std::ifstream file(path);
   if (!file.is_open()) {
-    std::cerr << "-!- Failed to open level file: " << path << std::endl;
+    std::cerr << "-!- Failed to open level file: " << path << "\n";
+    app->state = APP_STATE_QUIT;
     return;
   }
   std::string line;
@@ -37,17 +47,26 @@ void Level::Load(std::string path) {
     } else if (object_name == "Transport_Bus_1") {
       objects.push_back(new TransportBus_Lv1());
     } else {
-      std::cerr << "-!- Unknown object name: " << object_name << std::endl;
+      std::cerr << "\n-!- Unknown object name: " << object_name << "\n";
     }
   }
-  std::cout << "\r--- Level loaded\n";
+  std::cout << "--- Level loaded\n";
   loaded = true;
-  // Start fixed update thread
-  fixed_thread.Start([this] { app->game_fixed(); });
+  std::cout << "--- Starting level\n";
+  for (auto& object : objects) {
+    object->Start();
+  }
+  std::cout << "--- Level Started\n";
+  key_states.clear();
+  global_brightness = 100;
+  std::cout << "--- Starting fixed thread\n";
+  fixed_thread.Start(std::bind(&Application::Fixed, app, std::placeholders::_1), "Fixed");
+  std::cout << "--- Level loading complete\n";
 }
 
 void Level::LoadAtNextFrame(std::string path) {
   next_frame_path = path;
+  std::cout << "Level with path " << path << " registered for next update\n";
 }
 
 bool Level::HasNextFramePath() {
@@ -57,14 +76,18 @@ bool Level::HasNextFramePath() {
 void Level::LoadNextFramePath() {
   Load(next_frame_path);
   next_frame_path = "";
+  std::cout << "--- Next frame loaded\n";
 }
 
 void Level::Unload() {
-  close_all_threads();
+  thread_state = THREAD_STATE_TERMINATE;
+  std::cout << "--- Unloading level\n";
+  CloseAllThreads();
   for (Object* object : objects) {
     object->Quit();
     delete object;
   }
   objects.clear();
   loaded = false;
+  thread_state = THREAD_STATE_OPEN;
 }

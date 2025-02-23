@@ -1,6 +1,6 @@
 #ifndef APPLICATION_HPP
 #define APPLICATION_HPP
-
+#include <atomic>
 enum ApplicationState {
   APP_STATE_MAIN_MENU,
   APP_STATE_GAME,
@@ -14,11 +14,11 @@ class Application {
 public:
   ApplicationState state = APP_STATE_QUIT;
   void Init();
-  void mainMenu();
-  void game_fixed();
-  void game();
-  void dialouge();
-  void gameOver();
+  void MainMenu();
+  void Game();
+  void Fixed(std::atomic<bool>& running);
+  void Dialouge();
+  void GameOver();
   void Run();
   void Quit();
 };
