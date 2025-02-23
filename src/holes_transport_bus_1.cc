@@ -27,9 +27,7 @@ void TransportBus_Lv1::Update() {
   player_right = false;
   player.rect.x = rect.x + (rect.w / 2);
   player.rect.y = rect.y + (rect.h / 2);
-  //SDL_RenderCopy(renderer, texture, NULL, &rect);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-  SDL_RenderFillRect(renderer, &rect);
+  SDL_RenderCopy(renderer, texture, NULL, &rect);
   // Load next level when the animations are finished.
   if (!animator_transform->is_playing &&
       !animator_brightness->is_playing) {
@@ -42,4 +40,5 @@ void TransportBus_Lv1::Quit() {
   SDL_DestroyTexture(texture);
   delete animator_transform;
   delete animator_brightness;
+  ResetPlayerStats();
 }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <object.h>
+#include <camera.h>
 #include <safe_thread.h>
 // A level is a basically a list of objects
 // that are institated in the game world when
@@ -15,6 +16,7 @@ class Level {
  public:
   bool loaded = false;
   ST fixed_thread;
+  Camera camera;
   std::vector<Object*> objects;
   void LoadAtNextFrame(std::string path); // For calling Load while updating.
                         // This is to avoid loading in the middle of a frame,

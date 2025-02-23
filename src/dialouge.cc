@@ -8,11 +8,14 @@
 #include <config.h>
 #include <humanoid.h>
 #include <assetbundleloader.h>
-
+TTF_Font* font, *topFont;
 void Application::Dialouge() {
+  if (current_humanoid == nullptr) {
+    state = APP_STATE_GAME;
+  }
   int currentDialougeIndex = 0;
-  TTF_Font* font = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_DIALOUGE_PATH.c_str(), 24);
-  TTF_Font* topFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_DIALOUGE_NAME_PATH.c_str(), 18);
+  font = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_DIALOUGE_PATH.c_str(), 24);
+  topFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_DIALOUGE_NAME_PATH.c_str(), 18);
   auto humanoid_texture_data = ResLoad::LoadImage(current_humanoid->texture_path);
   current_humanoid->texture = humanoid_texture_data.texture;
 
@@ -25,7 +28,7 @@ void Application::Dialouge() {
     dialouge_rect.h + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2
   };
   
-  auto character_name_data = ResLoad::RenderText(topFont, current_humanoid->name);
+  ResLoad::TextureData character_name_data = ResLoad::RenderText(topFont, current_humanoid->name);
   SDL_Texture* character_name_texture = character_name_data.texture;
   SDL_Rect character_name_rect = {0, 0, 0, 0}, character_name_bg_rect = {0, 0, 0, 0};
   SDL_Texture* dialouge_texture = nullptr;
@@ -44,7 +47,7 @@ void Application::Dialouge() {
     }
     if (currentDialougeIndex == current_humanoid->messages.size()) {
       std::cout << "Reached end of dialouge queue\n";
-      break;
+      state = APP_STATE_GAME;
     }
     character_name_rect.x = dialouge_rect.x + 5;
     character_name_rect.y = dialouge_rect.y - (character_name_rect.h * 0.5);
@@ -86,6 +89,7 @@ void Application::Dialouge() {
   }
   
   std::cout << "Unloading assets\n";
+  TTF_CloseFont(topFont);
   TTF_CloseFont(font);
   state = APP_STATE_GAME;
 }

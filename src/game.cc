@@ -118,6 +118,7 @@ void Application::Game() {
     for (Object* object : level.objects) {
       object->Update();
     }
+    level.camera.Render();
     for (Hole* hole : holes_vector) {
       RenderHole(*hole);
     }
