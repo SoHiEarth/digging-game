@@ -13,6 +13,7 @@ class Level {
   bool loaded = false;
   std::vector<Object*> objects;
   void Load(std::string path);
+  void Unload();
 };
 
 #endif // LEVEL_H

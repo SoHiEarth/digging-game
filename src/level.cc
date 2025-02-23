@@ -6,6 +6,9 @@
 #include <interactable.h>
 void Level::Load(std::string path) {
   std::cout << "--- Loading level\r";
+  if (loaded) {
+    Unload();
+  }
   std::ifstream file(path);
   if (!file.is_open()) {
     std::cerr << "-!- Failed to open level file: " << path << std::endl;
@@ -33,4 +36,13 @@ void Level::Load(std::string path) {
   }
   std::cout << "\r--- Level loaded\n";
   loaded = true;
+}
+
+void Level::Unload() {
+  for (Object* object : objects) {
+    object->Quit();
+    delete object;
+  }
+  objects.clear();
+  loaded = false;
 }

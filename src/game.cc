@@ -77,7 +77,7 @@ void Application::game() {
   }
   LoadHoleTexture();
   PreloadStatusBarIcons();
-  PreloadPlayerSprite(); 
+  PreloadPlayerSprite();
   PreloadMapTexture();
   func_button_pressed = false;
   talk_button_pressed = false;
@@ -92,7 +92,7 @@ void Application::game() {
       }
       if (event.type == SDL_KEYDOWN) {
         key_states[event.key.keysym.sym] = true;
-      } 
+      }
       if (event.type == SDL_KEYUP) {
         key_states[event.key.keysym.sym] = false;
       }
