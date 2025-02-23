@@ -1,7 +1,9 @@
 #include <error.h>
 
 #include <Cocoa/Cocoa.h>
+#include <stdio.h>
 void errorWindow(const char* message) {
+  printf("Error: %s\n", message);
   @autoreleasepool {
     // Check if app is running in a GUI session
     if (!NSApp) {

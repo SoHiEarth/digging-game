@@ -19,7 +19,8 @@ class SafeThread {
     open = true;
   }
   void Close() {
-    thread.join();
+    if (thread.joinable())
+      thread.join();
     open = false;
   }
 };
