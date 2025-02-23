@@ -13,7 +13,7 @@ TransportBus_Lv1::TransportBus_Lv1() {
 }
 
 void TransportBus_Lv1::Start() {
-  texture = ResLoad::LoadImage("assets/transport_bus_1.png").texture;
+  texture = ResLoad::LoadImage("assets/transport_bus_1.png");
   animator_transform->LoadAnimation("assets/transport_bus_1.anim");
   animator_brightness->LoadAnimation("assets/transport_1_brightness.anim");
   animator_transform->Play();

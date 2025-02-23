@@ -23,6 +23,10 @@ struct Sir : public Humanoid {
   Sir();
 };
 
+struct Pendanski : public Humanoid {
+  Pendanski();
+};
+
 struct JailGuard : public Humanoid {
   JailGuard();
 };

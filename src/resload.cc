@@ -14,7 +14,7 @@ void ResLoad::Internal::default_logger(std::string message) {
   std::cout << "[RESLOAD]: " << message << std::endl;
 }
 std::function<void(std::string)> ResLoad::Internal::log = std::bind(ResLoad::Internal::default_logger, std::placeholders::_1);
-std::map<std::string, ResLoad::TextureData> ResLoad::Internal::image_cache;
+std::map<std::string, SDL_Texture*> ResLoad::Internal::image_cache;
 std::map<std::string, TTF_Font*> ResLoad::Internal::font_cache;
 SDL_Renderer* ResLoad::Internal::renderer;
 
@@ -33,13 +33,6 @@ void ResLoad::SetLogger(std::function<void(std::string)> logger) {
   ResLoad::Internal::log = std::bind(logger, std::placeholders::_1);
 }
 
-void ResLoad::DestroyData(ResLoad::TextureData data) {
-  SDL_DestroyTexture(data.texture);
-  if (Internal::image_cache.find(data.path) != Internal::image_cache.end()) {
-    Internal::image_cache.erase(data.path);
-  }
-}
-
 RESLOAD_API ResLoad::LoadImage(const std::string &path, bool fatal) {
   if (ResLoad::Internal::CheckState() != 0) {
     ResLoad::Internal::log("Check for proper init failed.");
@@ -53,27 +46,20 @@ RESLOAD_API ResLoad::LoadImage(const std::string &path, bool fatal) {
       throw std::runtime_error("[RESLOAD] Image doesn't exist. Path: " + path);
     }
   }
-  ResLoad::TextureData texture_data = {};
-  texture_data.path = path;
-  texture_data.texture = IMG_LoadTexture(ResLoad::Internal::renderer,
+  SDL_Texture* texture;
+  texture = IMG_LoadTexture(ResLoad::Internal::renderer,
       path.c_str());
-  if (texture_data.texture == nullptr) {
+  if (texture == nullptr) {
     ResLoad::Internal::log("Failed to load image. SDL: " + std::string(IMG_GetError()));
     if (fatal) {
       throw std::runtime_error("[RESLOAD] Failed to load image.\nPath: " + path + "\nSDL: " + std::string(IMG_GetError()));
     }
   }
-  if (SDL_QueryTexture(texture_data.texture,
-    NULL,
-    NULL,
-    &texture_data.w,
-    &texture_data.h) != 0) {
-    ResLoad::Internal::log("Failed to query image.\nPath: " + path + "\nSDL: " + std::string(IMG_GetError()));
-  }
-  return texture_data;
+  return texture;
 }
 
 TTF_Font* ResLoad::LoadFont(const std::string &path, int size, bool fatal) {
+  ResLoad::Internal::log("Loading Font");
   if (ResLoad::Internal::CheckState() != 0) {
     ResLoad::Internal::log("Check for proper init failed.");
     if (fatal) {
@@ -97,7 +83,18 @@ TTF_Font* ResLoad::LoadFont(const std::string &path, int size, bool fatal) {
     }
   }
   ResLoad::Internal::font_cache[path] = font;
+  ResLoad::Internal::log("Font loaded");
   return font;
+}
+
+void ResLoad::FreeFont(TTF_Font* font) {
+  for (auto it = ResLoad::Internal::font_cache.begin(); it != ResLoad::Internal::font_cache.end(); it++) {
+    if (it->second == font) {
+      ResLoad::Internal::font_cache.erase(it);
+      break;
+    }
+  }
+  TTF_CloseFont(font);
 }
 
 RESLOAD_API ResLoad::RenderText(TTF_Font *font, const std::string &text, SDL_Color color, int wrap, bool fatal) {
@@ -106,7 +103,7 @@ RESLOAD_API ResLoad::RenderText(TTF_Font *font, const std::string &text, SDL_Col
     if (fatal) {
       throw std::runtime_error("[RESLOAD] Check for proper init failed.");
     }
-    return {nullptr, 0, 0};
+    return nullptr;
   }
   SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), color, wrap);
   if (surface == nullptr) {
@@ -114,7 +111,7 @@ RESLOAD_API ResLoad::RenderText(TTF_Font *font, const std::string &text, SDL_Col
     if (fatal) {
       throw std::runtime_error("[RESLOAD] Failed to render text.\nSDL: " + std::string(TTF_GetError()));
     }
-    return {nullptr, 0, 0};
+    return nullptr;
   }
   SDL_Texture* texture = SDL_CreateTextureFromSurface(ResLoad::Internal::renderer, surface);
   if (texture == nullptr) {
@@ -122,10 +119,8 @@ RESLOAD_API ResLoad::RenderText(TTF_Font *font, const std::string &text, SDL_Col
     if (fatal) {
       throw std::runtime_error("[RESLOAD] Failed to create texture from surface.\nSDL: " + std::string(SDL_GetError()));
     }
-    return {nullptr, 0, 0};
+    return nullptr;
   }
   SDL_FreeSurface(surface);
-  int w, h;
-  SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-  return {texture, w, h};
+  return texture;
 }

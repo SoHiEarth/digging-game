@@ -1,3 +1,4 @@
+#include <SDL_render.h>
 #include <hole.h>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -14,10 +15,8 @@ void LoadHoleTexture() {
   if (hole_texture != nullptr) {
     SDL_DestroyTexture(hole_texture);
   }
-  auto hole_data = ResLoad::LoadImage(current_asset_bundle.HOLE_UNIFIED_TEXTURE_PATH);
-  hole_texture = hole_data.texture;
-  hole_texture_rect.w = hole_data.w;
-  hole_texture_rect.h = hole_data.h;
+  hole_texture = ResLoad::LoadImage(current_asset_bundle.HOLE_UNIFIED_TEXTURE_PATH);
+  SDL_QueryTexture(hole_texture, NULL, NULL, &hole_texture_rect.w, &hole_texture_rect.h);
 }
 
 vec2 hole_progress_bar = {100, 10};

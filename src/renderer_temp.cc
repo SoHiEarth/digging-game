@@ -6,7 +6,6 @@ TTF_Font *widgetFont = nullptr, *inventoryFont = nullptr;
 SDL_Texture* mapTexture_Part_Hill = nullptr;
 SDL_Rect mapRect = { 0, 0, 3200, 2400 };
 bool player_up = false, player_down = false, player_left = false, player_right = false;
-SDL_Rect playerRect = { 384, 284, 64, 64 }, itemRect = { 415, 300, 35, 35 };
 SDL_Rect chargeRectBg = { 400 - 50 + 16, 300 - 50, 100, 10 };
  
 WaterRefillStation* water_refill_station = nullptr;

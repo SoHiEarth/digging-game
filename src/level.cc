@@ -8,6 +8,7 @@
 #include <interactable.h>
 #include <safe_thread.h>
 #include <application.h>
+#include <holes_2_manager.h>
 void Level::Load(std::string path) {
   std::cout << "--- Loading level\n";
   if (!std::filesystem::exists(path)) {
@@ -46,6 +47,10 @@ void Level::Load(std::string path) {
       objects.push_back(new WaterRefillStation());
     } else if (object_name == "Transport_Bus_1") {
       objects.push_back(new TransportBus_Lv1());
+    } else if (object_name == "Holes_2_Manager") {
+      objects.push_back(new Holes_2_Manager());
+    } else if (object_name == "Pen") {
+      objects.push_back(new Pendanski());
     } else {
       std::cerr << "\n-!- Unknown object name: " << object_name << "\n";
     }

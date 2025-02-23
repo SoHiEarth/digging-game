@@ -10,7 +10,7 @@ Humanoid::~Humanoid() {
 }
 
 void Humanoid::Start() {
-  texture = ResLoad::LoadImage(texture_path).texture;
+  texture = ResLoad::LoadImage(texture_path);
 }
 
 void Humanoid::Update() {
@@ -37,10 +37,11 @@ void Humanoid::Update() {
   // Talking if player is in 
   // 10 pixel radius of the humanoid
   if (SDL_HasIntersection(&player.rect, &rect) == SDL_TRUE) {
-    auto control_data = ResLoad::RenderText(inventoryFont, "Press [F] to speak");
-    SDL_Rect talkControlRect = { rect.x, rect.y - 30, control_data.w, control_data.h};
-    SDL_RenderCopy(renderer, control_data.texture, NULL, &talkControlRect);
-    SDL_DestroyTexture(control_data.texture);
+    auto control_texture = ResLoad::RenderText(inventoryFont, "Press [F] to speak");
+    SDL_Rect talkControlRect = { rect.x, rect.y - 30};
+    SDL_QueryTexture(control_texture, NULL, NULL, &talkControlRect.w, &talkControlRect.h);
+    SDL_RenderCopy(renderer, control_texture, NULL, &talkControlRect);
+    SDL_DestroyTexture(control_texture);
     if (talk_button_pressed) {
       current_humanoid = this;
       app->state = APP_STATE_DIALOUGE;

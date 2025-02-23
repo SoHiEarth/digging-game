@@ -3,7 +3,7 @@
 
 #include <SDL.h>
 struct Object {
-  SDL_Rect rect;
+  SDL_Rect rect = { 0, 0, 64, 64 };
   SDL_Texture* texture;
   virtual void Start() {}
   virtual void Update() {}

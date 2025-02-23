@@ -18,7 +18,6 @@ extern TTF_Font *widgetFont, *inventoryFont;
 extern SDL_Texture* mapTexture_Part_Hill;
 extern SDL_Rect mapRect;
 extern bool player_up, player_down, player_left, player_right;
-extern SDL_Rect playerRect, itemRect;
 extern SDL_Rect chargeRectBg;
  
 extern WaterRefillStation* water_refill_station;

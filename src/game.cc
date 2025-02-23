@@ -21,7 +21,6 @@ void Application::Fixed(std::atomic<bool>& running) {
     if (player.thirst > 90 && player.energy > 90 && player.health < 100) {
       player.health += 0.05;
     }
-    SDL_QueryTexture(player.texture, NULL, NULL, &player.rect.w, &player.rect.h);
     player.rect.x = std::clamp(player.rect.x, 0, 800 - 64);
     player.rect.y = std::clamp(player.rect.y, 0, 600 - 64);
     if (player_up) {
@@ -61,7 +60,7 @@ void Application::Fixed(std::atomic<bool>& running) {
         else hole->rect.x -= player.move_speed / 2;
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000/60));
   }
 }
 
@@ -73,13 +72,14 @@ void Application::Game() {
   PreloadMapTexture();
   func_button_pressed = false;
   talk_button_pressed = false;
+  key_states.clear();
   inventoryFont = TTF_OpenFont(current_asset_bundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
   player_up = false, player_down = false, player_left = false, player_right = false;
   if (player.move_speed == 0) player.move_speed = _PLAYER_MOVE_SPEED;
   if (!level.loaded) {
     level.Load("assets/1.lvl");
     ResetPlayerStats();
-  } 
+  }
   while (state == APP_STATE_GAME) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -119,15 +119,18 @@ void Application::Game() {
       object->Update();
     }
     level.camera.Render();
-    for (Hole* hole : holes_vector) {
-      RenderHole(*hole);
-    }
-    SDL_RenderCopy(renderer, player.texture, NULL, &playerRect);
+    SDL_RenderCopy(renderer, player.texture, NULL, &player.rect);
     if (!player.inventory.empty()) {
       if (player.inventory[player.current_item]->sprite == nullptr) {
         player.inventory[player.current_item]->sprite = IMG_LoadTexture(renderer, player.inventory[player.current_item]->itemSpritePath.c_str());
       }
-      SDL_RenderCopy(renderer, player.inventory[player.current_item]->sprite, NULL, &itemRect);
+      SDL_Rect item_rect = {
+        player.rect.x + 5,
+        player.rect.y + 10,
+        player.rect.w - 10,
+        player.rect.h - 15
+      };
+      SDL_RenderCopy(renderer, player.inventory[player.current_item]->sprite, NULL, &item_rect);
     }
     RenderPlayerStats();
     RenderInventory();
