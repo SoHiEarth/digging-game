@@ -6,6 +6,7 @@ void errorWindow(const char* message) {
 }
 #else
 #ifdef __linux__
+#include <iostream>
 void errorWindow(const char* message) {
   std::cerr << "[MAIN] [Error] " << message << "\n";
 }
