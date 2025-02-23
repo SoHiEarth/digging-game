@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <vector>
+#include <functional>
 #define ST SafeThread
 class SafeThread;
 extern std::vector<SafeThread*> open_safe_threads;
