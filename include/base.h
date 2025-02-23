@@ -16,6 +16,7 @@ extern std::map<std::string, std::string> launch_args;
 extern std::map<SDL_Keycode, bool> key_states;
 extern Application* app;
 extern SDL_Window* window;
+extern int window_width, window_height;
 extern SDL_Renderer* renderer;
 extern SDL_Event event;
 extern bool running;

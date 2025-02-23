@@ -11,6 +11,7 @@
 #include <level.h>
 std::map<std::string, std::string> launch_args;
 SDL_Window* window = nullptr;
+int window_width = 800, window_height = 600;
 SDL_Renderer* renderer = nullptr;
 SDL_Event event;
 bool running = false;

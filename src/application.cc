@@ -19,7 +19,7 @@ void Application::Init() {
   if (IMG_Init(IMG_INIT_PNG) == 0) {
     throw std::runtime_error("IMG_Init failed");
   }
-  window = SDL_CreateWindow(current_asset_bundle.APP_TITLE.c_str(), 0, 25, 800, 600, SDL_WINDOW_SHOWN);
+  window = SDL_CreateWindow(current_asset_bundle.APP_TITLE.c_str(), 0, 25, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
   if (window == NULL) throw std::runtime_error("Error creating window");
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (renderer == NULL) throw std::runtime_error("Error creating renderer");

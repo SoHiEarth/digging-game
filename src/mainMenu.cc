@@ -1,13 +1,11 @@
 #include <renderer_temp.h>
 #include <application.h>
 #include <resload.h>
-int currentSelectedMenuItem = 0,
-    window_width = 800,
-    window_height = 600;
+int currentSelectedMenuItem = 0;
 void Application::MainMenu() {
   SDL_SetWindowTitle(window, "Holes - Main Menu");
   TTF_Font* hintFont = ResLoad::LoadFont(current_asset_bundle.FONT_MENU_HINT_PATH, 20);
-  SDL_Rect background_rect = { 0, 0, 800, 600};
+  SDL_Rect background_rect = { 0, 0, window_width, window_height };
   SDL_Texture* background_texture = ResLoad::LoadImage(current_asset_bundle.MENU_BACKGROUND_PATH);
   SDL_Texture* title_texture = ResLoad::LoadImage(current_asset_bundle.MENU_TITLE_PATH),
     *menu_start = ResLoad::RenderText(hintFont, "Start Game", {0, 0, 0, 255}),
@@ -15,8 +13,8 @@ void Application::MainMenu() {
   int menu_start_w, menu_start_h, menu_quit_w, menu_quit_h;
   SDL_QueryTexture(menu_start, NULL, NULL, &menu_start_w, &menu_start_h);
   SDL_QueryTexture(menu_quit, NULL, NULL, &menu_quit_w, &menu_quit_h);
-  SDL_Rect menu_start_rect = { 400 - menu_start_w / 2, 300, menu_start_w, menu_start_h },
-    menu_quit_rect = { 400 - menu_quit_w / 2, 350, menu_quit_w, menu_quit_h },
+  SDL_Rect menu_start_rect = { window_width / 2 - menu_start_w / 2, window_height / 2, menu_start_w, menu_start_h },
+    menu_quit_rect = { window_width / 2 - menu_quit_w / 2, 350, menu_quit_w, menu_quit_h },
     menu_start_bg_rect = { menu_start_rect.x - 10, menu_start_rect.y - 10, menu_start_rect.w + 20, menu_start_rect.h + 20 },
     menu_quit_bg_rect = { menu_quit_rect.x - 10, menu_quit_rect.y - 10, menu_quit_rect.w + 20, menu_quit_rect.h + 20 },
     menu_start_selected_rect = { menu_start_bg_rect.x, menu_start_bg_rect.y, menu_start_bg_rect.w + 50, menu_start_bg_rect.h + 10 },
@@ -26,6 +24,12 @@ void Application::MainMenu() {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
         state = APP_STATE_QUIT;
+      }
+      if (event.type == SDL_WINDOWEVENT) {
+        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+          SDL_GetWindowSize(window, &window_width, &window_height);
+          background_rect = { 0, 0, window_width, window_height };
+        }
       }
       if (event.type == SDL_KEYDOWN) {
         switch (event.key.keysym.sym) {
@@ -60,7 +64,7 @@ void Application::MainMenu() {
     vec2 mousePos = {0, 0};
     SDL_GetMouseState(&mousePos.x, &mousePos.y);
     SDL_GetWindowSize(window, &window_width, &window_height);
-    SDL_Rect title_rect = {window_width/2 - 384, 80, 384, 200};
+    SDL_Rect title_rect = {window_width / 2 - 384, 80, 384, 200};
     background_rect = { 0, 0, window_width, window_height };
     menu_start_rect = {title_rect.x + 30, window_height/2, menu_start_w, menu_start_h};
     menu_quit_rect = {title_rect.x + 30, menu_start_rect.y + menu_start_h + menu_quit_h, menu_quit_w, menu_quit_h};

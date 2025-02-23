@@ -58,6 +58,16 @@ RESLOAD_API ResLoad::LoadImage(const std::string &path, bool fatal) {
   return texture;
 }
 
+void ResLoad::FreeImage(SDL_Texture* texture) {
+  for (auto it = ResLoad::Internal::image_cache.begin(); it != ResLoad::Internal::image_cache.end(); it++) {
+    if (it->second == texture) {
+      ResLoad::Internal::image_cache.erase(it);
+      break;
+    }
+  }
+  SDL_DestroyTexture(texture);
+}
+
 TTF_Font* ResLoad::LoadFont(const std::string &path, int size, bool fatal) {
   ResLoad::Internal::log("Loading Font");
   if (ResLoad::Internal::CheckState() != 0) {

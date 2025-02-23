@@ -8,6 +8,9 @@
 #include <humanoid.h>
 #include <cstdlib>
 #include <error.h>
+#include <iostream>
+#include <level.h>
+#include <resload.h>
 std::map<SDL_Keycode, bool> key_states, prev_key_states;
 void Application::Fixed(std::atomic<bool>& running) {
   while (running && state == APP_STATE_GAME) {
@@ -21,8 +24,8 @@ void Application::Fixed(std::atomic<bool>& running) {
     if (player.thirst > 90 && player.energy > 90 && player.health < 100) {
       player.health += 0.05;
     }
-    player.rect.x = std::clamp(player.rect.x, 0, 800 - 64);
-    player.rect.y = std::clamp(player.rect.y, 0, 600 - 64);
+    player.rect.x = std::clamp(player.rect.x, 0, window_width - 64);
+    player.rect.y = std::clamp(player.rect.y, 0, window_height - 64);
     if (player_up) {
       if (player.energy > 0) mapRect.y += player.move_speed;
       else mapRect.y += player.move_speed / 2;
@@ -67,19 +70,20 @@ void Application::Fixed(std::atomic<bool>& running) {
 void Application::Game() {
   SDL_SetWindowTitle(window, "Holes - Game");
   LoadHoleTexture();
-  PreloadStatusBarIcons();
-  PreloadPlayerSprite();
+  LoadStatusBarIcons();
+  LoadPlayerSprite();
   PreloadMapTexture();
   func_button_pressed = false;
   talk_button_pressed = false;
   key_states.clear();
-  inventoryFont = TTF_OpenFont(current_asset_bundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
+  inventoryFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
   player_up = false, player_down = false, player_left = false, player_right = false;
   if (player.move_speed == 0) player.move_speed = _PLAYER_MOVE_SPEED;
   if (!level.loaded) {
     level.Load("assets/1.lvl");
     ResetPlayerStats();
   }
+  level.fixed_thread.Start(std::bind(&Application::Fixed, this, std::placeholders::_1), "Fixed");
   while (state == APP_STATE_GAME) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -90,6 +94,13 @@ void Application::Game() {
       }
       if (event.type == SDL_KEYUP) {
         key_states[event.key.keysym.sym] = false;
+      }
+      if (event.type == SDL_WINDOWEVENT) {
+        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+          SDL_GetWindowSize(window, &window_width, &window_height);
+          player.rect.x = (window_width - player.rect.w) / 2;
+          player.rect.y = (window_height - player.rect.h) / 2;
+        }
       }
     }
     if (key_states[SDLK_ESCAPE]) state = APP_STATE_QUIT;
@@ -114,7 +125,7 @@ void Application::Game() {
     SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_RenderCopy(renderer, mapTexture_Part_Hill, NULL, &mapRect);
+    SDL_RenderCopy(renderer, map_texture_Part_Hill, NULL, &mapRect);
     for (Object* object : level.objects) {
       object->Update();
     }

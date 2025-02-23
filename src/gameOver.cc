@@ -1,27 +1,18 @@
 #include <application.h>
-#include <renderer_temp.h>
-
-TTF_Font* gameOverFont = nullptr, *gameOverHintFont = nullptr;
-SDL_Texture* gameOverTexture;
-SDL_Texture* gameOverHintTexture;
-SDL_Rect gameOverRect = { 0, 0, 800, 600 }, gameOverHintRect = { 0, 0, 800, 600 };
+#include <base.h>
+#include <resload.h>
 void Application::GameOver() {
-
-  if (gameOverFont == nullptr) {
-    gameOverFont = TTF_OpenFont(current_asset_bundle.FONT_GAMEOVER_PATH.c_str(), 32);
-    if (gameOverFont == NULL) throw std::runtime_error("Error loading game over font");
-  }
-  if (gameOverHintFont == nullptr) {
-    gameOverHintFont = TTF_OpenFont(current_asset_bundle.FONT_GAMEOVER_HINT_PATH.c_str(), 16);
-    if (gameOverHintFont == NULL) throw std::runtime_error("Error loading game over hint font");
-  }
-  
-  gameOverTexture = renderText("Game Over", gameOverFont, {255, 0, 0, 255});
+  TTF_Font* gameOverFont = nullptr, *gameOverHintFont = nullptr;
+  SDL_Texture *gameOverTexture = nullptr, *gameOverHintTexture = nullptr;
+  SDL_Rect gameOverRect = { 0, 0, window_width, window_height }, gameOverHintRect = gameOverRect;
+  gameOverFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAMEOVER_PATH, 32);
+  gameOverHintFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAMEOVER_HINT_PATH, 16);
+  gameOverTexture = ResLoad::RenderText(gameOverFont, "Game Over", {255, 0, 0, 255});
   SDL_QueryTexture(gameOverTexture, NULL, NULL, &gameOverRect.w, &gameOverRect.h);
-  gameOverRect = { (800 - gameOverRect.w) / 2, (600 - gameOverRect.h) / 2, gameOverRect.w, gameOverRect.h };
-  gameOverHintTexture = renderText("[Press Any Key to Continue]", gameOverHintFont, {255, 255, 255, 255});
+  gameOverRect = { (window_width - gameOverRect.w) / 2, (window_height - gameOverRect.h) / 2, gameOverRect.w, gameOverRect.h };
+  gameOverHintTexture = ResLoad::RenderText(gameOverHintFont, "[Press Any Key to Continue]", {255, 255, 255, 255});
   SDL_QueryTexture(gameOverHintTexture, NULL, NULL, &gameOverHintRect.w, &gameOverHintRect.h);
-  gameOverHintRect = { (800 - gameOverHintRect.w) / 2, 600 - gameOverHintRect.h - 10, gameOverHintRect.w, gameOverHintRect.h };
+  gameOverHintRect = { (window_width - gameOverHintRect.w) / 2, window_height - gameOverHintRect.h - 10, gameOverHintRect.w, gameOverHintRect.h };
   
   while (state == APP_STATE_GAME_OVER) {
     while (SDL_PollEvent(&event)) {
@@ -38,6 +29,16 @@ void Application::GameOver() {
             break;
         }
       }
+      if (event.type == SDL_MOUSEBUTTONDOWN) {
+        state = APP_STATE_MAIN_MENU;
+      }
+      if (event.type == SDL_WINDOWEVENT) {
+        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+          SDL_GetWindowSize(window, &window_width, &window_height);
+          gameOverRect = { (window_width - gameOverRect.w) / 2, (window_height - gameOverRect.h) / 2, gameOverRect.w, gameOverRect.h };
+          gameOverHintRect = { (window_width - gameOverHintRect.w) / 2, window_height - gameOverHintRect.h - 10, gameOverHintRect.w, gameOverHintRect.h };
+        }
+      }
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -47,6 +48,6 @@ void Application::GameOver() {
   }
   SDL_DestroyTexture(gameOverTexture);
   SDL_DestroyTexture(gameOverHintTexture);
-  TTF_CloseFont(gameOverFont);
-  TTF_CloseFont(gameOverHintFont);
+  ResLoad::FreeFont(gameOverFont);
+  ResLoad::FreeFont(gameOverHintFont);
 }

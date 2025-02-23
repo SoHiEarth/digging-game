@@ -17,6 +17,7 @@ namespace ResLoad {
   /* Param: Fatal: Should the function throw an exception if 
      an error occured. */
   RESLOAD_API LoadImage(const std::string& path = "", bool fatal = false);
+  void FreeImage(SDL_Texture* texture);
   TTF_Font* LoadFont(const std::string& path = "", int size = 18, bool fatal = false);
   void FreeFont(TTF_Font* font);
   RESLOAD_API RenderText(TTF_Font *font = nullptr, const std::string &text = "", SDL_Color color = {255, 255, 255, 255}, int wrap = 0, bool fatal = false);

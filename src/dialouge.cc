@@ -9,20 +9,20 @@
 #include <humanoid.h>
 #include <assetbundleloader.h>
 #include <algorithm>
-TTF_Font* font, *topFont;
-SDL_Texture* dialouge_texture, *character_name_texture, *control_texture;
-SDL_Rect humanoid_rect = { 100, 50, 600, 450 },
-  dialouge_bg_rect = { 
-    150 - current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS, 
-    450 - current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS, 
-    500 + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2, 
-    100 + current_asset_bundle.DIALOUGE_BG_BORDER_THICKNESS * 2 },
-  dialouge_rect = { 150 + 20, 450 + 20, 0, 0 },
-  name_rect = { 140, 440, 0, 0 },
-  name_bg_rect = { 0, 0, 0, 0 };
+
+SDL_Rect GetBackground(SDL_Rect rect) {
+  return { rect.x - 10, rect.y - 10, rect.w + 20, rect.h + 20 };
+}
 
 void Application::Dialouge() {
+  TTF_Font* font, *topFont;
   int brightness = 255;
+  SDL_Texture* dialouge_texture, *character_name_texture, *control_texture;
+  SDL_GetWindowSize(window, &window_width, &window_height);
+  SDL_Rect humanoid_rect = { 100, 50, window_width - 200, window_height - 100 - 50 },
+    dialouge_rect = { 150, window_height - 150, 0, 0 },
+    dialouge_bg_rect = { GetBackground(dialouge_rect).x - 5, GetBackground(dialouge_rect).y - 5, 500, 120 },
+    name_rect = { dialouge_rect.x - 30, dialouge_rect.y - 30, 0, 0 };
   std::string current_dialouge_text = "";
   if (current_humanoid == nullptr) {
     state = APP_STATE_GAME;
@@ -36,22 +36,39 @@ void Application::Dialouge() {
   }
   character_name_texture = ResLoad::RenderText(topFont, current_humanoid->name, {255, 255, 255}, 500);
   SDL_QueryTexture(character_name_texture, NULL, NULL, &name_rect.w, &name_rect.h);
-  name_bg_rect = {
-    name_rect.x - 5,
-    name_rect.y - 5,
-    name_rect.w + 10,
-    name_rect.h + 10
-  };
+  SDL_Rect name_bg_rect = GetBackground(name_rect);
 
   control_texture = ResLoad::RenderText(topFont, "Press [SPACE] to continue", {255, 255, 255}, 500);
   int control_w, control_h;
   SDL_QueryTexture(control_texture, NULL, NULL, &control_w, &control_h);
-  SDL_Rect control_rect = { 800 - control_w - 10, 600 - control_h - 10, control_w, control_h };
+  SDL_Rect control_rect = { window_width - control_w - 10, window_height - control_h - 10, control_w, control_h };
+
+  humanoid_rect = { 100, 50, window_width - 200, window_height - 100 };
+  dialouge_rect = { 150, window_height - 150, dialouge_rect.w, dialouge_rect.h };
+  dialouge_bg_rect.y = dialouge_rect.y - 5;
+  dialouge_bg_rect.w = window_width - 290;
+  dialouge_bg_rect.h = 120;
+  name_rect = { dialouge_rect.x - 30, dialouge_rect.y - 30, name_rect.w, name_rect.h };
+  name_bg_rect = GetBackground(name_rect);
+  control_rect = { window_width - control_w - 10, window_height - control_h - 10, control_w, control_h };
 
   while (state == APP_STATE_DIALOUGE) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
         state = APP_STATE_QUIT;
+      }
+      if (event.type == SDL_WINDOWEVENT) {
+        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+          SDL_GetWindowSize(window, &window_width, &window_height);
+          humanoid_rect = { 100, 50, window_width - 200, window_height - 100 };
+          dialouge_rect = { 150, window_height - 150, dialouge_rect.w, dialouge_rect.h };
+          dialouge_bg_rect.y = dialouge_rect.y - 5;
+          dialouge_bg_rect.w = window_width - 290;
+          dialouge_bg_rect.h = 120;
+          name_rect = { dialouge_rect.x - 30, dialouge_rect.y - 30, name_rect.w, name_rect.h };
+          name_bg_rect = GetBackground(name_rect);
+          control_rect = { window_width - control_w - 10, window_height - control_h - 10, control_w, control_h };
+        }
       }
       if (event.type == SDL_KEYDOWN) {    
         if (event.key.keysym.sym == SDLK_ESCAPE) {
@@ -71,7 +88,7 @@ void Application::Dialouge() {
       if (current_dialouge_text.size() != current_humanoid->messages[currentDialougeIndex].size()) {
         current_dialouge_text += current_humanoid->messages[currentDialougeIndex][current_dialouge_text.size()];
       }
-      dialouge_texture = ResLoad::RenderText(font, current_dialouge_text, {255, 255, 255}, 500);
+      dialouge_texture = ResLoad::RenderText(font, current_dialouge_text, {255, 255, 255}, window_width - 200);
       SDL_QueryTexture(dialouge_texture, NULL, NULL, &dialouge_rect.w, &dialouge_rect.h);
     }
 

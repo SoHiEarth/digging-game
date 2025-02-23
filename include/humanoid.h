@@ -16,6 +16,7 @@ struct Humanoid : public Object{
   std::string texture_path;
   ~Humanoid();
   void Start() override;
+  void Fixed() override;
   void Update() override;
 };
 

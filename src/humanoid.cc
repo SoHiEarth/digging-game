@@ -13,7 +13,7 @@ void Humanoid::Start() {
   texture = ResLoad::LoadImage(texture_path);
 }
 
-void Humanoid::Update() {
+void Humanoid::Fixed() {
   if (player_up) {
     if (player.energy > 0) rect.y += player.move_speed;
     else rect.y += player.move_speed / 2;
@@ -30,7 +30,10 @@ void Humanoid::Update() {
     if (player.energy > 0) rect.x -= player.move_speed;
     else rect.x -= player.move_speed / 2;
   }
+}
 
+void Humanoid::Update() {
+  
   // Render the humanoid
   SDL_RenderCopy(renderer, texture, NULL, &rect);
 
