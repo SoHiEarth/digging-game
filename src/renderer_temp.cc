@@ -26,15 +26,6 @@ void ResetPlayerStats() {
   player.health = 100;
   player.energy = 100;
   player.thirst = 100;
-  if (!player.inventory.empty()) {
-    for (Item* item : player.inventory) {
-      delete item;
-    }
-  }
-  player.inventory.clear();
-  player.inventory.push_back(new Shovel());
-  player.inventory.push_back(new Food());
-  player.inventory.push_back(new Bottle());
 }
 
 void PreloadMapTexture() {
@@ -50,7 +41,7 @@ void RenderWidget(SDL_Rect anchor, SDL_Texture* icon, int val, int maxVal, SDL_C
   valTexture = ResLoad::RenderText(widgetFont, std::to_string(val), theme);
   SDL_QueryTexture(valTexture, NULL, NULL, &valRect.w, &valRect.h);
   valRect.x = iconRect.x + iconRect.w + 5;
-  valRect.y = iconRect.y + (iconRect.h - valRect.h) * 0.5;
+  valRect.y = iconRect.y + static_cast<int>((iconRect.h - valRect.h) * 0.5);
   barRect = { iconRect.x + 5, iconRect.y + iconRect.h - 1, static_cast<int>((anchor.w - 15) * (static_cast<float>(val) / maxVal)), 2 };
 
   SDL_SetRenderDrawColor(renderer, theme.r, theme.g, theme.b, 50);
@@ -117,6 +108,7 @@ void RenderItem(Item* item, SDL_Rect anchor, int alpha) {
 
 void RenderInventory() {
   SDL_Rect anchorRect = { window_width - 200 - 20, window_height - 100 - 10, 200, 95 };
+  if (player.inventory.empty()) return;
   if (player.current_item - 1 >= 0) inv_prevItem = player.inventory[player.current_item - 1];
   else inv_prevItem = nullptr;
   inv_currItem = player.inventory[player.current_item];

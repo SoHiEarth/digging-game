@@ -16,13 +16,13 @@ void Application::Fixed(std::atomic<bool>& running) {
   while (running && state == APP_STATE_GAME) {
     player.energy = std::clamp(player.energy, 0.0f, 100.0f);
     if (player_up || player_down || player_left || player_right) {
-      player.energy -= 0.01;
+      player.energy -= 0.01f;
     }
-    if (player.thirst <= 0) player.health -= 0.05;
-    else player.thirst -= 0.01;
-    if (player.energy <= 0) player.health -= 0.075;
+    if (player.thirst <= 0) player.health -= 0.05f;
+    else player.thirst -= 0.01f;
+    if (player.energy <= 0) player.health -= 0.075f;
     if (player.thirst > 90 && player.energy > 90 && player.health < 100) {
-      player.health += 0.05;
+      player.health += 0.05f;
     }
     player.rect.x = std::clamp(player.rect.x, 0, window_width - 64);
     player.rect.y = std::clamp(player.rect.y, 0, window_height - 64);
@@ -126,10 +126,13 @@ void Application::Game() {
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_RenderCopy(renderer, map_texture_Part_Hill, NULL, &mapRect);
+    for (Hole* hole : holes_vector) {
+      RenderHole(*hole);
+    }
     for (Object* object : level.objects) {
       object->Update();
     }
-    level.camera.Render();
+    //level.camera.Render();
     SDL_RenderCopy(renderer, player.texture, NULL, &player.rect);
     if (!player.inventory.empty()) {
       if (player.inventory[player.current_item]->sprite == nullptr) {

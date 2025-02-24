@@ -35,7 +35,7 @@ void Animator_Color::LoadAnimation(const std::string& source_file) {
     std::istringstream iss(line);
     std::string token;
     while (iss >> token) {
-      int r, g, b, a;
+      int r = 0, g = 0, b = 0, a = 0;
       if (token == "{rOffset}:") {
         iss >> r;
       }

@@ -17,13 +17,13 @@ class SafeThread {
   std::string attribute = "";
   bool open = false;
   SafeThread(std::function<void(std::atomic<bool>&)> func, std::string attr) {
-    id = open_safe_threads.size();
+    id = static_cast<int>(open_safe_threads.size());
     open_safe_threads.push_back(this);
     Start(func, attr);
     std::cout << "SafeThread " << attribute << " created\n";
   }
   SafeThread() {
-    id = open_safe_threads.size();
+    id = static_cast<int>(open_safe_threads.size());
     open_safe_threads.push_back(this);
     std::cout << "SafeThread " << attribute << " created\n";
   }

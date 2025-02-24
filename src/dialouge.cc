@@ -13,28 +13,30 @@
 SDL_Rect GetBackground(SDL_Rect rect) {
   return { rect.x - 10, rect.y - 10, rect.w + 20, rect.h + 20 };
 }
+Humanoid humanoid;
 
 void Application::Dialouge() {
+  if (current_humanoid == nullptr)
+      state = APP_STATE_GAME;
+  else
+    humanoid = *current_humanoid;
   TTF_Font* font, *topFont;
   int brightness = 255;
-  SDL_Texture* dialouge_texture, *character_name_texture, *control_texture;
+  SDL_Texture* dialouge_texture = nullptr, *character_name_texture = nullptr, *control_texture = nullptr;
   SDL_GetWindowSize(window, &window_width, &window_height);
   SDL_Rect humanoid_rect = { 100, 50, window_width - 200, window_height - 100 - 50 },
     dialouge_rect = { 150, window_height - 150, 0, 0 },
     dialouge_bg_rect = { GetBackground(dialouge_rect).x - 5, GetBackground(dialouge_rect).y - 5, 500, 120 },
     name_rect = { dialouge_rect.x - 30, dialouge_rect.y - 30, 0, 0 };
   std::string current_dialouge_text = "";
-  if (current_humanoid == nullptr) {
-    state = APP_STATE_GAME;
-  }
+  
   int currentDialougeIndex = 0;
   font = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_DIALOUGE_PATH, 24);
   topFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_DIALOUGE_NAME_PATH, 20);
   
-  if (current_humanoid->name == "") {
-    current_humanoid->name = "???";
-  }
-  character_name_texture = ResLoad::RenderText(topFont, current_humanoid->name, {255, 255, 255}, 500);
+  if (humanoid.name.empty())
+    humanoid.name = "???";
+  character_name_texture = ResLoad::RenderText(topFont, humanoid.name, {255, 255, 255}, 500);
   SDL_QueryTexture(character_name_texture, NULL, NULL, &name_rect.w, &name_rect.h);
   SDL_Rect name_bg_rect = GetBackground(name_rect);
 
@@ -78,15 +80,14 @@ void Application::Dialouge() {
         current_dialouge_text = "";
       }
     }
-    if (currentDialougeIndex == current_humanoid->messages.size()) {
+    if (currentDialougeIndex == humanoid.messages.size()) {
       std::cout << "Reached end of dialouge queue\n";
       state = APP_STATE_GAME;
     }
-    // Render the dialogue text
-    if (currentDialougeIndex < current_humanoid->messages.size() || current_dialouge_text.size() != current_humanoid->messages[currentDialougeIndex].size()) {
+    if (currentDialougeIndex < humanoid.messages.size() && current_dialouge_text.size() != humanoid.messages[currentDialougeIndex].size()) {
       SDL_DestroyTexture(dialouge_texture);
-      if (current_dialouge_text.size() != current_humanoid->messages[currentDialougeIndex].size()) {
-        current_dialouge_text += current_humanoid->messages[currentDialougeIndex][current_dialouge_text.size()];
+      if (current_dialouge_text.size() != humanoid.messages[currentDialougeIndex].size()) {
+        current_dialouge_text += humanoid.messages[currentDialougeIndex][std::clamp(static_cast<int>(current_dialouge_text.size()), 0, static_cast<int>(humanoid.messages[currentDialougeIndex].size() - 1))];
       }
       dialouge_texture = ResLoad::RenderText(font, current_dialouge_text, {255, 255, 255}, window_width - 200);
       SDL_QueryTexture(dialouge_texture, NULL, NULL, &dialouge_rect.w, &dialouge_rect.h);
@@ -95,7 +96,7 @@ void Application::Dialouge() {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, current_humanoid->texture, NULL, &humanoid_rect);
+    SDL_RenderCopy(renderer, humanoid.texture, NULL, &humanoid_rect);
     SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
     SDL_RenderFillRect(renderer, &dialouge_bg_rect);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
@@ -113,6 +114,11 @@ void Application::Dialouge() {
     brightness -= 50;
     SDL_RenderPresent(renderer);
     SDL_Delay(100);
+  }
+  std::cout << "Configuring humanoid\n";
+  if (current_humanoid != nullptr) {
+    current_humanoid->interacted = true;
+    current_humanoid->has_critical_update = false;
   }
   
   std::cout << "Unloading assets\n";

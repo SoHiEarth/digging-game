@@ -4,6 +4,7 @@
 #include <renderer_temp.h>
 #include <resload.h>
 TransportBus_Lv1::TransportBus_Lv1() {
+  texture = nullptr;
   rect = {0, 0, 120, 240};
   SDL_GetWindowSize(window, &rect.x, &rect.y);
   rect.x = (rect.x - rect.w) / 2;

@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <safe_thread.h>
-
+#include <atomic>
 struct AnimationFrame {
   int xOffset = 0;
   int yOffset = 0;
@@ -26,6 +26,7 @@ class Animator {
   ST animation_thread;
  public:
   bool is_playing = false;
+  std::atomic<int> play_count_since_start = 0;
   virtual void Play() = 0;
   virtual void LoadAnimation(const std::string& source_file) = 0;
 };
@@ -47,6 +48,7 @@ class Animator_Rect : public Animator {
 
   void Play();
   void LoadAnimation(const std::string& sourceFile);
+  void LoadAnimationByDelta(const std::string& sourceFile);
 };
 
 class Animator_Brightness : public Animator {

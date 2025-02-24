@@ -13,6 +13,7 @@ struct HumanoidDialougeOnTriggerAnim {
 struct Humanoid : public Object{
   std::string name;
   std::vector<std::string> messages;
+  bool interacted = false, has_critical_update = false;
   std::string texture_path;
   ~Humanoid();
   void Start() override;
@@ -25,6 +26,8 @@ struct Sir : public Humanoid {
 };
 
 struct Pendanski : public Humanoid {
+  Animator_Rect* animator_rect;
+  void Update() override;
   Pendanski();
 };
 

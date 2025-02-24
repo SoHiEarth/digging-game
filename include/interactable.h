@@ -10,7 +10,6 @@
 struct MapInteractable : public Object{
   public:
     std::string name = current_asset_bundle.INTERACTABLE_NULL_NAME;
-    SDL_Texture* texture;
     std::string texture_path = current_asset_bundle.INTERACTABLE_NULL_SPRITE_PATH;
     void Update() override;
     void Fixed() override;
