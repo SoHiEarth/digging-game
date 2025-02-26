@@ -9,8 +9,10 @@
 #include <cstdlib>
 #include <error.h>
 #include <iostream>
+#include "objective.h"
 #include <level.h>
 #include <resload.h>
+#include <object.h>
 std::map<SDL_Keycode, bool> key_states, prev_key_states;
 void Application::Fixed(std::atomic<bool>& running) {
   while (running && state == APP_STATE_GAME) {
@@ -148,6 +150,7 @@ void Application::Game() {
     }
     RenderPlayerStats();
     RenderInventory();
+    Holes::RenderObjective();
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * (100 - global_brightness) / 100);
     SDL_RenderFillRect(renderer, NULL);
     // Red tint if hp is low

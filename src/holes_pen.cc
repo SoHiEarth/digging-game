@@ -1,6 +1,7 @@
 #include <humanoid.h>
 #include <renderer_temp.h>
 #include <resload.h>
+#include <objective.h>
 #define CAN_SPEAK interacted && !animator_rect->is_playing
 
 enum PENDANSKI_ITERATION {
@@ -26,10 +27,13 @@ void Pendanski::Update() {
   Humanoid::Update();
   if (CAN_SPEAK && animator_rect->play_count_since_start == 0 && pendanski_iteration == PENDANSKI_FOLLOW) {
     animator_rect->Play();
+    Holes::Objective objective = { "Pendanski", "Follow Pendanski" };
+    Holes::SetCurrentObjective(objective);
   }
   if (CAN_SPEAK && animator_rect->play_count_since_start == 1 && pendanski_iteration == PENDANSKI_FOLLOW) {
     pendanski_iteration = PENDANSKI_WELCOME;
     interacted = false;
+    Holes::UnsetCurrentObjective();
   }
   switch (pendanski_iteration) {
   case PENDANSKI_WELCOME:
