@@ -75,7 +75,6 @@ void Animator_Rect::LoadAnimationByDelta(const std::string& source_file) {
       frame.wOffset = w_step;
       frame.hOffset = h_step;
       frame.timeUntilNextFrame = frame_time;
-      std::cout << "LOG: " << frame.xOffset << " " << frame.yOffset << " " << frame.wOffset << " " << frame.hOffset << " " << frame.timeUntilNextFrame << "\n";
       frames.push_back(frame);
      }
   }

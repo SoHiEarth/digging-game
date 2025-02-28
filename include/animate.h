@@ -7,6 +7,7 @@
 #include <safe_thread.h>
 #include <atomic>
 struct AnimationFrame {
+  float iOffset = 0;
   int xOffset = 0;
   int yOffset = 0;
   int wOffset = 0;
@@ -28,6 +29,9 @@ class Animator {
   bool is_playing = false;
   std::atomic<int> play_count_since_start = 0;
   virtual void Play() = 0;
+  void Halt() {
+    animation_thread.Close();
+  }
   virtual void LoadAnimation(const std::string& source_file) = 0;
 };
 
@@ -38,6 +42,16 @@ class Animator_Color : public Animator {
   Animator_Color(SDL_Color& color) : color_to_animate(color) {}
   void Play();
   void LoadAnimation(const std::string& source_file);
+};
+
+class Animator_Int : public Animator {
+  void PlayAnimation(std::atomic<bool>& running);
+ public:
+  int& int_to_animate;
+  Animator_Int(int& integer) : int_to_animate(integer) {}
+  void Play();
+  void LoadAnimation(const std::string& source_file);
+  void LoadAnimationByDelta(const std::string& source_file);
 };
 
 class Animator_Rect : public Animator {
