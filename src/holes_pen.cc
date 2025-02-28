@@ -2,6 +2,7 @@
 #include <renderer_temp.h>
 #include <resload.h>
 #include <objective.h>
+#include "prompt.h"
 #define CAN_SPEAK interacted && !animator_rect->is_playing
 
 enum PENDANSKI_ITERATION {
@@ -49,7 +50,15 @@ void Pendanski::Update() {
     if (!interacted) break;
     // If the player has interacted with Pendanski, then Pendanski will give the player an item
     player.inventory.push_back(new Shovel());
+    if (player.inventory.back()->sprite == nullptr) {
+      player.inventory.back()->sprite = ResLoad::LoadImage(player.inventory.back()->itemSpritePath);
+    }
+    Holes::PromptPlayerWithIconBox("You got a Shovel!", player.inventory.back()->sprite);
     player.inventory.push_back(new Bottle());
+    if (player.inventory.back()->sprite == nullptr) {
+      player.inventory.back()->sprite = ResLoad::LoadImage(player.inventory.back()->itemSpritePath);
+    }
+    Holes::PromptPlayerWithIconBox("You got a Bottle!", player.inventory.back()->sprite);
     this->messages.clear();
     pendanski_iteration = PENDANSKI_DONE;
     break;

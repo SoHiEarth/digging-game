@@ -23,6 +23,7 @@ struct Humanoid : public Object{
 
 struct Sir : public Humanoid {
   Sir();
+  void Update() override;
 };
 
 struct Pendanski : public Humanoid {

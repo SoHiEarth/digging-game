@@ -138,7 +138,7 @@ void Application::Game() {
     SDL_RenderCopy(renderer, player.texture, NULL, &player.rect);
     if (!player.inventory.empty()) {
       if (player.inventory[player.current_item]->sprite == nullptr) {
-        player.inventory[player.current_item]->sprite = IMG_LoadTexture(renderer, player.inventory[player.current_item]->itemSpritePath.c_str());
+        player.inventory[player.current_item]->sprite = ResLoad::LoadImage(player.inventory[player.current_item]->itemSpritePath);
       }
       SDL_Rect item_rect = {
         player.rect.x + 5,

@@ -7,6 +7,7 @@ namespace Holes {
       message;
   };
   void SetCurrentObjective(Objective objective);
+  Objective GetCurrentObjective();
   void UnsetCurrentObjective();
   void RenderObjective();
 };

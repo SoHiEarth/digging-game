@@ -11,7 +11,7 @@ extern SDL_Texture* hole_texture;
 
 struct Hole {
   SDL_Rect rect = { 0, 0, 32, 32 };
-  int progress = 0, speed = 10;
+  int progress = 0, speed = 5;
 };
 extern std::vector<Hole*> holes_vector;
 void LoadHoleTexture();
