@@ -1,0 +1,3 @@
+[submodule "lib/SDL2_gfx"]
+	path = lib/SDL2_gfx
+	url = https://github.com/ferzkopp/SDL2_gfx
