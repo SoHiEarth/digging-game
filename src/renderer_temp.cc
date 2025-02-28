@@ -1,6 +1,7 @@
 #include <humanoid.h>
 #include <renderer_temp.h>
 #include <resload.h>
+#include "SDL2_gfx/SDL2_gfxPrimitives.h"
 SDL_Texture *hpIconTexture = nullptr, *thirstIconTexture = nullptr, *energyIconTexture = nullptr;
 TTF_Font *widgetFont = nullptr, *inventoryFont = nullptr;
 SDL_Texture* map_texture_Part_Hill = nullptr;
@@ -44,8 +45,12 @@ void RenderWidget(SDL_Rect anchor, SDL_Texture* icon, int val, int maxVal, SDL_C
   valRect.y = iconRect.y + static_cast<int>((iconRect.h - valRect.h) * 0.5);
   barRect = { iconRect.x + 5, iconRect.y + iconRect.h - 1, static_cast<int>((anchor.w - 15) * (static_cast<float>(val) / maxVal)), 2 };
 
-  SDL_SetRenderDrawColor(renderer, theme.r, theme.g, theme.b, 50);
-  SDL_RenderFillRect(renderer, &anchor);
+  roundedRectangleRGBA(renderer,
+      static_cast<Sint16>(anchor.x),
+      static_cast<Sint16>(anchor.y),
+      static_cast<Sint16>(anchor.x + anchor.w),
+      static_cast<Sint16>(anchor.y + anchor.h),
+      10, theme.r, theme.g, theme.b, 120);
   SDL_RenderCopy(renderer, icon, NULL, &iconRect);
   SDL_RenderCopy(renderer, valTexture, NULL, &valRect);
   SDL_SetRenderDrawColor(renderer, theme.r, theme.g, theme.b, SDL_ALPHA_OPAQUE);
@@ -56,22 +61,26 @@ void RenderWidget(SDL_Rect anchor, SDL_Texture* icon, int val, int maxVal, SDL_C
 void RenderPlayerStats() {
   SDL_Rect playerStat_Background = { 20, window_height - 100 - 10, 200, 95 };
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 120);
-  SDL_RenderFillRect(renderer, &playerStat_Background);
+  roundedBoxRGBA(renderer,
+      static_cast<Sint16>(playerStat_Background.x),
+      static_cast<Sint16>(playerStat_Background.y),
+      static_cast<Sint16>(playerStat_Background.x + playerStat_Background.w),
+      static_cast<Sint16>(playerStat_Background.y + playerStat_Background.h),
+      10, 0, 0, 0, 120);
 
   SDL_Rect playerStat_HP_Anchor = { playerStat_Background.x + 5,
     playerStat_Background.y + 5,
     190, 40 };
-  SDL_Rect playerStat_Energy_Anchor = { playerStat_HP_Anchor.x,
+  SDL_Rect playerStat_Energy_Anchor = { playerStat_Background.x + 5,
     playerStat_HP_Anchor.y + playerStat_HP_Anchor.h + 5,
-    95, 40 };
-  SDL_Rect playerStat_Thirst_Anchor = { playerStat_Background.x + playerStat_Background.w / 2,
+    92, 40 };
+  SDL_Rect playerStat_Thirst_Anchor = { playerStat_Background.x + 5 + playerStat_Energy_Anchor.w + 5,
     playerStat_Energy_Anchor.y,
-    95, 40 };
+    92, 40 };
   
   RenderWidget(playerStat_HP_Anchor, hpIconTexture, static_cast<int>(player.health), 100, {255, 0, 0, 255});
   RenderWidget(playerStat_Energy_Anchor, energyIconTexture, static_cast<int>(player.energy), 100, {0, 255, 0, 255});
   RenderWidget(playerStat_Thirst_Anchor, thirstIconTexture, static_cast<int>(player.thirst), 100, {150, 150, 255, 255});
-  
 }
 
 Item* inv_prevItem = nullptr, *inv_currItem = nullptr, *inv_nextItem = nullptr, *prevItem = nullptr;
@@ -121,8 +130,12 @@ void RenderInventory() {
 
   if (inv_prevItem != nullptr) RenderItem(inv_prevItem, prevItemRect, 150);
   if (inv_nextItem != nullptr) RenderItem(inv_nextItem, nextItemRect, 150);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 120);
-  SDL_RenderFillRect(renderer, &anchorRect);
+  roundedBoxRGBA(renderer,
+      static_cast<Sint16>(anchorRect.x),
+      static_cast<Sint16>(anchorRect.y),
+      static_cast<Sint16>(anchorRect.x + anchorRect.w),
+      static_cast<Sint16>(anchorRect.y + anchorRect.h),
+      10, 0, 0, 0, 120);
   RenderItem(inv_currItem, currItemRect, 255);
 }
 

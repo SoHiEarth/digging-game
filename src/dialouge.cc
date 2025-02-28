@@ -9,7 +9,7 @@
 #include <humanoid.h>
 #include <assetbundleloader.h>
 #include <algorithm>
-
+#include <SDL2_gfx/SDL2_gfxPrimitives.h>
 SDL_Rect GetBackground(SDL_Rect rect) {
   return { rect.x - 10, rect.y - 10, rect.w + 20, rect.h + 20 };
 }
@@ -98,9 +98,18 @@ void Application::Dialouge() {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, humanoid.texture, NULL, &humanoid_rect);
     SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
-    SDL_RenderFillRect(renderer, &dialouge_bg_rect);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
-    SDL_RenderDrawRect(renderer, &dialouge_bg_rect);
+    roundedBoxRGBA(renderer,
+        static_cast<Sint16>(dialouge_bg_rect.x),
+        static_cast<Sint16>(dialouge_bg_rect.y),
+        static_cast<Sint16>(dialouge_bg_rect.x + dialouge_bg_rect.w),
+        static_cast<Sint16>(dialouge_bg_rect.y + dialouge_bg_rect.h),
+        10, 0, 0, 0, 120);
+    roundedRectangleRGBA(renderer,
+        static_cast<Sint16>(dialouge_bg_rect.x),
+        static_cast<Sint16>(dialouge_bg_rect.y),
+        static_cast<Sint16>(dialouge_bg_rect.x + dialouge_bg_rect.w),
+        static_cast<Sint16>(dialouge_bg_rect.y + dialouge_bg_rect.h),
+        10, 255, 255, 255, 200);
     SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
     SDL_RenderFillRect(renderer, &name_bg_rect);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
