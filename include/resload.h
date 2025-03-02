@@ -12,6 +12,7 @@
 namespace ResLoad {
   void SetRenderer(SDL_Renderer* renderer);
   void SetLogger(std::function<void(std::string)> logger);
+  SDL_Texture* MakeTextureFromColor(int width, int height, SDL_Color color);
   // Loads an image using SDL_image.
   /* Param: Path: Path to the image to load. */
   /* Param: Fatal: Should the function throw an exception if 

@@ -27,9 +27,12 @@ class Animator {
   ST animation_thread;
  public:
   bool is_playing = false;
+  bool repeat = false;
+  std::string custom_attrib = "";
   std::atomic<int> play_count_since_start = 0;
   virtual void Play() = 0;
   void Halt() {
+    is_playing = false;
     animation_thread.Close();
   }
   virtual void LoadAnimation(const std::string& source_file) = 0;
@@ -71,5 +74,4 @@ public:
   void Play();
   void LoadAnimation(const std::string& source_file);
 };
-
 #endif // ANIMATE_HPP

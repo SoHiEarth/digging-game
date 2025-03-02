@@ -1,0 +1,3 @@
+//ANIMATION_DELTA {ANIM_THREADING_CUSTOM_ATTRIB}: PROMPT_BACKGROUND_LOADING_SPRITE
+{dest}: 0 {time}: 500 {step}: 1 {repeat}: 1
+{dest}: 1 {time}: 500 {step}: 1 {repeat}: 1

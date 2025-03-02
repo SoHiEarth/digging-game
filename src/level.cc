@@ -9,6 +9,19 @@
 #include <safe_thread.h>
 #include <application.h>
 #include <holes_2_manager.h>
+#include <map_part.h>
+#include <unordered_map>
+std::unordered_map<std::string, Object*(*)()> object_factory {
+  {"Sir", []() -> Object* { return new Sir(); }},
+  {"JailGuard", []() -> Object* { return new JailGuard(); }},
+  {"WaterRefillStation", []() -> Object* { return new WaterRefillStation(); }},
+  {"Transport_Bus_1", []() -> Object* { return new TransportBus_Lv1(); }},
+  {"Holes_2_Manager", []() -> Object* { return new Holes_2_Manager(); }},
+  {"Pen", []() -> Object* { return new Pendanski(); }},
+  {"Player", []() -> Object* { return new Player(); }},
+  {"MapPart_Hill", []() -> Object* { return new Holes::Map::Hill(); }}
+};
+
 void Level::Load(std::string path) {
   std::cout << "--- Loading level\n";
   if (!std::filesystem::exists(path)) {
@@ -31,6 +44,7 @@ void Level::Load(std::string path) {
     app->state = APP_STATE_QUIT;
     return;
   }
+  Player* temp_player = nullptr;
   std::string line;
   int lineNumber = 0;
   while (std::getline(file, line)) {
@@ -39,23 +53,29 @@ void Level::Load(std::string path) {
     std::istringstream iss(line);
     std::string object_name;
     iss >> object_name;
-    if (object_name == "Sir") {
-      objects.push_back(new Sir());
-    } else if (object_name == "JailGuard") {
-      objects.push_back(new JailGuard());
-    } else if (object_name == "WaterRefillStation") {
-      objects.push_back(new WaterRefillStation());
-    } else if (object_name == "Transport_Bus_1") {
-      objects.push_back(new TransportBus_Lv1());
-    } else if (object_name == "Holes_2_Manager") {
-      objects.push_back(new Holes_2_Manager());
-    } else if (object_name == "Pen") {
-      objects.push_back(new Pendanski());
+    if (object_name == "Player") {
+      if (temp_player != nullptr) {
+        std::cerr << "-! L:" << lineNumber << "- Player already exists in level\n";
+        continue;
+      }
+      temp_player = new Player();
     } else {
-      std::cerr << "\n-!- Unknown object name: " << object_name << "\n";
+      if (object_factory.find(object_name) == object_factory.end()) {
+        std::cerr << "-!- Object not found: " << object_name << "\n";
+        continue;
+      }
+      Object* new_object = object_factory[object_name]();
+      objects.push_back(new_object);
     }
   }
+  if (temp_player != nullptr) {
+    player = temp_player;
+    objects.push_back(temp_player);
+  } else {
+    std::cerr << "-!- Player not found in level\n";
+  }
   std::cout << "--- Level loaded\n";
+  player_should_lock_camera = true;
   loaded = true;
   std::cout << "--- Starting level\n";
   for (auto& object : objects) {
@@ -82,6 +102,17 @@ void Level::LoadNextFramePath() {
   Load(next_frame_path);
   next_frame_path = "";
   std::cout << "--- Next frame loaded\n";
+}
+
+void Level::CopyTempObjects() {
+  if (objects.back() == player) {
+    temp_objects.push_back(player);
+    objects.pop_back();
+  }
+  for (Object* object : temp_objects) {
+    objects.push_back(object);
+  }
+  temp_objects.clear();
 }
 
 void Level::Unload() {

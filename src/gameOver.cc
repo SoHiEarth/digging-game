@@ -1,6 +1,7 @@
 #include <application.h>
 #include <base.h>
 #include <resload.h>
+#include "renderer_temp.h"
 void Application::GameOver() {
   TTF_Font* gameOverFont = nullptr, *gameOverHintFont = nullptr;
   SDL_Texture *gameOverTexture = nullptr, *gameOverHintTexture = nullptr;
@@ -50,4 +51,5 @@ void Application::GameOver() {
   SDL_DestroyTexture(gameOverHintTexture);
   ResLoad::FreeFont(gameOverFont);
   ResLoad::FreeFont(gameOverHintFont);
+  ResetPlayerStats();
 }

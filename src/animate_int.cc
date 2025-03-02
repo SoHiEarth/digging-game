@@ -9,6 +9,7 @@ void Animator_Int::PlayAnimation(std::atomic<bool>& running) {
   int_to_animate = start;
   animate_target_internal = int_to_animate;
   play_count_since_start++;
+frame:
   for (auto& frame : frames) {
     animate_target_internal += frame.iOffset;
     int_to_animate = static_cast<int>(animate_target_internal);
@@ -18,13 +19,15 @@ void Animator_Int::PlayAnimation(std::atomic<bool>& running) {
       std::this_thread::sleep_for(std::chrono::milliseconds(frame.timeUntilNextFrame));
     }
   }
+  if (!is_playing) return;
+  if (repeat) goto frame;
   is_playing = false;
 }
 
 void Animator_Int::Play() {
   if (is_playing) return;
   is_playing = true;
-  animation_thread.Start([this](std::atomic<bool>& running) { PlayAnimation(running); });
+  animation_thread.Start([this](std::atomic<bool>& running) { PlayAnimation(running); }, ((custom_attrib != "") ? custom_attrib : "ANIM_THREADING_DEFAULT"));
 }
 
 void Animator_Int::LoadAnimationByDelta(const std::string& source_file) {
@@ -43,12 +46,16 @@ void Animator_Int::LoadAnimationByDelta(const std::string& source_file) {
     while (iss >> token) {
       if (token == "//ANIMATION_DELTA" ) {
         delta_is_defined = true;
+      } else if (token == "{ANIM_THREADING_CUSTOM_ATTRIB}:") {
+        iss >> custom_attrib;
       } if (token == "{dest}:") {
         iss >> i;
       } else if (token == "{time}:") {
         iss >> time;
       } else if (token == "{step}:") {
         iss >> step;
+      } else if (token == "{repeat}:") {
+        iss >> repeat;
       }
     }
     float i_step = (float)(i + start) / step,
@@ -93,7 +100,7 @@ void Animator_Int::LoadAnimation(const std::string& source_file) {
       }
     }
     AnimationFrame frame;
-    frame.xOffset = i; // Dirty hack, just set is a xOffset
+    frame.iOffset = i;
     frame.timeUntilNextFrame = time;
     frames.push_back(frame);
   }

@@ -20,6 +20,7 @@ int global_brightness = 100;
 std::mutex humanoidsMutex;
 std::vector<Humanoid*> humanoidsVec;
 Humanoid* current_humanoid = nullptr;
-Player player;
+Player* player = nullptr;
+bool player_should_lock_camera = true;
 Level level;
 THREAD_STATE thread_state = THREAD_STATE_OPEN;

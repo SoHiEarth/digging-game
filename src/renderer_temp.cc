@@ -17,16 +17,18 @@ void LoadStatusBarIcons() {
 }
 
 void LoadPlayerSprite() {
-  if (player.texture != nullptr) ResLoad::FreeImage(player.texture);
-  player.texture = ResLoad::LoadImage(current_asset_bundle.PLAYER_SPRITE_PATH);
+  if (player == nullptr) return;
+  if (player->texture != nullptr) ResLoad::FreeImage(player->texture);
+  player->texture = ResLoad::LoadImage(current_asset_bundle.PLAYER_SPRITE_PATH);
 }
 
 void ResetPlayerStats() {
-  player.rect.x = (window_width - 64) / 2;
-  player.rect.y = (window_height - 64) / 2;
-  player.health = 100;
-  player.energy = 100;
-  player.thirst = 100;
+  if (player == nullptr) return;
+  player->rect.x = (window_width - 64) / 2;
+  player->rect.y = (window_height - 64) / 2;
+  player->health = 100;
+  player->energy = 100;
+  player->thirst = 100;
 }
 
 void PreloadMapTexture() {
@@ -67,6 +69,7 @@ void RenderPlayerStats() {
       static_cast<Sint16>(playerStat_Background.x + playerStat_Background.w),
       static_cast<Sint16>(playerStat_Background.y + playerStat_Background.h),
       10, 0, 0, 0, 120);
+  if (player == nullptr) return;
 
   SDL_Rect playerStat_HP_Anchor = { playerStat_Background.x + 5,
     playerStat_Background.y + 5,
@@ -77,10 +80,10 @@ void RenderPlayerStats() {
   SDL_Rect playerStat_Thirst_Anchor = { playerStat_Background.x + 5 + playerStat_Energy_Anchor.w + 5,
     playerStat_Energy_Anchor.y,
     92, 40 };
-  
-  RenderWidget(playerStat_HP_Anchor, hpIconTexture, static_cast<int>(player.health), 100, {255, 0, 0, 255});
-  RenderWidget(playerStat_Energy_Anchor, energyIconTexture, static_cast<int>(player.energy), 100, {0, 255, 0, 255});
-  RenderWidget(playerStat_Thirst_Anchor, thirstIconTexture, static_cast<int>(player.thirst), 100, {150, 150, 255, 255});
+
+  RenderWidget(playerStat_HP_Anchor, hpIconTexture, static_cast<int>(player->health), 100, {255, 0, 0, 255});
+  RenderWidget(playerStat_Energy_Anchor, energyIconTexture, static_cast<int>(player->energy), 100, {0, 255, 0, 255});
+  RenderWidget(playerStat_Thirst_Anchor, thirstIconTexture, static_cast<int>(player->thirst), 100, {150, 150, 255, 255});
 }
 
 Item* inv_prevItem = nullptr, *inv_currItem = nullptr, *inv_nextItem = nullptr, *prevItem = nullptr;
@@ -117,11 +120,11 @@ void RenderItem(Item* item, SDL_Rect anchor, int alpha) {
 
 void RenderInventory() {
   SDL_Rect anchorRect = { window_width - 200 - 20, window_height - 100 - 10, 200, 95 };
-  if (player.inventory.empty()) return;
-  if (player.current_item - 1 >= 0) inv_prevItem = player.inventory[player.current_item - 1];
+  if (player->inventory.empty()) return;
+  if (player->current_item - 1 >= 0) inv_prevItem = player->inventory[player->current_item - 1];
   else inv_prevItem = nullptr;
-  inv_currItem = player.inventory[player.current_item];
-  if (player.current_item + 1 < player.inventory.size()) inv_nextItem = player.inventory[player.current_item + 1];
+  inv_currItem = player->inventory[player->current_item];
+  if (player->current_item + 1 < player->inventory.size()) inv_nextItem = player->inventory[player->current_item + 1];
   else inv_nextItem = nullptr;
 
   SDL_Rect prevItemRect = { anchorRect.x + 5, anchorRect.y, anchorRect.w, 30 };
@@ -148,6 +151,6 @@ void RenderHumanoid(Humanoid* humanoid) {
   SDL_QueryTexture(characterName, NULL, NULL, &characterNameRect.w, &characterNameRect.h);
   characterNameRect = { humanoid->rect.x - (humanoid->rect.w / 2), humanoid->rect.y + humanoid->rect.w, characterNameRect.w, characterNameRect.h };
   SDL_RenderCopy(renderer, characterName, NULL, &characterNameRect);
-  SDL_RenderCopy(renderer, humanoid->texture, NULL, &humanoid->rect); 
+  SDL_RenderCopy(renderer, humanoid->texture, NULL, &humanoid->rect);
   SDL_DestroyTexture(characterName);
 }

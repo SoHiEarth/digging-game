@@ -1,3 +1,4 @@
+#include <SDL_pixels.h>
 #include <SDL_render.h>
 #include <resload.h>
 
@@ -31,6 +32,22 @@ void ResLoad::SetRenderer(SDL_Renderer* renderer) {
 
 void ResLoad::SetLogger(std::function<void(std::string)> logger) {
   ResLoad::Internal::log = std::bind(logger, std::placeholders::_1);
+}
+
+SDL_Texture* ResLoad::MakeTextureFromColor(int width, int height, SDL_Color color) {
+  SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 8, SDL_PIXELFORMAT_RGBA8888);
+  if (surface == nullptr) {
+    ResLoad::Internal::log("Failed to create surface. SDL: " + std::string(SDL_GetError()));
+    return nullptr;
+  }
+  SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a));
+  SDL_Texture* texture = SDL_CreateTextureFromSurface(ResLoad::Internal::renderer, surface);
+  if (texture == nullptr) {
+    ResLoad::Internal::log("Failed to create texture from surface. SDL: " + std::string(SDL_GetError()));
+    return nullptr;
+  }
+  SDL_FreeSurface(surface);
+  return texture;
 }
 
 RESLOAD_API ResLoad::LoadImage(const std::string &path, bool fatal) {

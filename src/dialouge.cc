@@ -76,6 +76,7 @@ void Application::Dialouge() {
         if (event.key.keysym.sym == SDLK_ESCAPE) {
           state = APP_STATE_MAIN_MENU;
         }
+        current_humanoid->messages[currentDialougeIndex].second(current_dialouge_text);
         currentDialougeIndex++;
         current_dialouge_text = "";
       }
@@ -84,12 +85,12 @@ void Application::Dialouge() {
       std::cout << "Reached end of dialouge queue\n";
       state = APP_STATE_GAME;
     }
-    if (currentDialougeIndex < humanoid.messages.size() && current_dialouge_text.size() != humanoid.messages[currentDialougeIndex].size()) {
+    if (currentDialougeIndex < humanoid.messages.size() && current_dialouge_text.size() != humanoid.messages[currentDialougeIndex].first.size()) {
       SDL_DestroyTexture(dialouge_texture);
-      if (current_dialouge_text.size() != humanoid.messages[currentDialougeIndex].size()) {
-        current_dialouge_text += humanoid.messages[currentDialougeIndex][std::clamp(static_cast<int>(current_dialouge_text.size()), 0, static_cast<int>(humanoid.messages[currentDialougeIndex].size() - 1))];
+      if (current_dialouge_text.size() != humanoid.messages[currentDialougeIndex].first.size()) {
+        current_dialouge_text += humanoid.messages.at(currentDialougeIndex).first[std::clamp(static_cast<int>(current_dialouge_text.size()), 0, static_cast<int>(humanoid.messages[currentDialougeIndex].first.size() - 1))];
       }
-      dialouge_texture = ResLoad::RenderText(font, current_dialouge_text, {255, 255, 255}, window_width - 200);
+      dialouge_texture = ResLoad::RenderText(font, current_dialouge_text, {255, 255, 255}, dialouge_bg_rect.w - 20);
       SDL_QueryTexture(dialouge_texture, NULL, NULL, &dialouge_rect.w, &dialouge_rect.h);
     }
 
@@ -122,7 +123,7 @@ void Application::Dialouge() {
     SDL_RenderFillRect(renderer, NULL);
     brightness -= 50;
     SDL_RenderPresent(renderer);
-    SDL_Delay(100);
+    SDL_Delay(50);
   }
   std::cout << "Configuring humanoid\n";
   if (current_humanoid != nullptr) {

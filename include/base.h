@@ -22,7 +22,8 @@ extern SDL_Event event;
 extern bool running;
 extern int global_brightness;
 extern Humanoid* current_humanoid;
-extern Player player;
+extern Player* player;
+extern bool player_should_lock_camera;
 extern Level level;
 extern THREAD_STATE thread_state;
 #endif // BASE_H

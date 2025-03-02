@@ -8,4 +8,6 @@ struct Camera {
   void Render();
 };
 
+SDL_Rect GetRectInCameraSpace(SDL_Rect rect);
+
 #endif // CAMERA_H

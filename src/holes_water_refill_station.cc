@@ -7,12 +7,12 @@ WaterRefillStation::WaterRefillStation() {
 }
 
 void WaterRefillStation::func() {
-  for (int i = 0; i < player.inventory.size(); i++) {
-    if (player.inventory[i] == nullptr) {
+  for (int i = 0; i < player->inventory.size(); i++) {
+    if (player->inventory[i] == nullptr) {
       continue;
     }
-    if (player.inventory[i]->itemName == "Bottle") {
-      Bottle* bottle = static_cast<Bottle*>(player.inventory[i]);
+    if (player->inventory[i]->itemName == "Bottle") {
+      Bottle* bottle = static_cast<Bottle*>(player->inventory[i]);
       if (bottle == nullptr) continue;
       else {
         bottle->capacity = 100;
@@ -20,6 +20,6 @@ void WaterRefillStation::func() {
       break;
     }
   }
-  player.inventory.push_back(new Bottle());
+  player->inventory.push_back(new Bottle());
 
 }

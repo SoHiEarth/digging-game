@@ -2,6 +2,7 @@
 #define HUMANOID_H
 #include <string>
 #include <vector>
+#include <functional>
 #include <SDL.h>
 #include <animate.h>
 #include <object.h>
@@ -12,7 +13,7 @@ struct HumanoidDialougeOnTriggerAnim {
 
 struct Humanoid : public Object{
   std::string name;
-  std::vector<std::string> messages;
+  std::vector<std::pair<std::string, std::function<void(std::string)>>> messages;
   bool interacted = false, has_critical_update = false;
   std::string texture_path;
   ~Humanoid();

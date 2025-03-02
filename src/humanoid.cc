@@ -14,28 +14,17 @@ void Humanoid::Start() {
 }
 
 void Humanoid::Fixed() {
-  if (player_up) {
-    if (player.energy > 0) rect.y += player.move_speed;
-    else rect.y += player.move_speed / 2;
-  }
-  if (player_down) {
-    if (player.energy > 0) rect.y -= player.move_speed;
-    else rect.y -= player.move_speed / 2;
-  }
-  if (player_left) {
-    if (player.energy > 0) rect.x += player.move_speed;
-    else rect.x += player.move_speed / 2;
-  }
-  if (player_right) {
-    if (player.energy > 0) rect.x -= player.move_speed;
-    else rect.x -= player.move_speed / 2;
-  }
 }
 
 void Humanoid::Update() {
-  
-  // Render the humanoid
-  SDL_RenderCopy(renderer, texture, NULL, &rect);
+  SDL_Texture* humanoid_name_texture = ResLoad::RenderText(inventoryFont, name);
+  SDL_Rect name_rect, name_bg_rect;
+  SDL_QueryTexture(humanoid_name_texture, NULL, NULL, &name_rect.w, &name_rect.h);
+  name_rect.x = rect.x + (rect.w - name_rect.w) / 2;
+  name_rect.y = rect.y + rect.h + 5;
+  name_bg_rect = { name_rect.x - 5, name_rect.y - 5, name_rect.w + 10, name_rect.h + 10 };
+  extras.insert({ResLoad::MakeTextureFromColor(name_rect.w, name_rect.h, {0, 0, 0, 255}), name_bg_rect});
+  extras.insert({humanoid_name_texture, name_rect});
 
   // If the humanoid has something new to say, render a exclamation mark with a red color
   if (has_critical_update) {
@@ -43,18 +32,15 @@ void Humanoid::Update() {
     SDL_Rect exclamationRect = { rect.x + 20, rect.y - 30 };
     SDL_QueryTexture(exclamation_texture, NULL, NULL, &exclamationRect.w, &exclamationRect.h);
     SDL_Rect exclamation_bg_rect = { exclamationRect.x - 5, exclamationRect.y - 5, exclamationRect.w + 10, exclamationRect.h + 10 };
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &exclamation_bg_rect);
-    SDL_RenderCopy(renderer, exclamation_texture, NULL, &exclamationRect);
-    SDL_DestroyTexture(exclamation_texture);
+    extras.insert({ResLoad::MakeTextureFromColor(exclamation_bg_rect.w, exclamation_bg_rect.h, {255, 0, 0, 255}), exclamation_bg_rect});
+    extras.insert({exclamation_texture, exclamationRect});
   }
 
-  if (SDL_HasIntersection(&player.rect, &rect) == SDL_TRUE) {
+  if (SDL_HasIntersection(&player->rect, &rect) == SDL_TRUE) {
     auto control_texture = ResLoad::RenderText(inventoryFont, "Press [F] to speak");
     SDL_Rect talkControlRect = { rect.x, rect.y - 30};
     SDL_QueryTexture(control_texture, NULL, NULL, &talkControlRect.w, &talkControlRect.h);
-    SDL_RenderCopy(renderer, control_texture, NULL, &talkControlRect);
-    SDL_DestroyTexture(control_texture);
+    extras.insert({control_texture, talkControlRect});
     if (talk_button_pressed) {
       current_humanoid = this;
       app->state = APP_STATE_DIALOUGE;
