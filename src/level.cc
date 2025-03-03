@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <filesystem>
-#include "base.h"
+#include <base.h>
 #include <humanoid.h>
 #include <interactable.h>
 #include <safe_thread.h>
@@ -11,6 +11,7 @@
 #include <holes_2_manager.h>
 #include <map_part.h>
 #include <unordered_map>
+#include <holes_camp.h>
 std::unordered_map<std::string, Object*(*)()> object_factory {
   {"Sir", []() -> Object* { return new Sir(); }},
   {"JailGuard", []() -> Object* { return new JailGuard(); }},
@@ -19,7 +20,8 @@ std::unordered_map<std::string, Object*(*)()> object_factory {
   {"Holes_2_Manager", []() -> Object* { return new Holes_2_Manager(); }},
   {"Pen", []() -> Object* { return new Pendanski(); }},
   {"Player", []() -> Object* { return new Player(); }},
-  {"MapPart_Hill", []() -> Object* { return new Holes::Map::Hill(); }}
+  {"MapPart_Hill", []() -> Object* { return new Holes::Map::Hill(); }},
+  {"Camp_1", []() -> Object* { return new Camp_1(); }}
 };
 
 void Level::Load(std::string path) {

@@ -1,14 +1,11 @@
 #ifndef RESLOAD_H
 #define RESLOAD_H
-
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <map>
 #include <string>
 #include <functional>
-
 #define RESLOAD_API SDL_Texture*
-
 namespace ResLoad {
   void SetRenderer(SDL_Renderer* renderer);
   void SetLogger(std::function<void(std::string)> logger);
@@ -32,5 +29,4 @@ namespace ResLoad {
     int CheckState();
   }
 }
-
 #endif // RESLOAD_H

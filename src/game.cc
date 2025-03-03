@@ -36,7 +36,6 @@ void Application::Fixed(std::atomic<bool>& running) {
 
 void Application::Game() {
   SDL_SetWindowTitle(window, "Holes - Game");
-  LoadHoleTexture();
   LoadStatusBarIcons();
   PreloadMapTexture();
   func_button_pressed = false;

@@ -4,11 +4,9 @@
 #include <sstream>
 
 AssetBundle current_asset_bundle{};
-
 void AssetBundle::LoadAssetBundle(const char* path) {
   // Load asset bundle from path
-  // {VariableName} = {AssetValue};
-  
+  // {VariableName} = {AssetValue}; 
   std::ifstream file(path);
   std::string line;
   int lineNumber = 0;

@@ -1,10 +1,10 @@
 #ifndef HOLE_H
 #define HOLE_H
-
 #include <SDL.h>
 #include <SDL_image.h>
 #include <vector>
 #include <base.h>
+#include <object.h>
 #include <config.h>
 extern SDL_Texture* hole_texture;
 struct Hole;

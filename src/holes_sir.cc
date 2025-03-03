@@ -1,6 +1,5 @@
 #include <humanoid.h>
-#include "objective.h"
-
+#include <objective.h>
 Sir::Sir() {
   this->name = "Mr. Sir";
   this->messages.push_back({"Stop Right There!", [](std::string) {}});

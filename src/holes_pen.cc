@@ -3,9 +3,8 @@
 #include <resload.h>
 #include <objective.h>
 #include <holescan.h>
-#include "prompt.h"
+#include <prompt.h>
 #define CAN_SPEAK interacted && !animator_rect->is_playing
-
 enum PENDANSKI_ITERATION {
   PENDANSKI_FOLLOW,
   PENDANSKI_WELCOME,
