@@ -1,13 +1,10 @@
 #include <humanoid.h>
 #include <renderer_temp.h>
 #include <resload.h>
-#include "SDL2_gfx/SDL2_gfxPrimitives.h"
+#include <SDL2_gfx/SDL2_gfxPrimitives.h>
+#include <base.h>
 SDL_Texture *hpIconTexture = nullptr, *thirstIconTexture = nullptr, *energyIconTexture = nullptr;
 TTF_Font *widgetFont = nullptr, *inventoryFont = nullptr;
-SDL_Texture* map_texture_Part_Hill = nullptr;
-SDL_Rect mapRect = { 0, 0, 3200, 2400 };
-bool player_up = false, player_down = false, player_left = false, player_right = false;
-SDL_Rect chargeRectBg = { 400 - 50 + 16, 300 - 50, 100, 10 };
 
 void LoadStatusBarIcons() {
   hpIconTexture = ResLoad::LoadImage(current_asset_bundle.PLAYERSTAT_HEALTH_ICON_PATH);
@@ -30,12 +27,6 @@ void ResetPlayerStats() {
   player->energy = 100;
   player->thirst = 100;
 }
-
-void PreloadMapTexture() {
-  if (map_texture_Part_Hill != nullptr) return;
-  map_texture_Part_Hill = ResLoad::LoadImage(current_asset_bundle.MAP_PART_HILL_PATH);
-}
-
 void RenderWidget(SDL_Rect anchor, SDL_Texture* icon, int val, int maxVal, SDL_Color theme){
   SDL_Rect iconRect, valRect, barRect;
   SDL_Texture* valTexture = nullptr;

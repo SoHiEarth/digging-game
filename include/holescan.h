@@ -1,6 +1,5 @@
 #ifndef HOLESCAN_H
 #define HOLESCAN_H
-
 #include <object.h>
 #include <hole.h>
 #include <objective.h>
@@ -24,5 +23,4 @@ struct HoleDesignatedArea : public Object {
     SDL_RenderDrawRect(renderer, &rect_camera);
   }
 };
-
 #endif // HOLESCAN_H

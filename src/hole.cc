@@ -5,7 +5,6 @@
 #include <vector>
 #include <assetbundleloader.h>
 #include <algorithm>
-#include <iostream>
 #include <resload.h>
 
 std::vector<Hole*> holes_vector;
@@ -18,16 +17,11 @@ void LoadHoleTexture() {
   hole_texture = ResLoad::LoadImage(current_asset_bundle.HOLE_UNIFIED_TEXTURE_PATH);
   SDL_QueryTexture(hole_texture, NULL, NULL, &hole_texture_rect.w, &hole_texture_rect.h);
 }
-
 vec2 hole_progress_bar = {100, 10};
 
 void RenderHole(Hole* hole, SDL_Rect hole_rect) {
   if (hole_texture == nullptr) {
-    try {
-      LoadHoleTexture();
-    } catch (const std::runtime_error& e) {
-      std::cerr << "Failed to preload hole texture: " << e.what() << std::endl;
-    }
+    LoadHoleTexture();
   }
 
   SDL_Rect hole_border_rect = {

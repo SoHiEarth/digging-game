@@ -1,4 +1,5 @@
 #include <renderer_temp.h>
+#include <base.h>
 #include <application.h>
 #include <resload.h>
 int currentSelectedMenuItem = 0;

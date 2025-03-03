@@ -6,10 +6,7 @@
 #include <SDL.h>
 #include <algorithm>
 #include <humanoid.h>
-#include <cstdlib>
 #include <error.h>
-#include <iostream>
-#include "objective.h"
 #include <level.h>
 #include <resload.h>
 #include <object.h>
@@ -17,7 +14,7 @@ std::map<SDL_Keycode, bool> key_states, prev_key_states;
 void Application::Fixed(std::atomic<bool>& running) {
   while (running && state == APP_STATE_GAME) {
     player->energy = std::clamp(player->energy, 0.0f, 100.0f);
-    if (player_up || player_down || player_left || player_right) {
+    if (key_states[SDLK_w] || key_states[SDLK_a] || key_states[SDLK_s] || key_states[SDLK_d]) {
       player->energy -= 0.01f;
     }
     if (player->thirst <= 0) player->health -= 0.05f;
@@ -26,7 +23,7 @@ void Application::Fixed(std::atomic<bool>& running) {
     if (player->thirst > 90 && player->energy > 90 && player->health < 100) {
       player->health += 0.05f;
     }
-    for (Object* object : level.objects) {
+    for (const auto object : level.objects) {
       if (object->enabled)
         object->Fixed();
     }
@@ -37,18 +34,17 @@ void Application::Fixed(std::atomic<bool>& running) {
 void Application::Game() {
   SDL_SetWindowTitle(window, "Holes - Game");
   LoadStatusBarIcons();
-  PreloadMapTexture();
   func_button_pressed = false;
   talk_button_pressed = false;
   key_states.clear();
   inventoryFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
-  player_up = false, player_down = false, player_left = false, player_right = false;
   if (!level.loaded) {
     level.Load("assets/1.lvl");
     ResetPlayerStats();
   }
-  if (player->move_speed == 0) player->move_speed = _PLAYER_MOVE_SPEED;
-  level.fixed_thread.Start(std::bind(&Application::Fixed, this, std::placeholders::_1), "Fixed");
+  if (!level.fixed_thread.open) {
+    level.fixed_thread.Start(std::bind(&Application::Fixed, this, std::placeholders::_1), "Fixed");
+  }
   while (state == APP_STATE_GAME) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -67,10 +63,6 @@ void Application::Game() {
       }
     }
     if (key_states[SDLK_ESCAPE]) state = APP_STATE_QUIT;
-    player_up = key_states[SDLK_w];
-    player_down = key_states[SDLK_s];
-    player_left = key_states[SDLK_a];
-    player_right = key_states[SDLK_d];
     if (key_states[SDLK_e] && !prev_key_states[SDLK_e]) {
       func_button_pressed = true;
       if (!player->inventory.empty()) {
@@ -85,42 +77,19 @@ void Application::Game() {
       }
     }
     if (player->current_item > player->inventory.size() - 1) player->current_item = 0;
-    SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
-    SDL_RenderClear(renderer);
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    for (Object* object : level.objects) {
-      if (object->enabled)
-        object->Update();
-    }
     level.camera.Render();
-    
-    RenderPlayerStats();
-    RenderInventory();
-    Holes::RenderObjective();
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * (100 - global_brightness) / 100);
-    SDL_RenderFillRect(renderer, NULL);
-    // Red tint if hp is low
-    if (player->health <= 10) {
-      Uint8 redAlpha = static_cast<Uint8>(255 * ((10 - player->health) / 10.0));
-      SDL_SetRenderDrawColor(renderer, 255, 0, 0, redAlpha);
-      SDL_RenderFillRect(renderer, NULL);
-    }
-    // Gradually fade to black
-    if (player->health <= 5) {
-      Uint8 blackAlpha = static_cast<Uint8>(255 * (5 - (player->health / 5.0)));
-      SDL_SetRenderDrawColor(renderer, 0, 0, 0, blackAlpha);
-      SDL_RenderFillRect(renderer, NULL);
+    for (const auto object : level.objects) {
+      if (object->enabled)
+        object->LateUpdate();
     }
     if (player->health <= 0) {
       state = APP_STATE_GAME_OVER;
     }
-    SDL_RenderPresent(renderer);
     prev_key_states = key_states;
     level.CopyTempObjects();
     SDL_Delay(1000/60);
     if (level.HasNextFramePath()) {
       level.LoadNextFramePath();
     }
-    std::cout << "Frame end.\r";
   }
 }

@@ -21,5 +21,4 @@ void WaterRefillStation::func() {
     }
   }
   player->inventory.push_back(new Bottle());
-
 }

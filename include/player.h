@@ -1,14 +1,11 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-
 #include <SDL.h>
 #include <vector>
 #include <items.h>
 #include <iostream>
 #include <assetbundleloader.h>
 #include <object.h>
-
-
 class Player : public Object {
   std::string name = "Player";
   public:

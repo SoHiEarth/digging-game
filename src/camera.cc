@@ -3,19 +3,25 @@
 #include <base.h>
 #include <hole.h>
 #include <resload.h>
+#include <renderer_temp.h>
+#include <objective.h>
 void Camera::Render() {
-  for (auto hole : holes_vector) {
-    if (hole->enabled) {
-      SDL_Rect screenspace_rect = {
-        hole->rect.x - position.x,
-        hole->rect.y - position.y,
-        hole->rect.w,
-        hole->rect.h
-      };
-      RenderHole(hole, screenspace_rect);
-    }
+  SDL_SetRenderDrawColor(renderer, 224, 172, 105, 255);
+  SDL_RenderClear(renderer);
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+  for (Object* object : level.objects) {
+    if (object->enabled)
+      object->Update();
   }
-
+  for (auto hole : holes_vector) {
+    SDL_Rect screenspace_rect = {
+      hole->rect.x - position.x,
+      hole->rect.y - position.y,
+      hole->rect.w,
+      hole->rect.h
+    };
+    RenderHole(hole, screenspace_rect);
+  }
   for (Object* object : level.objects) {
     if (!object->enabled) continue;
     SDL_Rect screenspace_rect = {
@@ -50,6 +56,12 @@ void Camera::Render() {
      };
     SDL_RenderCopy(renderer, player->inventory[player->current_item]->sprite, NULL, &item_rect);
   }
+  RenderPlayerStats();
+  RenderInventory();
+  Holes::RenderObjective();
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * (100 - global_brightness) / 100);
+  SDL_RenderFillRect(renderer, NULL);
+  SDL_RenderPresent(renderer);
 }
 
 SDL_Rect GetRectInCameraSpace(SDL_Rect rect) {

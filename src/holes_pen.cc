@@ -12,7 +12,6 @@ enum PENDANSKI_ITERATION {
   PENDANSKI_ITEM,
   PENDANSKI_DONE
 };
-
 PENDANSKI_ITERATION pendanski_iteration = PENDANSKI_FOLLOW;
 
 Pendanski::Pendanski() {
@@ -66,11 +65,11 @@ void Pendanski::Update() {
     Holes::PromptPlayerWithIconBox("You got a Bottle!", player->inventory.back()->sprite);
         }});
     this->messages.push_back({"You'll need them for the work here.", [](std::string) {}});
-    this->messages.push_back({"Now, go and dig a hole.", [](std::string) {
+    this->messages.push_back({"Now, go and dig a hole. I will meet you back at camp when you're finished.", [](std::string) {
         Holes::SetCurrentObjective({"Dig a hole", "Dig one hole at the blue area by pressing [E].\n(P.S.) It's to the west."});
         level.AddObjectInLoop(new HoleDesignatedArea());
         pendanski_iteration = PENDANSKI_AWAIT;
-        }});
+    }});
     this->has_critical_update = true;
     this->interacted = false;
     pendanski_iteration = PENDANSKI_AWAIT;

@@ -1,6 +1,5 @@
 #ifndef INTERACTABLE_H
 #define INTERACTABLE_H
-
 #include <SDL.h>
 #include <string>
 #include <config.h>
@@ -15,13 +14,17 @@ struct MapInteractable : public Object{
     void Fixed() override;
     virtual void func();
 };
-
 struct WaterRefillStation : public MapInteractable {
  public:
   WaterRefillStation();
   void func() override;
 };
-
+struct Camp : public MapInteractable {
+ public:
+  Camp();
+  void Update() override;
+  void func() override;
+};
 struct TransportBus_Lv1 : public Object {
  public:
   SDL_Texture* texture;
@@ -32,5 +35,4 @@ struct TransportBus_Lv1 : public Object {
   void Update() override;
   void Quit() override;
 };
-
 #endif // INTERACTABLE_H

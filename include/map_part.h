@@ -1,10 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
-
 #include <SDL.h>
 #include <object.h>
 #include <string>
-
 struct MapPart : public Object {
  public:
   std::string path;
@@ -14,7 +12,6 @@ struct MapPart : public Object {
   void Fixed() override;
   void Quit() override;
 };
-
 namespace Holes {
   namespace Map {
     struct Hill : public MapPart {
@@ -22,5 +19,4 @@ namespace Holes {
     };
   }
 }
-
 #endif // MAP_H
