@@ -5,14 +5,18 @@
 #include <hole.h>
 #include <objective.h>
 struct HoleDesignatedArea : public Object {
+  bool objective_complete = false;
   HoleDesignatedArea() {
     rect = { -800, -400, 256, 256 };
   }
   void Update() override {
+    if (objective_complete) return;
     for (auto* hole : holes_vector) {
       if (SDL_HasIntersection(&hole->rect, &player->rect) == SDL_TRUE) {
-        if (hole->progress >= 100)
-          Holes::SetCurrentObjective({ "Dig a hole - Complete!", "Go to camp to meet campmates." });
+        if (hole->progress >= 100) {
+          objective_complete = true;
+          Holes::SetCurrentObjective({"Dig a Hole - Complete!", "Go to camp and spend the rest of your day."});
+        }
       }
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);

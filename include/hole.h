@@ -19,5 +19,5 @@ struct Hole : public Object {
   }
 };
 void LoadHoleTexture();
-void RenderHole(Hole& hole);
+void RenderHole(Hole* hole, SDL_Rect rect);
 #endif // HOLE_H

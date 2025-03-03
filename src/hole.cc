@@ -21,7 +21,7 @@ void LoadHoleTexture() {
 
 vec2 hole_progress_bar = {100, 10};
 
-void RenderHole(Hole& hole, SDL_Rect hole_rect) {
+void RenderHole(Hole* hole, SDL_Rect hole_rect) {
   if (hole_texture == nullptr) {
     try {
       LoadHoleTexture();
@@ -37,11 +37,11 @@ void RenderHole(Hole& hole, SDL_Rect hole_rect) {
     hole_rect.h + 10
   };
 
-  if (hole.progress < 100) {
+  if (hole->progress < 100) {
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &hole_border_rect);
     SDL_Rect hole_progress_bar_bg = {
-      hole_rect.x + (hole.rect.w)/2 - (hole_progress_bar.x/2),
+      hole_rect.x + (hole_rect.w)/2 - (hole_progress_bar.x/2),
       hole_rect.y - hole_progress_bar.y - 10,
       hole_progress_bar.x,
       hole_progress_bar.y
@@ -49,10 +49,10 @@ void RenderHole(Hole& hole, SDL_Rect hole_rect) {
     hole_progress_bar_content = {
       hole_progress_bar_bg.x,
       hole_progress_bar_bg.y,
-      hole_progress_bar_bg.w * std::clamp(hole.progress, 1, 100)/100,
+      hole_progress_bar_bg.w * std::clamp(hole->progress, 1, 100)/100,
       hole_progress_bar_bg.h
     };
-    hole.extras.insert({ResLoad::MakeTextureFromColor(hole_progress_bar_bg.w, hole_progress_bar_bg.h, {0, 0, 0}), hole_progress_bar_bg});
-    hole.extras.insert({ResLoad::MakeTextureFromColor(hole_progress_bar_content.w, hole_progress_bar_content.h, {0, 255, 0}), hole_progress_bar_content});
+    hole->extras.insert({ResLoad::MakeTextureFromColor(hole_progress_bar_bg.w, hole_progress_bar_bg.h, {0, 0, 0}), hole_progress_bar_bg});
+    hole->extras.insert({ResLoad::MakeTextureFromColor(hole_progress_bar_content.w, hole_progress_bar_content.h, {0, 255, 0}), hole_progress_bar_content});
   }
 }

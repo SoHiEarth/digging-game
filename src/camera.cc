@@ -4,6 +4,18 @@
 #include <hole.h>
 #include <resload.h>
 void Camera::Render() {
+  for (auto hole : holes_vector) {
+    if (hole->enabled) {
+      SDL_Rect screenspace_rect = {
+        hole->rect.x - position.x,
+        hole->rect.y - position.y,
+        hole->rect.w,
+        hole->rect.h
+      };
+      RenderHole(hole, screenspace_rect);
+    }
+  }
+
   for (Object* object : level.objects) {
     if (!object->enabled) continue;
     SDL_Rect screenspace_rect = {
@@ -37,17 +49,6 @@ void Camera::Render() {
       player->rect.h - 15
      };
     SDL_RenderCopy(renderer, player->inventory[player->current_item]->sprite, NULL, &item_rect);
-  }
-  for (Hole* hole : holes_vector) {
-    if (hole->enabled) {
-      SDL_Rect screenspace_rect = {
-        hole->rect.x - position.x,
-        hole->rect.y - position.y,
-        hole->rect.w,
-        hole->rect.h
-      };
-      RenderHole(hole, screenspace_rect);
-    }
   }
 }
 

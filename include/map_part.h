@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <object.h>
+#include <string>
 
 struct MapPart : public Object {
  public:

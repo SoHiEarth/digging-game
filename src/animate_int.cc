@@ -1,6 +1,7 @@
 #include <animate.h>
 #include <safe_thread.h>
 #include <fstream>
+#include <sstream>
 #include <base.h>
 int start = 0;
 double animate_target_internal = 0;
