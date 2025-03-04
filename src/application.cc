@@ -39,7 +39,7 @@ void Application::Run() {
       case APP_STATE_GAME:
         Game();
         break;
-      case APP_STATE_DIALOUGE:
+      case APP_STATE_DIALOGUE:
         Dialouge();
         break;
       case APP_STATE_QUIT:

@@ -31,7 +31,10 @@ void Holes::UnsetCurrentObjective() {
 }
 
 void Holes::RenderObjective() {
-  if (current_objective.title.empty() || objective_unset) return;
+  if (current_objective.title.empty() || current_objective.message.empty() || objective_unset) return;
+  if (inventoryFont == nullptr) {
+    inventoryFont = ResLoad::LoadFont(current_asset_bundle.FONT_GAME_INVENTORY_PATH.c_str(), 16);
+  }
   SDL_Texture* title_texture = ResLoad::RenderText(inventoryFont, current_objective.title, {255, 255, 255, 255}, window_width * 0.35),
     *message_texture = ResLoad::RenderText(inventoryFont, current_objective.message, {255, 255, 255, 255}, window_width * 0.25);
   SDL_Rect title_texture_rect = { objective_window_x_offset + 10, 40, 0, 0 },

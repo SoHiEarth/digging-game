@@ -10,6 +10,13 @@
 std::vector<Hole*> holes_vector;
 SDL_Texture* hole_texture = nullptr;
 SDL_Rect hole_texture_rect = { 0, 0, 64, 64 };
+
+void Hole::Update() {
+  if (progress >= 100) {
+    enabled = false;
+  }
+}
+
 void LoadHoleTexture() {
   if (hole_texture != nullptr) {
     SDL_DestroyTexture(hole_texture);

@@ -43,7 +43,7 @@ void Humanoid::Update() {
     extras.insert({control_texture, talkControlRect});
     if (talk_button_pressed) {
       current_humanoid = this;
-      app->state = APP_STATE_DIALOUGE;
+      app->state = APP_STATE_DIALOGUE;
     }
   }
 }

@@ -33,6 +33,12 @@ struct Pendanski : public Humanoid {
   Pendanski();
 };
 
+struct Pendanski_2 : public Pendanski {
+  void Update() override;
+  Pendanski_2();
+};
+
+
 struct JailGuard : public Humanoid {
   JailGuard();
 };
@@ -43,5 +49,19 @@ struct Warden : public Humanoid {
 
 struct Zero : public Humanoid {
   Zero();
+};
+
+struct StoryTeller : public Humanoid {
+  void Start() override;
+  void Update() override;
+  void Quit() override;
+  StoryTeller();
+};
+
+struct StoryTeller_2 : public Humanoid {
+  void Start() override;
+  void Update() override;
+  void Quit() override;
+  StoryTeller_2();
 };
 #endif // HUMANOID_H

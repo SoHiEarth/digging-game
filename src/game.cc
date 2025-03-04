@@ -10,7 +10,7 @@
 #include <level.h>
 #include <resload.h>
 #include <object.h>
-std::map<SDL_Keycode, bool> key_states, prev_key_states;
+std::map<SDL_Keycode, bool> key_states;
 void Application::Fixed(std::atomic<bool>& running) {
   while (running && state == APP_STATE_GAME) {
     player->energy = std::clamp(player->energy, 0.0f, 100.0f);
@@ -42,9 +42,7 @@ void Application::Game() {
     level.Load("assets/1.lvl");
     ResetPlayerStats();
   }
-  if (!level.fixed_thread.open) {
-    level.fixed_thread.Start(std::bind(&Application::Fixed, this, std::placeholders::_1), "Fixed");
-  }
+  level.fixed_thread.Start(std::bind(&Application::Fixed, this, std::placeholders::_1), "Fixed");
   while (state == APP_STATE_GAME) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -63,7 +61,7 @@ void Application::Game() {
       }
     }
     if (key_states[SDLK_ESCAPE]) state = APP_STATE_QUIT;
-    if (key_states[SDLK_e] && !prev_key_states[SDLK_e]) {
+    if (key_states[SDLK_e]) {
       func_button_pressed = true;
       if (!player->inventory.empty()) {
         player->inventory[std::clamp(player->current_item, 0, (int)player->inventory.size())]->func();
@@ -85,7 +83,6 @@ void Application::Game() {
     if (player->health <= 0) {
       state = APP_STATE_GAME_OVER;
     }
-    prev_key_states = key_states;
     level.CopyTempObjects();
     SDL_Delay(1000/60);
     if (level.HasNextFramePath()) {

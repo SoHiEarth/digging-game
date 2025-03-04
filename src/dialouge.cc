@@ -54,7 +54,7 @@ void Application::Dialouge() {
   name_bg_rect = GetBackground(name_rect);
   control_rect = { window_width - control_w - 10, window_height - control_h - 10, control_w, control_h };
 
-  while (state == APP_STATE_DIALOUGE) {
+  while (state == APP_STATE_DIALOGUE) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
         state = APP_STATE_QUIT;

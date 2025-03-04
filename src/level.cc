@@ -9,17 +9,23 @@
 #include <safe_thread.h>
 #include <application.h>
 #include <holes_2_manager.h>
+#include <holes_3_manager.h>
 #include <map_part.h>
 #include <unordered_map>
+#include <holes_camp.h>
 std::unordered_map<std::string, Object*(*)()> object_factory {
   {"Sir", []() -> Object* { return new Sir(); }},
   {"JailGuard", []() -> Object* { return new JailGuard(); }},
   {"WaterRefillStation", []() -> Object* { return new WaterRefillStation(); }},
   {"Transport_Bus_1", []() -> Object* { return new TransportBus_Lv1(); }},
   {"Holes_2_Manager", []() -> Object* { return new Holes_2_Manager(); }},
+  {"Holes_3_Manager", []() -> Object* { return new Holes_3_Manager(); }},
   {"Pen", []() -> Object* { return new Pendanski(); }},
+  {"Pen_2", []() -> Object* { return new Pendanski_2(); }},
   {"Player", []() -> Object* { return new Player(); }},
   {"MapPart_Hill", []() -> Object* { return new Holes::Map::Hill(); }},
+  {"Camp_2_In", []() -> Object* { return new Holes::Camp_2_In(); }},
+  {"Camp_2", []() -> Object* { return new Holes::Camp_2(); }},
 };
 
 void Level::Load(std::string path) {
